@@ -1,6 +1,7 @@
 import EventInfoModal from '@/components/event/EventInfoModal'
 import config from '@/config/config.json'
 import EventFetch from '@/fetch/event'
+import { fetcher } from '@/hooks/swr'
 import { isEventUpdated } from '@/store/event'
 import { userStore } from '@/store/user'
 import type { EventResponse } from '@/types/event'
@@ -17,21 +18,32 @@ interface DateRange {
   endStr: string
 }
 
-const fetcher = (url: string): Promise<any> => fetch(url).then((res) => res.json())
-
 const Calendar: React.FC = () => {
   const $userStore = useStore(userStore)
   const calendarRef = useRef<FullCalendar>(null)
 
   // カレンダーの日付範囲を初期化
   const [dateRange, setDateRange] = useState<DateRange>({ startStr: '', endStr: '' })
-  const { data: events, mutate: mutateEvents } = useSWR(
+
+  // SWRでイベントデータを取得（エラーハンドリング追加）
+  const {
+    data: events,
+    error: eventsError,
+    isLoading: eventsLoading,
+    mutate: mutateEvents
+  } = useSWR(
     dateRange.startStr && dateRange.endStr
       ? `${config.api.rootUrl}/event?start=${dateRange.startStr}&end=${dateRange.endStr}`
       : null,
     fetcher
   )
-  const { data: holidays } = useSWR(
+
+  // SWRで祝日データを取得（エラーハンドリング追加）
+  const {
+    data: holidays,
+    error: holidaysError,
+    isLoading: holidaysLoading
+  } = useSWR(
     dateRange.startStr && dateRange.endStr
       ? `${config.api.rootUrl}/holiday?start=${dateRange.startStr}&end=${dateRange.endStr}`
       : null,
@@ -40,8 +52,8 @@ const Calendar: React.FC = () => {
 
   // イベント情報のモーダルを初期化
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [selectedEvent, setSelectedEvent] = useState<any>(null)
-  const [userAuth, setUserAuth] = useState<any>(null)
+  const [selectedEvent, setSelectedEvent] = useState<EventResponse | null>(null)
+  const [userAuth, setUserAuth] = useState<typeof $userStore | null>(null)
 
   /**
    * イベント情報の更新を監視
@@ -66,7 +78,7 @@ const Calendar: React.FC = () => {
   }
 
   // 日付セルにカスタムコンテンツをレンダリングする関数
-  const renderDayCellContent = (dayCellContent: any) => {
+  const renderDayCellContent = (dayCellContent: { date: Date; view: { type: string } }) => {
     // 祝日データがない場合は何もしない
     if (!holidays) {
       return null
@@ -95,11 +107,10 @@ const Calendar: React.FC = () => {
     try {
       const response = await EventFetch.getEvent(Number(clickInfo.event.id))
       if (!response.ok) {
-        const errorData = await response.json()
-        //setError(`データの取得に失敗しました: ${errorData.message}`)
+        //setError(`データの取得に失敗しました`)
         return
       }
-      const eventData = await response.json()
+      const eventData = (await response.json()) as EventResponse
 
       setUserAuth($userStore)
       setSelectedEvent(eventData)
@@ -111,6 +122,28 @@ const Calendar: React.FC = () => {
   const closeModal = () => {
     setIsModalOpen(false)
     setSelectedEvent(null)
+  }
+
+  // ローディング状態の表示
+  if (eventsLoading || holidaysLoading) {
+    return (
+      <div className="calendar-main mb-5">
+        <div className="flex h-96 items-center justify-center">
+          <div className="text-gray-500">データを読み込み中...</div>
+        </div>
+      </div>
+    )
+  }
+
+  // エラー状態の表示
+  if (eventsError || holidaysError) {
+    return (
+      <div className="calendar-main mb-5">
+        <div className="flex h-96 items-center justify-center">
+          <div className="text-red-500">データの取得に失敗しました</div>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -177,8 +210,8 @@ const Calendar: React.FC = () => {
           // 通常イベントの場合
           if (!a.allDay && !b.allDay) {
             // 開始時間を比較
-            const startTimeA = new Date(a.start).getTime()
-            const startTimeB = new Date(b.start).getTime()
+            const startTimeA = new Date(a.start as string).getTime()
+            const startTimeB = new Date(b.start as string).getTime()
 
             // 開始時間が同じ場合はカテゴリーインデックスで比較
             if (startTimeA === startTimeB) {
@@ -192,7 +225,7 @@ const Calendar: React.FC = () => {
           }
 
           // その他の場合は開始時間で比較
-          return new Date(a.start).getTime() - new Date(b.start).getTime()
+          return new Date(a.start as string).getTime() - new Date(b.start as string).getTime()
         }}
         eventTimeFormat={{
           // 時刻フォーマット'14:30'
