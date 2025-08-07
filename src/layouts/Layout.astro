@@ -1,0 +1,88 @@
+---
+import '@/styles/global.css'
+import Navigation from '@/layouts/partials/Navigation.astro'
+import Footer from '@/layouts/partials/Footer.astro'
+import HeroHeader from '@/layouts/partials/HeroHeader.astro'
+import Head from '@/layouts/partials/Head.astro'
+import ProfileModal from '@/components/ProfileModal'
+import ChangePasswordModal from '@/components/ChangePasswordModal'
+import SizeIndicator from '@/components/SizeIndicator.astro'
+
+const user = (
+  Astro.locals as {
+    user?: { id: number; name: string; email: string; avatar?: string; role: string }
+  }
+).user
+
+interface Props {
+  title: string
+  isHome?: boolean
+  description?: string
+  currentPage?: string
+}
+
+const { title, isHome = false, description, currentPage: propCurrentPage } = Astro.props
+
+// 現在のページパスを取得
+const currentPage = propCurrentPage || Astro.url.pathname
+---
+
+<!doctype html>
+<html lang="ja">
+  <head>
+    <Head title={title} {...description && { description }} />
+  </head>
+  <body>
+    <SizeIndicator />
+    {
+      isHome ? (
+        <HeroHeader>
+          <Navigation slot="navigation" currentPage={currentPage} />
+        </HeroHeader>
+      ) : (
+        <header class="bg-primary-800">
+          <Navigation currentPage={currentPage} />
+        </header>
+      )
+    }
+    <main class="container mx-auto mt-16 px-4 py-8">
+      <slot />
+    </main>
+    <Footer />
+
+    {user && <ProfileModal client:load userid={user.id} />}
+
+    {user && <ChangePasswordModal client:load userId={user.id} />}
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --accent: 136, 58, 234;
+    --accent-light: 224, 204, 250;
+    --accent-dark: 49, 10, 101;
+    --accent-gradient: linear-gradient(
+      45deg,
+      rgb(var(--accent)),
+      rgb(var(--accent-light)) 30%,
+      white 60%
+    );
+  }
+  html {
+    /*font-family: system-ui, sans-serif;*/
+    background: #f6f6f6;
+    background-size: 224px;
+  }
+
+  code {
+    font-family:
+      Menlo,
+      Monaco,
+      Lucida Console,
+      Liberation Mono,
+      DejaVu Sans Mono,
+      Bitstream Vera Sans Mono,
+      Courier New,
+      monospace;
+  }
+</style>

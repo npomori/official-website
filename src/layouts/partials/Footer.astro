@@ -1,0 +1,41 @@
+---
+const currentYear = new Date().getFullYear()
+---
+
+<footer class="bg-gray-800 text-white">
+  <div class="container mx-auto px-4 py-8">
+    <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
+      <div>
+        <h3 class="mb-4 text-xl font-bold">お問い合わせ</h3>
+        <p>〒xxx-xxxx</p>
+        <p>東京都○○区○○町1-2-3</p>
+        <p>TEL: 03-xxxx-xxxx</p>
+        <p>Email: info@example.com</p>
+        <p class="mt-4">
+          <a href="/contact" class="text-white hover:text-gray-300">お問い合わせフォーム</a>
+        </p>
+      </div>
+      <div>
+        <h3 class="mb-4 text-xl font-bold">リンク</h3>
+        <ul>
+          <li><a href="/staff" class="hover:text-gray-300">事務局員紹介</a></li>
+          <li><a href="/access" class="hover:text-gray-300">アクセス</a></li>
+          <li><a href="/privacy" class="hover:text-gray-300">プライバシーポリシー</a></li>
+          <li><a href="/sitemap" class="hover:text-gray-300">サイトマップ</a></li>
+          <li><a href="/member" class="hover:text-gray-300">会員専用</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="mb-4 text-xl font-bold">SNS</h3>
+        <div class="flex space-x-4">
+          <a href="#" class="hover:text-gray-300">Twitter</a>
+          <a href="#" class="hover:text-gray-300">Facebook</a>
+          <a href="#" class="hover:text-gray-300">Instagram</a>
+        </div>
+      </div>
+    </div>
+    <div class="mt-8 text-center">
+      <p>&copy; {currentYear} 日本森林ボランティア協会 All rights reserved.</p>
+    </div>
+  </div>
+</footer>

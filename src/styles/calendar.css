@@ -1,0 +1,80 @@
+@import "./global.css";
+
+th.fc-day-sat .fc-col-header-cell-cushion {
+  @apply text-blue-500;
+}
+th.fc-day-sun .fc-col-header-cell-cushion {
+  @apply text-red-500;
+}
+
+td.fc-day-sat .fc-daygrid-day-number {
+  @apply text-blue-500;
+}
+td.fc-day-sun .fc-daygrid-day-number {
+  @apply text-red-500;
+}
+
+.holiday-label {
+  @apply text-red-500;
+}
+.holiday-number {
+  @apply text-red-500;
+}
+.fc-daygrid-day-number {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row-reverse;
+  width: 100%;
+}
+
+/* Toolbar */
+.fc-toolbar-chunk {
+  .fc-button {
+    @apply inline-flex items-center rounded-md border-none bg-primary-600 px-3 py-2 text-sm font-semibold text-white ring-0 hover:bg-primary-700;
+  }
+  .fc-button:disabled {
+    @apply cursor-auto bg-primary-500;
+  }
+  .fc-button:not(:disabled):active {
+    @apply bg-primary-700;
+  }
+
+  .fc-button.fc-button-primary.fc-button-active {
+    @apply bg-primary-800;
+  }
+}
+.fc-event {
+  margin-bottom: 2px;
+}
+.fc-event.fc-daygrid-dot-event {
+  @apply border-pink-500 bg-pink-500 align-middle text-white;
+  padding: 2px 5px;
+}
+.fc-event.fc-daygrid-block-event {
+  @apply border-green-600 bg-green-600 align-middle;
+  padding: 2px 5px;
+}
+
+/* 「他n件」表示の改善 */
+.fc-more-link {
+  @apply bg-primary-500 text-white font-normal !px-2 !pt-2 !pb-1 !rounded-md !ml-1 !mt-1 block w-fit text-center;
+  transition: background-color 0.2s, color 0.2s;
+}
+.fc-more-link:hover {
+  @apply bg-primary-600;
+}
+
+/* 日付のセルを拡大するポップアップ用 */
+.fc-more-popover-misc {/* 日付の数値を非表示にする */
+  display: none;
+}
+.fc-popover {
+  @apply shadow-lg rounded-md !border-2 !border-gray-400;
+  z-index: 10 !important;
+}
+.fc-popover-header {
+  @apply !bg-primary-500 text-white font-semibold p-2 rounded-t-sm;
+}
+.fc-popover-body {
+  @apply p-2;
+}

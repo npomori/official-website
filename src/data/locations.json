@@ -1,0 +1,232 @@
+[
+  {
+    "id": "minoh",
+    "name": "箕面国有林",
+    "position": [34.8167, 135.4667],
+    "description": "大阪府箕面市の国有林での活動",
+    "type": "regular",
+    "activities": ["森林整備活動", "植樹活動", "自然観察会"],
+    "image": "https://images.unsplash.com/photo-1448375240586-882707db888b?w=600&auto=format&fit=crop&q=60",
+    "address": "大阪府箕面市",
+    "hasDetail": true,
+    "detailInfo": {
+      "history": "箕面国有林は、明治時代から続く歴史ある国有林です。大阪の都市部に近い位置にありながら、豊かな自然が残されており、多くの動植物が生息しています。",
+      "access": "阪急箕面線箕面駅から徒歩約20分、または箕面バス停から徒歩約15分",
+      "facilities": "駐車場、トイレ、休憩所、案内板",
+      "schedule": "毎月第2・4土曜日 9:00-15:00",
+      "requirements": "動きやすい服装、長靴、軍手、帽子、水筒",
+      "contact": "箕面市役所 環境部 06-1234-5678",
+      "gallery": [
+        "https://images.unsplash.com/photo-1448375240586-882707db888b?w=400&auto=format&fit=crop&q=60",
+        "https://images.unsplash.com/photo-1440342359743-84fcb8c21f21?w=400&auto=format&fit=crop&q=60",
+        "https://images.unsplash.com/photo-1475483768296-6163e08872a1?w=400&auto=format&fit=crop&q=60"
+      ]
+    }
+  },
+  {
+    "id": "kongosan",
+    "name": "金剛山",
+    "position": [34.4167, 135.6833],
+    "description": "大阪府と奈良県の県境にある金剛山での活動",
+    "type": "regular",
+    "activities": ["登山道整備", "森林保全活動", "環境調査"],
+    "image": "https://images.unsplash.com/photo-1440342359743-84fcb8c21f21?w=600&auto=format&fit=crop&q=60",
+    "address": "大阪府南河内郡千早赤阪村・奈良県御所市",
+    "hasDetail": true,
+    "detailInfo": {
+      "history": "金剛山は標高1,125mの山で、大阪府と奈良県の県境に位置しています。古くから信仰の山として知られ、豊かな森林と多様な生態系を有しています。",
+      "access": "近鉄長野線富田林駅からバス約30分、または車で金剛山ロープウェイ駐車場まで",
+      "facilities": "ロープウェイ、駐車場、トイレ、売店、山小屋",
+      "schedule": "毎月第1・3日曜日 8:00-16:00",
+      "requirements": "登山靴、リュックサック、雨具、防寒具、水筒、行動食",
+      "contact": "千早赤阪村役場 産業振興課 0721-72-0081",
+      "gallery": [
+        "https://images.unsplash.com/photo-1440342359743-84fcb8c21f21?w=400&auto=format&fit=crop&q=60",
+        "https://images.unsplash.com/photo-1448375240586-882707db888b?w=400&auto=format&fit=crop&q=60",
+        "https://images.unsplash.com/photo-1524661135-423995f22d0b?w=400&auto=format&fit=crop&q=60"
+      ]
+    }
+  },
+  {
+    "id": "kudoyama",
+    "name": "九度山",
+    "position": [34.2833, 135.5667],
+    "description": "和歌山県九度山町での森林整備活動",
+    "type": "regular",
+    "activities": ["間伐作業", "下草刈り", "林道整備"],
+    "image": "https://images.unsplash.com/photo-1475483768296-6163e08872a1?w=600&auto=format&fit=crop&q=60",
+    "address": "和歌山県伊都郡九度山町",
+    "hasDetail": true,
+    "detailInfo": {
+      "history": "九度山は真田昌幸・信繁父子が配流された地として知られ、歴史と自然が調和した地域です。周辺の森林は地域の重要な資源として保全されています。",
+      "access": "南海高野線九度山駅から徒歩約10分、または車で九度山町役場まで",
+      "facilities": "駐車場、トイレ、休憩所、真田庵（史跡）",
+      "schedule": "毎月第2土曜日 9:00-15:00",
+      "requirements": "作業服、長靴、軍手、帽子、水筒、昼食",
+      "contact": "九度山町役場 産業建設課 0736-54-2014",
+      "gallery": [
+        "https://images.unsplash.com/photo-1475483768296-6163e08872a1?w=400&auto=format&fit=crop&q=60",
+        "https://images.unsplash.com/photo-1448375240586-882707db888b?w=400&auto=format&fit=crop&q=60",
+        "https://images.unsplash.com/photo-1440342359743-84fcb8c21f21?w=400&auto=format&fit=crop&q=60"
+      ]
+    }
+  },
+  {
+    "id": "nose",
+    "name": "能勢の森",
+    "position": [34.9667, 135.4167],
+    "description": "大阪府豊能郡能勢町での森づくり活動",
+    "type": "regular",
+    "activities": ["森づくり活動", "植樹祭", "自然体験プログラム"],
+    "image": "https://images.unsplash.com/photo-1524661135-423995f22d0b?w=600&auto=format&fit=crop&q=60",
+    "address": "大阪府豊能郡能勢町",
+    "hasDetail": true,
+    "detailInfo": {
+      "history": "能勢の森は、大阪府の北部に位置する豊かな自然環境を有する地域です。里山の景観が美しく、四季折々の自然を楽しむことができます。",
+      "access": "能勢電鉄妙見線妙見口駅からバス約15分、または車で能勢町役場まで",
+      "facilities": "駐車場、トイレ、休憩所、キャンプ場、バーベキュー場",
+      "schedule": "毎月第3土曜日 9:00-15:00（季節により変動）",
+      "requirements": "動きやすい服装、長靴、軍手、帽子、水筒、昼食",
+      "contact": "能勢町役場 産業振興課 072-734-0001",
+      "gallery": [
+        "https://images.unsplash.com/photo-1524661135-423995f22d0b?w=400&auto=format&fit=crop&q=60",
+        "https://images.unsplash.com/photo-1448375240586-882707db888b?w=400&auto=format&fit=crop&q=60",
+        "https://images.unsplash.com/photo-1475483768296-6163e08872a1?w=400&auto=format&fit=crop&q=60"
+      ]
+    }
+  },
+  {
+    "id": "takatsuki-bijoyama",
+    "name": "高槻美女山",
+    "position": [34.85, 135.6167],
+    "description": "大阪府高槻市の美女山での活動",
+    "type": "regular",
+    "activities": ["森林整備", "自然観察", "環境教育"],
+    "image": "https://images.unsplash.com/photo-1448375240586-882707db888b?w=600&auto=format&fit=crop&q=60",
+    "address": "大阪府高槻市",
+    "hasDetail": false
+  },
+  {
+    "id": "yoshikawa",
+    "name": "吉川の里",
+    "position": [34.75, 134.9833],
+    "description": "兵庫県三木市吉川町での里山保全活動",
+    "type": "regular",
+    "activities": ["里山保全", "農地整備", "地域連携活動"],
+    "image": "https://images.unsplash.com/photo-1440342359743-84fcb8c21f21?w=600&auto=format&fit=crop&q=60",
+    "address": "兵庫県三木市吉川町",
+    "hasDetail": false
+  },
+  {
+    "id": "sasayama-maruyama",
+    "name": "篠山丸山",
+    "position": [35.0667, 135.2167],
+    "description": "兵庫県丹波篠山市の丸山での活動",
+    "type": "regular",
+    "activities": ["森林整備", "植樹活動", "自然観察"],
+    "image": "https://images.unsplash.com/photo-1475483768296-6163e08872a1?w=600&auto=format&fit=crop&q=60",
+    "address": "兵庫県丹波篠山市",
+    "hasDetail": false
+  },
+  {
+    "id": "katsuragi-mitoshi",
+    "name": "葛城御歳神社",
+    "position": [34.4667, 135.7333],
+    "description": "奈良県御所市の葛城御歳神社周辺での活動",
+    "type": "regular",
+    "activities": ["神社周辺の整備", "文化財保護活動", "地域文化継承"],
+    "image": "https://images.unsplash.com/photo-1524661135-423995f22d0b?w=600&auto=format&fit=crop&q=60",
+    "address": "奈良県御所市",
+    "hasDetail": false
+  },
+  {
+    "id": "muraya",
+    "name": "村屋神社",
+    "position": [34.55, 135.7833],
+    "description": "奈良県磯城郡田原本町の村屋神社での活動",
+    "type": "regular",
+    "activities": ["神社境内整備", "歴史的環境保全", "地域交流活動"],
+    "image": "https://images.unsplash.com/photo-1448375240586-882707db888b?w=600&auto=format&fit=crop&q=60",
+    "address": "奈良県磯城郡田原本町",
+    "hasDetail": false
+  },
+  {
+    "id": "minamiyamashiro",
+    "name": "南山城",
+    "position": [34.7833, 135.85],
+    "description": "京都府相楽郡南山城村での活動",
+    "type": "regular",
+    "activities": ["森林整備", "環境保全", "地域貢献活動"],
+    "image": "https://images.unsplash.com/photo-1440342359743-84fcb8c21f21?w=600&auto=format&fit=crop&q=60",
+    "address": "京都府相楽郡南山城村",
+    "hasDetail": false
+  },
+  {
+    "id": "izumi",
+    "name": "いずみの森",
+    "position": [34.4, 135.35],
+    "description": "大阪府泉南郡熊取町のいずみの森での活動",
+    "type": "regular",
+    "activities": ["森づくり活動", "自然体験", "環境教育"],
+    "image": "https://images.unsplash.com/photo-1475483768296-6163e08872a1?w=600&auto=format&fit=crop&q=60",
+    "address": "大阪府泉南郡熊取町",
+    "hasDetail": false
+  },
+  {
+    "id": "kagu-kobo",
+    "name": "家具工房の森",
+    "position": [34.6833, 135.5],
+    "description": "家具工房と連携した森づくり活動",
+    "type": "regular",
+    "activities": ["木材活用", "持続可能な森づくり", "産業連携"],
+    "image": "https://images.unsplash.com/photo-1524661135-423995f22d0b?w=600&auto=format&fit=crop&q=60",
+    "address": "大阪府",
+    "hasDetail": false
+  },
+  {
+    "id": "ntt-horigono",
+    "name": "ＮＴＴドコモほりごの森活動支援",
+    "position": [34.85, 135.45],
+    "description": "ＮＴＴドコモとの協働による森づくり活動",
+    "type": "activity",
+    "activities": ["企業との協働活動", "森づくり支援", "社会貢献活動"],
+    "image": "https://images.unsplash.com/photo-1448375240586-882707db888b?w=600&auto=format&fit=crop&q=60",
+    "address": "大阪府",
+    "hasDetail": true,
+    "detailInfo": {
+      "history": "ＮＴＴドコモほりごの森は、企業のCSR活動として2010年から開始された森づくりプロジェクトです。地域との協働により、持続可能な森づくりを推進しています。",
+      "access": "近鉄南大阪線河内長野駅からバス約20分、または車でほりごの森駐車場まで",
+      "facilities": "駐車場、トイレ、休憩所、案内センター、体験施設",
+      "schedule": "毎月第4土曜日 9:00-15:00（企業イベント時は変更あり）",
+      "requirements": "動きやすい服装、長靴、軍手、帽子、水筒、昼食",
+      "contact": "ＮＴＴドコモ関西支社 CSR推進部 06-1234-5678",
+      "gallery": [
+        "https://images.unsplash.com/photo-1448375240586-882707db888b?w=400&auto=format&fit=crop&q=60",
+        "https://images.unsplash.com/photo-1440342359743-84fcb8c21f21?w=400&auto=format&fit=crop&q=60",
+        "https://images.unsplash.com/photo-1524661135-423995f22d0b?w=400&auto=format&fit=crop&q=60"
+      ]
+    }
+  },
+  {
+    "id": "zurich",
+    "name": "チューリッヒ生命植樹指導",
+    "position": [34.75, 135.55],
+    "description": "チューリッヒ生命との連携による植樹活動",
+    "type": "activity",
+    "activities": ["植樹指導", "環境教育", "企業連携"],
+    "image": "https://images.unsplash.com/photo-1440342359743-84fcb8c21f21?w=600&auto=format&fit=crop&q=60",
+    "address": "大阪府",
+    "hasDetail": false
+  },
+  {
+    "id": "mikusayama",
+    "name": "三草山の防鹿柵設置",
+    "position": [34.95, 135.25],
+    "description": "兵庫県三草山での防鹿柵設置活動",
+    "type": "activity",
+    "activities": ["防鹿柵設置", "野生動物対策", "森林保護"],
+    "image": "https://images.unsplash.com/photo-1475483768296-6163e08872a1?w=600&auto=format&fit=crop&q=60",
+    "address": "兵庫県三草山",
+    "hasDetail": false
+  }
+]

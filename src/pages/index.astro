@@ -1,0 +1,234 @@
+---
+import Layout from '@/layouts/Layout.astro'
+import UpcomingEvents from '@/components/home/UpcomingEvents'
+import NewsSection from '@/components/home/NewsSection'
+
+// 最新のブログ記事データ
+const latestPosts = [
+  {
+    id: 1,
+    content:
+      '今日は春の植樹活動でした！参加者30名でクヌギとコナラの苗木を100本植樹しました。みんなで協力して作業したので、予定より早く終了。植えた苗木が大きく育つのが楽しみです🌱 #植樹 #春 #森林ボランティア',
+    date: '2024-03-20',
+    author: '田中 太郎',
+    image: '/images/spring-planting.jpg',
+    likes: 24
+  },
+  {
+    id: 2,
+    content:
+      '森林調査の結果が出ました！昨年植えた苗木の生存率95%達成🎉 平均樹高も15%成長。生物多様性も向上していて、アカゲラやコゲラも増加中。森林が健康に育っている証拠ですね🌳 #調査 #生物多様性 #成果',
+    date: '2024-03-10',
+    author: '佐藤 花子',
+    image: '/images/forest-survey.jpg',
+    likes: 31
+  },
+  {
+    id: 3,
+    content:
+      '冬の森林整備活動。寒い中でしたが、枯れ枝の除去と下草刈りを完了！森林の健康状態が改善されました。作業後は温かいお茶で一息☕️ #整備 #冬 #森林管理',
+    date: '2024-02-15',
+    author: '山田 次郎',
+    image: '/images/winter-nature.jpg',
+    likes: 18
+  }
+]
+---
+
+<Layout title="ホーム" isHome={true}>
+  <div class="mx-auto max-w-4xl">
+    <section class="mb-16 grid grid-cols-1 gap-8 md:grid-cols-2">
+      <UpcomingEvents client:load />
+
+      <NewsSection client:load />
+    </section>
+
+    <!-- 主な事業セクション -->
+    <section class="mb-16">
+      <h2 class="mb-8 text-center text-3xl font-bold">主な活動</h2>
+      <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
+        <div class="rounded-lg bg-white p-6 text-center shadow-lg">
+          <div class="mb-4 flex justify-center">
+            <a
+              href="/locations"
+              class="text-primary-600 hover:text-primary-800 inline-block transition-all duration-300 hover:scale-110 hover:rotate-3"
+            >
+              <i class="fas fa-tree text-4xl"></i>
+            </a>
+          </div>
+          <h3 class="mb-4 text-xl font-bold">森林整備</h3>
+          <p class="text-left leading-relaxed text-gray-600">
+            植樹、下草刈り、枝打ちなど、森林の健全な成長を支える活動を行っています。
+            定期的な整備により、生物多様性豊かな森づくりを推進しています。
+          </p>
+        </div>
+
+        <div class="rounded-lg bg-white p-6 text-center shadow-lg">
+          <div class="mb-4 flex justify-center">
+            <a
+              href="/university"
+              class="text-primary-600 hover:text-primary-800 inline-block transition-all duration-300 hover:scale-110 hover:rotate-3"
+            >
+              <i class="fas fa-graduation-cap text-4xl"></i>
+            </a>
+          </div>
+          <h3 class="mb-4 text-xl font-bold">森林大学</h3>
+          <p class="text-left leading-relaxed text-gray-600">
+            森林の知識と技術を学ぶ講座を開催しています。
+            初心者から経験者まで、森林について深く学べる場を提供しています。
+          </p>
+        </div>
+
+        <div class="rounded-lg bg-white p-6 text-center shadow-lg">
+          <div class="mb-4 flex justify-center">
+            <a
+              href="/lectures"
+              class="text-primary-600 hover:text-primary-800 inline-block transition-all duration-300 hover:scale-110 hover:rotate-3"
+            >
+              <i class="fas fa-chalkboard-teacher text-4xl"></i>
+            </a>
+          </div>
+          <h3 class="mb-4 text-xl font-bold">各種講習会</h3>
+          <p class="text-left leading-relaxed text-gray-600">
+            安全な活動のための技術講習や、森林の基礎知識を学ぶ講習会を開催。
+            ボランティア活動に必要なスキルを身につけることができます。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 最新のブログ記事セクション -->
+    <section class="mb-16">
+      <div class="mb-6 flex items-center justify-between">
+        <h2 class="text-2xl font-bold">最新の活動レポート</h2>
+        <a href="/blog" class="text-primary-600 hover:text-primary-800 font-semibold">
+          すべてのレポートを見る <i class="fas fa-arrow-right ml-1"></i>
+        </a>
+      </div>
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+        {
+          latestPosts.map((post) => (
+            <article class="overflow-hidden rounded-lg bg-white shadow-lg transition-shadow hover:shadow-xl">
+              <div class="relative">
+                <img src={post.image} alt="活動写真" class="h-48 w-full object-cover" />
+              </div>
+              <div class="p-4">
+                <div class="mb-2 flex items-center text-base text-gray-500">
+                  <i class="fas fa-calendar mr-2" />
+                  {new Date(post.date).toLocaleDateString('ja-JP')}
+                  <i class="fas fa-user mr-2 ml-4" />
+                  {post.author}
+                </div>
+                <p class="mb-4 line-clamp-3 text-base text-gray-600">{post.content}</p>
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center text-base text-gray-500">
+                    <i class="fas fa-heart mr-1 text-red-500" />
+                    <span>{post.likes}</span>
+                  </div>
+                  <a
+                    href={`/blog/${post.id}`}
+                    class="text-primary-600 hover:text-primary-800 inline-flex items-center text-base font-semibold"
+                  >
+                    詳細を見る
+                    <i class="fas fa-arrow-right ml-1" />
+                  </a>
+                </div>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- 支援・募集セクション -->
+    <section class="mb-16">
+      <h2 class="mb-8 text-center text-3xl font-bold">募集</h2>
+      <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
+        <div class="rounded-lg bg-white p-6 text-center shadow-lg">
+          <div class="mb-4 flex justify-center">
+            <a
+              href="/contact"
+              class="text-primary-600 hover:text-primary-800 inline-block transition-all duration-300 hover:scale-110 hover:rotate-3"
+              title="お問い合わせ"
+            >
+              <svg class="h-12 w-12" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fill-rule="evenodd"
+                  d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                  clip-rule="evenodd"></path>
+              </svg>
+            </a>
+          </div>
+          <h3 class="mb-4 text-xl font-bold">活動地募集</h3>
+          <p class="mb-4 text-left leading-relaxed text-gray-600">
+            森林整備活動の新しい活動地を募集しています。<br />
+            企業のCSR活動の支援も行っています。<br />
+            ご所有の森林や、整備が必要な森林がありましたら、ぜひご相談ください。
+          </p>
+          <a
+            href="/contact"
+            class="text-primary-600 hover:text-primary-800 inline-flex items-center text-base font-semibold"
+          >
+            お問い合わせ
+            <i class="fas fa-arrow-right ml-1"></i>
+          </a>
+        </div>
+
+        <div class="rounded-lg bg-white p-6 text-center shadow-lg">
+          <div class="mb-4 flex justify-center">
+            <a
+              href="/contact"
+              class="text-primary-600 hover:text-primary-800 inline-block transition-all duration-300 hover:scale-110 hover:rotate-3"
+              title="寄付について"
+            >
+              <svg class="h-12 w-12" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fill-rule="evenodd"
+                  d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
+                  clip-rule="evenodd"></path>
+              </svg>
+            </a>
+          </div>
+          <h3 class="mb-4 text-xl font-bold">寄付募集</h3>
+          <p class="mb-4 text-left leading-relaxed text-gray-600">
+            森林整備活動の継続的な運営のため、寄付を募集しています。
+            皆様のご支援が、豊かな森林づくりの原動力となります。
+          </p>
+          <a
+            href="/contact"
+            class="text-primary-600 hover:text-primary-800 inline-flex items-center text-base font-semibold"
+          >
+            寄付について
+            <i class="fas fa-arrow-right ml-1"></i>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-primary-50 mb-16 rounded-lg p-8">
+      <h2 class="mb-6 text-2xl font-bold">協会への入会を募集中</h2>
+      <p class="mb-6">森林ボランティア活動に興味のある方、自然を守りたい方、ぜひご入会ください。</p>
+      <a
+        href="/join"
+        class="bg-primary-600 hover:bg-primary-700 rounded-lg px-6 py-3 text-white transition-colors"
+      >
+        入会案内へ
+      </a>
+    </section>
+  </div>
+
+  <style>
+    .line-clamp-2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .line-clamp-3 {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+  </style>
+</Layout>

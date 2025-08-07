@@ -1,0 +1,103 @@
+---
+import { Icon } from 'astro-icon/components'
+import EventModalLink from '@/components/event/EventModalLink'
+import NewsModalLink from '@/components/news/NewsModalLink'
+import RecordModalLink from '@/components/record/RecordModalLink'
+
+interface Props {
+  variant?: 'desktop' | 'mobile'
+  currentPage?: string
+}
+
+const { variant = 'desktop', currentPage } = Astro.props
+
+const user = (
+  Astro.locals as {
+    user?: { id: number; name: string; email: string; avatar?: string; role: string }
+  }
+).user
+
+// ADMIN、MODERATOR、EDITORロールの場合に表示
+const showAdminMenu =
+  user && (user.role === 'ADMIN' || user.role === 'MODERATOR' || user.role === 'EDITOR')
+// カレンダーページの場合のみEventModalLinkを表示
+const isCalendarPage = currentPage === '/calendar'
+// 活動記録ページの場合のみRecordModalLinkを表示
+const isRecordPage = currentPage === '/record'
+// お知らせページの場合のみNewsModalLinkを表示
+const isNewsPage = currentPage === '/news'
+// ADMINまたはMODERATORロールの場合のみダッシュボードを表示
+const showDashboard = user && (user.role === 'ADMIN' || user.role === 'MODERATOR')
+---
+
+{
+  showAdminMenu &&
+    (variant === 'desktop' ? (
+      <li class="group relative flex items-center">
+        <button class="hover:text-primary-200 flex items-center py-2 text-white">
+          <Icon class="h-5 w-5" name="mdi:cog" />
+          <svg class="ml-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 9l-7 7-7-7"
+            />
+          </svg>
+        </button>
+        <ul class="bg-primary-700 border-primary-600 absolute top-full left-0 hidden min-w-[200px] rounded border py-2 shadow-lg group-hover:block">
+          {isCalendarPage && (
+            <li>
+              <EventModalLink client:load />
+            </li>
+          )}
+          {isRecordPage && (
+            <li>
+              <RecordModalLink client:load />
+            </li>
+          )}
+          {isNewsPage && (
+            <li>
+              <NewsModalLink client:load />
+            </li>
+          )}
+          {showDashboard && (
+            <li>
+              <a href="/admin" class="hover:bg-primary-600 flex items-center px-4 py-2 text-white">
+                <Icon class="mr-2 h-4 w-4" name="mdi:view-dashboard" />
+                ダッシュボード
+              </a>
+            </li>
+          )}
+        </ul>
+      </li>
+    ) : (
+      <li class="border-primary-700 border-t pt-4">
+        <ul class="space-y-2">
+          {isCalendarPage && (
+            <li>
+              <EventModalLink client:load />
+            </li>
+          )}
+          {isRecordPage && (
+            <li>
+              <RecordModalLink client:load />
+            </li>
+          )}
+          {isNewsPage && (
+            <li>
+              <NewsModalLink client:load />
+            </li>
+          )}
+          {showDashboard && (
+            <li>
+              <a href="/admin" class="hover:text-primary-200 flex items-center text-white">
+                <Icon class="mr-3 h-5 w-5" name="mdi:view-dashboard" />
+                ダッシュボード
+              </a>
+            </li>
+          )}
+        </ul>
+      </li>
+    ))
+}

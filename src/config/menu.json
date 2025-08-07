@@ -1,0 +1,148 @@
+{
+  "desktopMenu": [
+    {
+      "id": "about",
+      "label": "森林ボランティアとは",
+      "href": "/about",
+      "type": "link"
+    },
+    {
+      "id": "organization",
+      "label": "協会の概要",
+      "href": "/organization",
+      "type": "link"
+    },
+    {
+      "id": "activities",
+      "label": "活動情報",
+      "type": "dropdown",
+      "children": [
+        {
+          "id": "locations",
+          "label": "活動地紹介",
+          "href": "/locations"
+        },
+        {
+          "id": "calendar",
+          "label": "活動予定表",
+          "href": "/calendar"
+        },
+        {
+          "id": "activities",
+          "label": "活動記録",
+          "href": "/record"
+        },
+        {
+          "id": "blog",
+          "label": "活動レポート",
+          "href": "/blog"
+        }
+      ]
+    },
+    {
+      "id": "join",
+      "label": "協会へ入会",
+      "href": "/join",
+      "type": "link"
+    },
+    {
+      "id": "others",
+      "label": "その他",
+      "type": "dropdown",
+      "children": [
+        {
+          "id": "university",
+          "label": "森林大学",
+          "href": "/university"
+        },
+        {
+          "id": "lectures",
+          "label": "各種講習会",
+          "href": "/lectures"
+        },
+        {
+          "id": "news",
+          "label": "お知らせ",
+          "href": "/news"
+        },
+        {
+          "id": "access",
+          "label": "アクセス",
+          "href": "/access"
+        },
+        {
+          "id": "links",
+          "label": "リンク集",
+          "href": "/links"
+        }
+      ]
+    }
+  ],
+  "mobileMenu": [
+    {
+      "id": "about",
+      "label": "森林ボランティアとは",
+      "href": "/about"
+    },
+    {
+      "id": "organization",
+      "label": "協会の概要",
+      "href": "/organization"
+    },
+    {
+      "id": "locations",
+      "label": "活動地紹介",
+      "href": "/locations"
+    },
+    {
+      "id": "calendar",
+      "label": "活動予定表",
+      "href": "/calendar"
+    },
+    {
+      "id": "activities",
+      "label": "活動記録",
+      "href": "/record"
+    },
+    {
+      "id": "blog",
+      "label": "活動レポート",
+      "href": "/blog"
+    },
+    {
+      "id": "join",
+      "label": "協会へ入会",
+      "href": "/join"
+    },
+    {
+      "id": "university",
+      "label": "森林大学",
+      "href": "/university"
+    },
+    {
+      "id": "lectures",
+      "label": "各種講習会",
+      "href": "/lectures"
+    },
+    {
+      "id": "news",
+      "label": "お知らせ",
+      "href": "/news"
+    },
+    {
+      "id": "insurance",
+      "label": "森林ボランティア保険",
+      "href": "/insurance"
+    },
+    {
+      "id": "access",
+      "label": "アクセス",
+      "href": "/access"
+    },
+    {
+      "id": "links",
+      "label": "リンク集",
+      "href": "/links"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# Stack
+
+- Astro framework
+- React
+- TailwindCSS v4
+- Flowbite
+- ESLint
+- TypeScript
+
+# コマンドラインツール
+
+- pnpm

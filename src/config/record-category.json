@@ -1,0 +1,47 @@
+[
+  {
+    "name": "定例活動",
+    "value": "regular",
+    "color": "#059669"
+  },
+  {
+    "name": "森林整備",
+    "value": "maintenance",
+    "color": "#3357FF"
+  },
+  {
+    "name": "植樹",
+    "value": "planting",
+    "color": "#16A34A"
+  },
+  {
+    "name": "観察",
+    "value": "observation",
+    "color": "#FF33A1"
+  },
+  {
+    "name": "調査",
+    "value": "survey",
+    "color": "#FF8C33"
+  },
+  {
+    "name": "清掃",
+    "value": "cleaning",
+    "color": "#FF5342"
+  },
+  {
+    "name": "研修",
+    "value": "training",
+    "color": "#8B5CF6"
+  },
+  {
+    "name": "講習会",
+    "value": "seminar",
+    "color": "#F59E0B"
+  },
+  {
+    "name": "イベント",
+    "value": "event",
+    "color": "#EC4899"
+  }
+]

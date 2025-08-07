@@ -1,0 +1,11 @@
+---
+import '@/styles/calendar.css'
+import FullLayout from '@/layouts/Layout.astro'
+import Calendar from '@/components/Calendar'
+---
+
+<FullLayout title="カレンダー">
+  <main class="container mx-auto px-4">
+    <Calendar client:load />
+  </main>
+</FullLayout>

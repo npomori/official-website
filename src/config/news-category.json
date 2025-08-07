@@ -1,0 +1,47 @@
+[
+  {
+    "value": "recruitment",
+    "name": "募集",
+    "color": "#2563EB"
+  },
+  {
+    "value": "insurance",
+    "name": "保険",
+    "color": "#059669"
+  },
+  {
+    "value": "event",
+    "name": "イベント",
+    "color": "#7C3AED"
+  },
+  {
+    "value": "regular_activity",
+    "name": "定例活動",
+    "color": "#0891B2"
+  },
+  {
+    "value": "training",
+    "name": "講習",
+    "color": "#D97706"
+  },
+  {
+    "value": "newsletter",
+    "name": "会報",
+    "color": "#DB2777"
+  },
+  {
+    "value": "office",
+    "name": "事務局",
+    "color": "#6B7280"
+  },
+  {
+    "value": "member",
+    "name": "会員向け",
+    "color": "#059669"
+  },
+  {
+    "value": "public",
+    "name": "一般向け",
+    "color": "#7C2D12"
+  }
+]

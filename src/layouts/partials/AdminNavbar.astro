@@ -1,0 +1,109 @@
+---
+import config from '@/config/config.json'
+import { Icon } from 'astro-icon/components'
+
+const user = Astro.locals.user
+const avatarUrl = user?.avatar ? `${config.upload.avatar.url}/${user.avatar}` : null
+---
+
+<nav class="fixed z-30 w-full border-b border-gray-200 bg-white">
+  <div class="px-3 py-3 lg:px-5 lg:pl-3">
+    <div class="flex items-center">
+      <div class="flex flex-1 items-center justify-start">
+        <button
+          id="toggleSidebarMobile"
+          aria-expanded="true"
+          aria-controls="sidebar"
+          class="mr-2 cursor-pointer rounded p-2 text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:ring-2 focus:ring-gray-100 lg:hidden"
+        >
+          <svg
+            id="toggleSidebarMobileHamburger"
+            class="h-6 w-6"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg"
+            ><path
+              fill-rule="evenodd"
+              d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h6a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+              clip-rule="evenodd"></path></svg
+          >
+          <svg
+            id="toggleSidebarMobileClose"
+            class="hidden h-6 w-6"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg"
+            ><path
+              fill-rule="evenodd"
+              d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+              clip-rule="evenodd"></path></svg
+          >
+        </button>
+        <a href="/admin" class="ml-0 flex items-center lg:ml-64">
+          <img class="mr-3 h-auto w-10" src={config.site.logo} alt="siteロゴ" />
+          <span class="self-center text-xl font-semibold whitespace-nowrap sm:text-2xl"
+            >{config.site.title} 管理画面</span
+          >
+        </a>
+      </div>
+      <div class="mr-0 flex items-center lg:mr-64">
+        <!-- Profile -->
+        <div class="flex items-center">
+          <button
+            type="button"
+            class="inline-flex h-10 w-10 items-center justify-center overflow-hidden rounded-full ring-2 ring-white"
+            aria-expanded="false"
+            data-dropdown-toggle="accountDropdown"
+            aria-label="userアイコン"
+          >
+            <span class="sr-only">Open user menu</span>
+            {
+              avatarUrl ? (
+                <img
+                  src={avatarUrl}
+                  alt={`${user.name}のアバター`}
+                  class="h-full w-full cursor-pointer rounded-full border border-gray-300 object-cover"
+                />
+              ) : (
+                <div class="flex h-full w-full cursor-pointer items-center justify-center rounded-full border border-gray-300 bg-blue-600">
+                  <Icon class="h-8 w-8 cursor-pointer text-white" name="mdi:account" />
+                </div>
+              )
+            }
+          </button>
+          <!-- Dropdown menu -->
+          <div
+            class="z-50 my-4 hidden list-none divide-y divide-gray-100 rounded bg-white text-base shadow ring-1 ring-black/5"
+            id="accountDropdown"
+          >
+            <div class="px-4 py-3" role="none">
+              <p class="text-gray-900" role="none">{user.name}</p>
+              <p class="truncate text-gray-900" role="none">
+                {user.email}
+              </p>
+            </div>
+            <ul class="py-1" role="none">
+              <li>
+                <a
+                  id="logout"
+                  href="#"
+                  class="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                  role="menuitem">ログアウト</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+<script>
+  import AuthFetch from '@/fetch/auth'
+
+  const button = document.querySelector('#logout')
+  button?.addEventListener('click', async () => {
+    const result = await AuthFetch.logout()
+    if (result) window.location.href = '/'
+  })
+</script>

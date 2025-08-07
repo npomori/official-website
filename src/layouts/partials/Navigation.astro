@@ -1,0 +1,172 @@
+---
+import UserMenu from './UserMenu.astro'
+import SearchMenu from './SearchMenu.astro'
+import AdminMenu from './AdminMenu.astro'
+import UserStoreInitializer from '@/components/UserStoreInitializer'
+import menuData from '@/config/menu.json'
+import { Icon } from 'astro-icon/components'
+import config from '@/config/config.json'
+import type { UserSessionData, UserAuth } from '@/types/user'
+import { convertToUserAuth } from '@/types/user'
+
+const user = (
+  Astro.locals as {
+    user?: UserSessionData
+  }
+).user
+const userAuth: UserAuth | null = user ? convertToUserAuth(user) : null
+const avatarUrl = user?.avatar ? `${config.upload.avatar.url}/${user.avatar}` : null
+
+interface Props {
+  currentPage?: string
+}
+
+const { currentPage } = Astro.props
+---
+
+<!-- ログイン時はユーザ情報を取得 -->
+<UserStoreInitializer userAuth={userAuth} client:load />
+
+<nav class="bg-primary-800/90 fixed top-0 right-0 left-0 z-50 backdrop-blur-sm">
+  <div class="container mx-auto px-4 py-4">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center space-x-4">
+        <a href="/" class="flex items-center text-xl font-bold text-white xl:text-2xl">
+          <i class="fas fa-tree mr-2 text-3xl"></i>
+          日本森林ボランティア協会
+        </a>
+        {/* 管理機能メニュー（ログイン時のみ表示） */}
+        <AdminMenu variant="desktop" {...currentPage && { currentPage }} />
+      </div>
+      <div class="flex items-center space-x-4">
+        {/* モバイル表示時のアバター画像 */}
+        {
+          user && (
+            <div class="md:hidden">
+              {avatarUrl ? (
+                <img
+                  src={avatarUrl}
+                  alt={`${user.name}のアバター`}
+                  class="h-8 w-8 cursor-pointer rounded-full border border-gray-300 object-cover"
+                  id="mobile-avatar"
+                />
+              ) : (
+                <div
+                  class="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-gray-300 bg-blue-600"
+                  id="mobile-avatar"
+                >
+                  <Icon class="h-6 w-6 text-white" name="mdi:account" />
+                </div>
+              )}
+            </div>
+          )
+        }
+        <!-- モバイルメニューボタン -->
+        <button id="mobile-menu-button" class="text-white md:hidden" aria-label="メニュー">
+          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+      </div>
+      <!-- デスクトップメニュー -->
+      <ul class="hidden items-center space-x-2 md:flex xl:space-x-4">
+        {
+          menuData.desktopMenu.map((item) => (
+            <li
+              class={
+                item.type === 'dropdown' ? 'group relative flex items-center' : 'flex items-center'
+              }
+            >
+              {item.type === 'dropdown' ? (
+                <>
+                  <button class="hover:text-primary-200 flex items-center py-2 text-white">
+                    {item.label}
+                    <svg class="ml-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </button>
+                  <ul class="bg-primary-700 border-primary-600 absolute top-full left-0 hidden min-w-[200px] rounded border py-2 shadow-lg group-hover:block">
+                    {item.children?.map((child) => (
+                      <li>
+                        <a
+                          href={child.href}
+                          class="hover:bg-primary-600 block px-4 py-2 text-white"
+                        >
+                          {child.label}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              ) : (
+                <a href={item.href} class="hover:text-primary-200 py-2 text-white">
+                  {item.label}
+                </a>
+              )}
+            </li>
+          ))
+        }
+        <div class="flex items-center space-x-3">
+          <SearchMenu variant="desktop" />
+          <UserMenu variant="desktop" />
+        </div>
+      </ul>
+    </div>
+    <!-- モバイルメニュー -->
+    <div id="mobile-menu" class="hidden md:hidden">
+      <ul class="mt-4 space-y-4">
+        {
+          menuData.mobileMenu.map((item) => (
+            <li>
+              <a href={item.href} class="hover:text-primary-200 block text-white">
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+
+        <AdminMenu variant="mobile" {...currentPage && { currentPage }} />
+
+        <UserMenu variant="mobile" />
+
+        <SearchMenu variant="mobile" />
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<script>
+  import { showProfileModal } from '@/store/profile'
+
+  // モバイルメニューの開閉
+  const mobileMenuButton = document.getElementById('mobile-menu-button')
+  const mobileMenu = document.getElementById('mobile-menu')
+
+  mobileMenuButton?.addEventListener('click', () => {
+    mobileMenu?.classList.toggle('hidden')
+  })
+
+  // モバイルアバタークリック時の処理
+  const mobileAvatar = document.getElementById('mobile-avatar')
+  mobileAvatar?.addEventListener('click', () => {
+    // プロフィール設定モーダルを開く
+    showProfileModal.set(true)
+  })
+
+  // メニュー項目をクリックしたらメニューを閉じる
+  const mobileMenuLinks = mobileMenu?.querySelectorAll('a')
+  mobileMenuLinks?.forEach((link) => {
+    link.addEventListener('click', () => {
+      mobileMenu?.classList.add('hidden')
+    })
+  })
+</script>

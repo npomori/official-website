@@ -1,0 +1,104 @@
+---
+import { Icon } from 'astro-icon/components'
+import items from '@/data/sidebar.json'
+import type { MenuItem, SubMenuItem } from '@/types/sidebar'
+
+const currentPath = Astro.url.pathname
+const menuItems = items as MenuItem[]
+---
+
+<aside
+  id="sidebar"
+  class="transition-width fixed top-0 left-0 z-20 flex hidden h-full w-64 flex-shrink-0 flex-col pt-16 font-normal duration-75 lg:flex"
+  aria-label="Sidebar"
+>
+  <div class="relative flex min-h-0 flex-1 flex-col border-r border-gray-200 bg-white pt-0">
+    <div class="flex flex-1 flex-col overflow-y-auto pt-5 pb-4">
+      <div class="flex-1 space-y-1 divide-y divide-gray-200 bg-white px-3">
+        <ul class="space-y-2 pb-2">
+          {
+            menuItems.map((item) =>
+              item.subMenu ? (
+                <li>
+                  <button
+                    type="button"
+                    class={`group flex w-full items-center rounded-lg p-2 text-base text-gray-900 transition duration-75 hover:bg-gray-100 ${
+                      item.subMenu.some((subItem: SubMenuItem) => subItem.href === currentPath)
+                        ? 'bg-gray-100'
+                        : ''
+                    }`}
+                    aria-controls={item.subMenuId}
+                    data-collapse-toggle={item.subMenuId}
+                  >
+                    <Icon
+                      name={item.icon}
+                      class="h-6 w-6 flex-shrink-0 text-gray-500 transition duration-75 group-hover:text-gray-900"
+                    />
+                    <span class="ml-3 flex-1 text-left whitespace-nowrap">{item.title}</span>
+                    <svg
+                      class="h-6 w-6"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                  </button>
+                  <ul id={item.subMenuId} class="hidden space-y-2 py-2">
+                    {item.subMenu.map((subItem: SubMenuItem) => (
+                      <li>
+                        <a
+                          href={subItem.href}
+                          class={`group flex items-center rounded-lg p-2 pl-11 text-base text-gray-900 transition duration-75 hover:bg-gray-100 ${
+                            subItem.href === currentPath ? 'bg-gray-100' : ''
+                          }`}
+                        >
+                          {subItem.title}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </li>
+              ) : (
+                <li>
+                  <a
+                    href={item.href}
+                    class={`group flex items-center rounded-lg p-2 text-base text-gray-900 hover:bg-gray-100 ${
+                      item.href === currentPath ? 'bg-gray-100' : ''
+                    }`}
+                  >
+                    <Icon
+                      name={item.icon}
+                      class="h-6 w-6 text-gray-500 transition duration-75 group-hover:text-gray-900"
+                    />
+                    <span class="ml-3">{item.title}</span>
+                  </a>
+                </li>
+              )
+            )
+          }
+        </ul>
+      </div>
+      <!-- フロントへ戻るリンク -->
+      <div class="mt-auto border-t border-gray-200 px-3 py-4">
+        <a
+          href="/"
+          class={`group text-primary-700 hover:bg-primary-50 flex items-center rounded-lg p-2 text-base font-medium ${
+            currentPath === '/' ? 'bg-primary-50' : ''
+          }`}
+          aria-label="フロント画面へ戻る"
+        >
+          <Icon
+            name="mdi:arrow-left-circle"
+            class="text-primary-600 group-hover:text-primary-800 h-6 w-6 transition-colors duration-200"
+          />
+          <span class="ml-3 flex items-center"> フロントへ戻る </span>
+        </a>
+      </div>
+    </div>
+  </div>
+</aside>

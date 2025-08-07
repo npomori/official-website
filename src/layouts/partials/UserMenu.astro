@@ -1,0 +1,201 @@
+---
+import { Icon } from 'astro-icon/components'
+import config from '@/config/config.json'
+
+interface Props {
+  variant?: 'desktop' | 'mobile'
+}
+
+const { variant = 'desktop' } = Astro.props
+
+const user = (
+  Astro.locals as {
+    user?: { id: number; name: string; email: string; avatar?: string; role: string }
+  }
+).user
+const avatarUrl = user?.avatar ? `${config.upload.avatar.url}/${user.avatar}` : null
+---
+
+{
+  !user ? (
+    // 未ログイン時のメニュー
+    variant === 'desktop' ? (
+      <li class="group relative">
+        <button class="hover:text-primary-200 flex items-center text-white">
+          <Icon class="h-8 w-8" name="mdi:account-lock" />
+          <svg class="ml-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 9l-7 7-7-7"
+            />
+          </svg>
+        </button>
+        <div class="bg-primary-700 border-primary-600 absolute right-0 hidden min-w-[200px] rounded border py-2 shadow-lg group-hover:block">
+          <ul class="py-1">
+            <li>
+              <a
+                href={`/login?redirect=${encodeURIComponent(Astro.url.pathname)}`}
+                class="hover:bg-primary-600 block w-full px-4 py-2 text-left text-white"
+              >
+                <Icon class="mr-2 inline h-4 w-4" name="mdi:login" />
+                ログイン
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+    ) : (
+      <li class="border-primary-700 border-t pt-4">
+        <ul class="space-y-2">
+          <li>
+            <a
+              href={`/login?redirect=${encodeURIComponent(Astro.url.pathname)}`}
+              class="hover:text-primary-200 flex w-full items-center text-left text-white"
+            >
+              <Icon class="mr-3 h-5 w-5" name="mdi:login" />
+              ログイン
+            </a>
+          </li>
+        </ul>
+      </li>
+    )
+  ) : // ログイン時のメニュー
+  variant === 'desktop' ? (
+    <li class="group relative">
+      <button class="hover:text-primary-200 flex items-center text-white">
+        {avatarUrl ? (
+          <img
+            src={avatarUrl}
+            alt={`${user.name}のアバター`}
+            class="h-8 w-8 cursor-pointer rounded-full border border-gray-300 object-cover"
+          />
+        ) : (
+          <div class="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-gray-300 bg-blue-600">
+            <Icon class="h-8 w-8 text-white" name="mdi:account" />
+          </div>
+        )}
+        <svg class="ml-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M19 9l-7 7-7-7"
+          />
+        </svg>
+      </button>
+      <div class="bg-primary-700 border-primary-600 absolute right-0 hidden min-w-[200px] rounded border py-2 shadow-lg group-hover:block">
+        <div class="border-primary-700 border-b px-4 py-3">
+          <p class="font-medium text-white">{user.name}</p>
+          <p class="text-primary-200 truncate text-sm">{user.email}</p>
+        </div>
+        <ul class="py-1">
+          <li>
+            <button
+              id="profile-settings"
+              class="hover:bg-primary-600 block w-full px-4 py-2 text-left text-white"
+            >
+              <Icon class="mr-2 inline h-4 w-4" name="mdi:account-edit" />
+              プロフィール設定
+            </button>
+          </li>
+          <li>
+            <button
+              id="change-password"
+              class="hover:bg-primary-600 block w-full px-4 py-2 text-left text-white"
+            >
+              <Icon class="mr-2 inline h-4 w-4" name="mdi:lock-reset" />
+              パスワード変更
+            </button>
+          </li>
+          <li>
+            <button
+              id="logout"
+              class="hover:bg-primary-600 block w-full px-4 py-2 text-left text-white"
+            >
+              <Icon class="mr-2 inline h-4 w-4" name="mdi:logout" />
+              ログアウト
+            </button>
+          </li>
+        </ul>
+      </div>
+    </li>
+  ) : (
+    <li class="border-primary-700 border-t pt-4">
+      <div class="border-primary-700 mb-2 border-b px-4 py-3">
+        <p class="font-medium text-white">{user.name}</p>
+        <p class="text-primary-200 truncate text-sm">{user.email}</p>
+      </div>
+      <ul class="space-y-2">
+        <li>
+          <button
+            id="profile-settings-mobile"
+            class="hover:text-primary-200 flex w-full items-center text-left text-white"
+          >
+            <Icon class="mr-3 h-5 w-5" name="mdi:account-edit" />
+            プロフィール設定
+          </button>
+        </li>
+        <li>
+          <button
+            id="change-password-mobile"
+            class="hover:text-primary-200 flex w-full items-center text-left text-white"
+          >
+            <Icon class="mr-3 h-5 w-5" name="mdi:lock-reset" />
+            パスワード変更
+          </button>
+        </li>
+        <li>
+          <button
+            id="logout-mobile"
+            class="hover:text-primary-200 flex w-full items-center text-left text-white"
+          >
+            <Icon class="mr-3 h-5 w-5" name="mdi:logout" />
+            ログアウト
+          </button>
+        </li>
+      </ul>
+    </li>
+  )
+}
+
+<script>
+  import AuthFetch from '@/fetch/auth'
+  import { showProfileModal } from '@/store/profile'
+  import { showChangePasswordModal } from '@/components/ChangePasswordModal'
+
+  // デスクトップ版のイベントリスナー
+  const buttonLogout = document.querySelector('#logout')
+  buttonLogout?.addEventListener('click', async () => {
+    const result = await AuthFetch.logout()
+    if (result) window.location.href = '/'
+  })
+
+  const buttonProfileSettings = document.querySelector('#profile-settings')
+  buttonProfileSettings?.addEventListener('click', () => {
+    showProfileModal.set(true)
+  })
+
+  const buttonChangePassword = document.querySelector('#change-password')
+  buttonChangePassword?.addEventListener('click', () => {
+    showChangePasswordModal.set(true)
+  })
+
+  // モバイル版のイベントリスナー
+  const buttonLogoutMobile = document.querySelector('#logout-mobile')
+  buttonLogoutMobile?.addEventListener('click', async () => {
+    const result = await AuthFetch.logout()
+    if (result) window.location.href = '/'
+  })
+
+  const buttonProfileSettingsMobile = document.querySelector('#profile-settings-mobile')
+  buttonProfileSettingsMobile?.addEventListener('click', () => {
+    showProfileModal.set(true)
+  })
+
+  const buttonChangePasswordMobile = document.querySelector('#change-password-mobile')
+  buttonChangePasswordMobile?.addEventListener('click', () => {
+    showChangePasswordModal.set(true)
+  })
+</script>

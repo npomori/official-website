@@ -1,0 +1,37 @@
+---
+import config from '@/config/config.json'
+import AdminNavbar from '@/layouts/partials/AdminNavbar.astro'
+import Sidebar from '@/layouts/partials/AdminSidebar.astro'
+import SizeIndicator from '@/components/SizeIndicator.astro'
+import '@/styles/global-admin.css'
+
+export interface Props {
+  title: string
+  activeMenu?: string
+}
+
+const { title, activeMenu } = Astro.props
+---
+
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Astro description" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/png" href={config.site.favicon} />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+  </head>
+  <body class="bg-gray-50">
+    <SizeIndicator />
+    <AdminNavbar />
+    <div class="flex overflow-hidden bg-gray-50 pt-16">
+      <Sidebar activeMenu={activeMenu} />
+      <main class="relative h-full w-full overflow-y-auto bg-gray-50 lg:ml-64">
+        <slot />
+      </main>
+    </div>
+    <script src="../scripts/admin.js"></script>
+  </body>
+</html>

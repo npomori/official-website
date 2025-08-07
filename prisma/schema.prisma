@@ -1,0 +1,108 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id                    Int       @id @default(autoincrement())
+  name                  String
+  email                 String    @unique
+  password              String
+  avatar                String?
+  biography             String?   @db.Text
+  rememberMeToken       String?   @unique
+  rememberMeTokenExpiry DateTime?
+  role                  String
+  isGuest               Boolean   @default(false)
+  isEnabled             Boolean   @default(true)
+  lastLoginAt           DateTime?
+  creatorId             Int?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  creator               User?     @relation("UserToUser", fields: [creatorId], references: [id])
+  createdUsers          User[]    @relation("UserToUser")
+  Events                Event[]
+  Comments              Comment[]
+  Activities            Activity[]
+  Records               Record[]
+  News                  News[]
+}
+
+model Event {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String?   @db.Text
+  url         String?
+  start       DateTime
+  end         DateTime
+  isAllDay    Boolean   @default(false)
+  categoryId  String    @default("")
+  creatorId   Int
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  creator     User      @relation(fields: [creatorId], references: [id])
+  Comments    Comment[]
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  content   String   @db.Text
+  eventId   Int
+  creatorId Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  event     Event    @relation(fields: [eventId], references: [id])
+  creator   User     @relation(fields: [creatorId], references: [id])
+}
+
+model Activity {
+  id          Int      @id @default(autoincrement())
+  type        String   // アクティビティの種類
+  title       String
+  description String?  @db.Text // アクティビティの詳細情報
+  metadata    Json?    // 追加のメタデータ（JSON形式で保存）
+  userId      Int      // アクティビティを実行したユーザ
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id])
+}
+
+model Record {
+  id          Int      @id @default(autoincrement())
+  location    String   // 活動場所
+  datetime    String   // 活動日時
+  eventDate   DateTime // 比較用の活動日
+  weather     String   // 天候
+  participants String  // 参加者
+  reporter    String   // 報告者
+  content     String   @db.Text // 活動内容
+  nearMiss    String?  @db.Text // ヒヤリハット
+  equipment   String?  // 動力使用
+  remarks     String?  @db.Text // 備考
+  categories  Json?    // カテゴリ（JSON配列として保存）
+  images      Json?    // 画像ファイル名（JSON配列として保存）
+  status      String   @default("published") // 状態（draft: 下書き、published: 公開、archived: アーカイブ）
+  creatorId   Int      // 記録作成者
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  creator     User     @relation(fields: [creatorId], references: [id])
+}
+
+model News {
+  id          Int      @id @default(autoincrement())
+  title       String   // お知らせのタイトル
+  content     String   @db.Text // お知らせの内容
+  date        DateTime // お知らせの日付
+  categories  Json?    // カテゴリ（募集、保険、イベント、定例活動、講習、会報、事務局、会員向け、一般向けなど、JSON配列として保存）
+  priority    String?  // 優先度（重要、至急、要確認など）
+  attachments Json?    // 添付ファイル（JSON配列として保存）
+  author      String   // 作成者
+  status      String   @default("published") // 状態（draft: 下書き、published: 公開、scheduled: 予約投稿、archived: アーカイブ）
+  creatorId   Int      // お知らせ作成者
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  creator     User     @relation(fields: [creatorId], references: [id])
+}

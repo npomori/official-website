@@ -1,0 +1,23 @@
+---
+interface Props {
+  title: string
+  description?: string
+}
+
+const {
+  title,
+  description = '森林ボランティア活動を通じて、自然環境の保全と地域社会の発展に貢献します。'
+} = Astro.props
+---
+
+<meta charset="UTF-8" />
+<meta name="description" content={description} />
+<meta name="viewport" content="width=device-width" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<meta name="generator" content={Astro.generator} />
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+/>
+<title>{title} | 日本森林ボランティア協会</title>
+

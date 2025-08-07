@@ -1,0 +1,73 @@
+{
+  "site": {
+    "title": "カレンダーデモ",
+    "logo": "/images/logo.png",
+    "favicon": "/images/favicon.png",
+    "comments": {
+      "enabled": true
+    }
+  },
+  "upload": {
+    "avatar": {
+      "url": "/uploads/avatars",
+      "directory": "public/uploads/avatars",
+      "size": {
+        "width": 200,
+        "height": 200
+      },
+      "default": "default.svg"
+    },
+    "record": {
+      "enabled": true,
+      "url": "/uploads/records",
+      "directory": "public/uploads/records",
+      "maxFiles": 10,
+      "maxFileSize": 5242880,
+      "allowedTypes": ["image/jpeg", "image/png", "image/gif", "image/webp"],
+      "maxSize": {
+        "width": 1200,
+        "height": 1200
+      },
+      "quality": 85,
+      "thumbnail": {
+        "width": 96,
+        "height": 96
+      }
+    }
+  },
+  "api": {
+    "rootUrl": "/api",
+    "adminUrl": "/api/admin",
+    "memberUrl": "/api/member"
+  },
+  "dashboard": {
+    "recentActivities": {
+      "admin": 5,
+      "user": 5
+    }
+  },
+  "home": {
+    "news": {
+      "itemsPerPage": 3
+    },
+    "events": {
+      "itemsPerPage": 3
+    }
+  },
+  "pagination": {
+    "recordList": {
+      "itemsPerPage": 10
+    },
+    "newsList": {
+      "itemsPerPage": 10
+    }
+  },
+  "content": {
+    "record": {
+      "editDays": 7
+    },
+    "news": {
+      "editDays": 7
+    }
+  }
+}

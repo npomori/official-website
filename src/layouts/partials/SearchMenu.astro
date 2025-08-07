@@ -1,0 +1,123 @@
+---
+import { Icon } from 'astro-icon/components'
+
+interface Props {
+  variant?: 'desktop' | 'mobile'
+}
+
+const { variant = 'desktop' } = Astro.props
+---
+
+{
+  variant === 'desktop' ? (
+    <li class="group relative">
+      <button
+        id="search-button"
+        class="hover:text-primary-200 flex items-center text-white"
+        aria-label="検索"
+      >
+        <Icon class="h-8 w-8" name="mdi:magnify" />
+      </button>
+      <div
+        id="search-dropdown"
+        class="bg-primary-700 border-primary-600 absolute right-0 hidden min-w-[300px] rounded border p-4 group-hover:block"
+      >
+        <div class="space-y-3">
+          <h4 class="text-base font-semibold text-white">検索</h4>
+          <form class="flex space-x-2">
+            <input
+              type="text"
+              id="search-input"
+              placeholder="キーワードを入力..."
+              class="focus:border-primary-500 focus:ring-primary-500 flex-1 rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:ring-2 focus:outline-none"
+            />
+            <button
+              type="submit"
+              class="bg-primary-600 hover:bg-primary-700 focus:ring-primary-500 rounded-md px-4 py-2 text-white focus:ring-2 focus:outline-none"
+            >
+              <i class="fas fa-search" />
+            </button>
+          </form>
+        </div>
+      </div>
+    </li>
+  ) : (
+    <li class="border-primary-700 border-t pt-4">
+      <div class="space-y-3">
+        <form class="flex space-x-2">
+          <input
+            type="text"
+            id="mobile-search-input"
+            placeholder="キーワードを入力..."
+            class="focus:border-primary-500 focus:ring-primary-500 flex-1 rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:ring-2 focus:outline-none"
+          />
+          <button
+            type="submit"
+            class="bg-primary-600 hover:bg-primary-700 focus:ring-primary-500 rounded-md px-4 py-2 text-white focus:ring-2 focus:outline-none"
+          >
+            <i class="fas fa-search" />
+          </button>
+        </form>
+      </div>
+    </li>
+  )
+}
+
+<script>
+  if (document.currentScript?.getAttribute('data-variant') === 'desktop') {
+    // デスクトップ版の検索機能
+    const searchButton = document.getElementById('search-button')
+    const searchDropdown = document.getElementById('search-dropdown')
+    const searchForm = searchDropdown?.querySelector('form')
+    const searchInput = document.getElementById('search-input') as HTMLInputElement
+
+    // 検索ボタンをクリックした時の処理
+    searchButton?.addEventListener('click', (e) => {
+      e.preventDefault()
+      searchDropdown?.classList.toggle('hidden')
+      if (!searchDropdown?.classList.contains('hidden')) {
+        searchInput?.focus()
+      }
+    })
+
+    // 検索フォームの送信処理
+    searchForm?.addEventListener('submit', (e) => {
+      e.preventDefault()
+      const query = searchInput?.value.trim()
+      if (query) {
+        // 検索結果ページにリダイレクト（実際の検索機能に応じて調整）
+        window.location.href = `/search?q=${encodeURIComponent(query)}`
+      }
+    })
+
+    // 検索ドロップダウンの外側をクリックした時に閉じる
+    document.addEventListener('click', (e) => {
+      if (
+        !searchButton?.contains(e.target as Node) &&
+        !searchDropdown?.contains(e.target as Node)
+      ) {
+        searchDropdown?.classList.add('hidden')
+      }
+    })
+
+    // ESCキーで検索ドロップダウンを閉じる
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        searchDropdown?.classList.add('hidden')
+      }
+    })
+  } else {
+    // モバイル版の検索機能
+    const mobileSearchForm = document.querySelector('#mobile-menu form')
+    const mobileSearchInput = document.getElementById('mobile-search-input') as HTMLInputElement
+
+    mobileSearchForm?.addEventListener('submit', (e) => {
+      e.preventDefault()
+      const query = mobileSearchInput?.value.trim()
+      if (query) {
+        // 検索結果ページにリダイレクト（実際の検索機能に応じて調整）
+        window.location.href = `/search?q=${encodeURIComponent(query)}`
+      }
+    })
+  }
+</script>

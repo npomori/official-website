@@ -1,0 +1,60 @@
+---
+import '@/styles/global.css'
+import Navigation from '@/layouts/partials/Navigation.astro'
+import Footer from '@/layouts/partials/Footer.astro'
+import Head from '@/layouts/partials/Head.astro'
+import SizeIndicator from '@/components/SizeIndicator.astro'
+
+interface Props {
+  title: string
+  description?: string
+}
+
+const { title, description } = Astro.props
+---
+
+<!doctype html>
+<html lang="ja">
+  <head>
+    <Head title={title} {...description && { description }} />
+  </head>
+  <body class="flex min-h-screen flex-col">
+    <SizeIndicator />
+    <Navigation />
+    <main class="flex flex-1 items-center justify-center px-4 py-8 pt-24 md:pt-28">
+      <slot />
+    </main>
+    <Footer class="mt-auto" />
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --accent: 136, 58, 234;
+    --accent-light: 224, 204, 250;
+    --accent-dark: 49, 10, 101;
+    --accent-gradient: linear-gradient(
+      45deg,
+      rgb(var(--accent)),
+      rgb(var(--accent-light)) 30%,
+      white 60%
+    );
+  }
+  html {
+    /*font-family: system-ui, sans-serif;*/
+    background: #f6f6f6;
+    background-size: 224px;
+  }
+
+  code {
+    font-family:
+      Menlo,
+      Monaco,
+      Lucida Console,
+      Liberation Mono,
+      DejaVu Sans Mono,
+      Bitstream Vera Sans Mono,
+      Courier New,
+      monospace;
+  }
+</style>
