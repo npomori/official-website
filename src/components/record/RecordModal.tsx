@@ -559,7 +559,7 @@ const RecordModal: React.FC<RecordModalProps> = ({
                         <div className="flex w-full items-start">
                           <label
                             htmlFor="record-images"
-                            className="inline-flex cursor-pointer items-center rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 focus:outline-none dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                            className="inline-flex cursor-pointer items-center rounded-lg bg-gray-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-700 focus:ring-2 focus:ring-gray-400 focus:outline-none"
                           >
                             <svg
                               className="mr-2 h-4 w-4"
@@ -588,7 +588,7 @@ const RecordModal: React.FC<RecordModalProps> = ({
                             />
                           </label>
                         </div>
-                        <p className="mt-1 text-sm text-gray-500">
+                        <p className="mt-3 text-sm text-gray-500">
                           {recordConfig.allowedTypes
                             .map((type) => {
                               const ext = type.split('/')[1]?.toUpperCase() || type
