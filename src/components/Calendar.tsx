@@ -1,6 +1,8 @@
+import Alert from '@/components/base/Alert'
 import EventInfoModal from '@/components/event/EventInfoModal'
 import config from '@/config/config.json'
 import EventFetch from '@/fetch/event'
+import { fetcher } from '@/hooks/swr'
 import { isEventUpdated } from '@/store/event'
 import { userStore } from '@/store/user'
 import type { EventResponse } from '@/types/event'
@@ -17,26 +19,46 @@ interface DateRange {
   endStr: string
 }
 
-const fetcher = (url: string): Promise<any> => fetch(url).then((res) => res.json())
-
 const Calendar: React.FC = () => {
   const $userStore = useStore(userStore)
   const calendarRef = useRef<FullCalendar>(null)
 
   // カレンダーの日付範囲を初期化
   const [dateRange, setDateRange] = useState<DateRange>({ startStr: '', endStr: '' })
-  const { data: events, mutate: mutateEvents } = useSWR(
+  const {
+    data: events,
+    mutate: mutateEvents,
+    error: eventsError
+  } = useSWR(
     dateRange.startStr && dateRange.endStr
       ? `${config.api.rootUrl}/event?start=${dateRange.startStr}&end=${dateRange.endStr}`
       : null,
     fetcher
   )
-  const { data: holidays } = useSWR(
+  const {
+    data: holidays,
+    mutate: mutateHolidays,
+    error: holidaysError
+  } = useSWR(
     dateRange.startStr && dateRange.endStr
       ? `${config.api.rootUrl}/holiday?start=${dateRange.startStr}&end=${dateRange.endStr}`
       : null,
     fetcher
   )
+
+  // エラー状態の管理
+  const [error, setError] = useState<string | null>(null)
+
+  // エラーハンドリング
+  useEffect(() => {
+    if (eventsError) {
+      setError('イベントデータの取得に失敗しました')
+    } else if (holidaysError) {
+      setError('祝日データの取得に失敗しました')
+    } else {
+      setError(null)
+    }
+  }, [eventsError, holidaysError])
 
   // イベント情報のモーダルを初期化
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -115,6 +137,8 @@ const Calendar: React.FC = () => {
 
   return (
     <div className="calendar-main mb-5">
+      {/* エラー表示 */}
+      {error && <Alert message={error} type="error" />}
       <FullCalendar
         ref={calendarRef}
         plugins={[dayGridPlugin]}
