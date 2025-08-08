@@ -157,16 +157,6 @@ const RecordModal: React.FC<RecordModalProps> = ({
             data: validationResult.data,
             images: selectedImages
           })
-          // if (selectedImages.length > 0) {
-          //   // 新しい画像がある場合は画像付き更新
-          //   responseData = await adminRecordFetch.updateRecordWithImages(record.id, {
-          //     data: validationResult.data,
-          //     images: selectedImages
-          //   })
-          // } else {
-          //   // 新しい画像がない場合は通常の更新
-          //   responseData = await adminRecordFetch.updateRecord(record.id, validationResult.data)
-          // }
         } else {
           // 新規作成モードの場合
           const dateForFilename = selectedDate
@@ -566,14 +556,38 @@ const RecordModal: React.FC<RecordModalProps> = ({
                     <label className="mb-1 block font-medium text-gray-900">活動写真</label>
                     <div className="space-y-4">
                       <div>
-                        <input
-                          type="file"
-                          accept={recordConfig.allowedTypes.join(',')}
-                          multiple
-                          onChange={handleImageUpload}
-                          className="file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 block w-full text-sm text-gray-500 file:mr-4 file:rounded-full file:border-0 file:px-4 file:py-2 file:text-sm file:font-semibold"
-                          disabled={completed}
-                        />
+                        <div className="flex w-full items-start">
+                          <label
+                            htmlFor="record-images"
+                            className="inline-flex cursor-pointer items-center rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 focus:outline-none dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                          >
+                            <svg
+                              className="mr-2 h-4 w-4"
+                              aria-hidden="true"
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 20 16"
+                            >
+                              <path
+                                stroke="currentColor"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                              ></path>
+                            </svg>
+                            ファイルを選択
+                            <input
+                              id="record-images"
+                              type="file"
+                              accept={recordConfig.allowedTypes.join(',')}
+                              multiple
+                              onChange={handleImageUpload}
+                              className="hidden"
+                              disabled={completed}
+                            />
+                          </label>
+                        </div>
                         <p className="mt-1 text-sm text-gray-500">
                           {recordConfig.allowedTypes
                             .map((type) => {
