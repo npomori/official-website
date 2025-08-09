@@ -3,9 +3,7 @@ import Button from '@/components/base/Button'
 import NewsCategoryDropdown from '@/components/news/NewsCategoryDropdown'
 import NewsPriorityDropdown from '@/components/news/NewsPriorityDropdown'
 import newsFetch from '@/fetch/news'
-import { modalNewsId, notifyNewsUpdate, showNewsModal } from '@/store/news'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useStore } from '@nanostores/react'
 import { useEffect, useState } from 'react'
 import { Controller, useForm, type FieldErrors } from 'react-hook-form'
 import { z } from 'zod'
@@ -26,14 +24,14 @@ type FormValues = z.infer<typeof schema>
 interface NewsModalProps {
   onClose: () => void
   onSuccess?: () => void
+  news?: any // 編集時の既存データ
+  isEditMode?: boolean
 }
 
-const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess }) => {
+const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditMode = false }) => {
   const [success, setSuccess] = useState('')
   const [error, setError] = useState('')
   const [completed, setCompleted] = useState(false) // 登録完了フラグ
-  const isModalVisible = useStore(showNewsModal)
-  const newsId = useStore(modalNewsId)
 
   const {
     control,
@@ -60,8 +58,16 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess }) => {
     setError('')
     setCompleted(false)
 
-    if (newsId === 0) {
-      // フォームをリセット
+    if (isEditMode && news) {
+      // 編集モードの場合、既存データをフォームに設定
+      setValue('title', news.title || '')
+      setValue('content', news.content || '')
+      setValue('date', new Date(news.date).toISOString().split('T')[0] || '')
+      setValue('categories', news.categories || [])
+      setValue('priority', news.priority || null)
+      setValue('attachments', news.attachments || [])
+    } else {
+      // 新規作成モードの場合、フォームをリセット
       reset({
         title: '',
         content: '',
@@ -70,28 +76,8 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess }) => {
         priority: null,
         attachments: []
       })
-    } else {
-      // お知らせ情報を取得
-      ;(async () => {
-        try {
-          const newsData = await newsFetch.getNewsById(newsId)
-
-          // フォームの初期値を設定
-          reset({
-            title: newsData.title,
-            content: newsData.content,
-            date: new Date(newsData.date).toISOString().split('T')[0] || '',
-            categories: newsData.categories || [],
-            priority: newsData.priority || null,
-            attachments: newsData.attachments || []
-          })
-        } catch (e) {
-          console.error(e)
-          setError('通信エラーが発生しました')
-        }
-      })()
     }
-  }, [newsId, reset])
+  }, [isEditMode, news, reset, setValue])
 
   const onSubmit = async (values: FormValues) => {
     // メッセージリセット
@@ -99,7 +85,18 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess }) => {
     setError('')
 
     try {
-      if (newsId === 0) {
+      if (isEditMode && news) {
+        // お知らせの更新の場合
+        await newsFetch.updateNews(news.id, {
+          title: values.title,
+          content: values.content,
+          date: values.date,
+          categories: values.categories,
+          priority: values.priority,
+          attachments: values.attachments || []
+        })
+        setSuccess('お知らせを更新しました')
+      } else {
         // 新規お知らせの追加の場合
         await newsFetch.createNews({
           title: values.title,
@@ -110,24 +107,10 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess }) => {
           attachments: values.attachments || []
         })
         setSuccess('お知らせを追加しました')
-      } else {
-        // お知らせの更新の場合
-        await newsFetch.updateNews(newsId, {
-          title: values.title,
-          content: values.content,
-          date: values.date,
-          categories: values.categories,
-          priority: values.priority,
-          attachments: values.attachments || []
-        })
-        setSuccess('お知らせを更新しました')
       }
 
       // 登録完了
       setCompleted(true)
-
-      // お知らせの更新を通知
-      notifyNewsUpdate()
 
       // 成功時のコールバックを呼び出す
       if (onSuccess) {
@@ -141,7 +124,6 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess }) => {
 
   const handleCancel: React.MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault()
-    showNewsModal.set(false)
     onClose()
   }
 
@@ -150,8 +132,6 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess }) => {
     console.log('バリデーションエラー発生')
     console.log(errors)
   }
-
-  if (!isModalVisible) return null
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto bg-black/50">
@@ -176,7 +156,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess }) => {
             </button>
           </div>
           <h2 className="mb-3 text-3xl font-bold text-gray-900">
-            {newsId ? 'お知らせを編集' : 'お知らせを作成'}
+            {isEditMode ? 'お知らせを編集' : 'お知らせを作成'}
           </h2>
         </div>
         {/* コンテンツ */}
@@ -360,7 +340,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess }) => {
             <div className="flex justify-end space-x-3 pt-4">
               {!completed && (
                 <Button type="submit" variant="primary" disabled={isSubmitting}>
-                  {newsId ? '更新する' : '追加する'}
+                  {isEditMode ? '更新する' : '追加する'}
                 </Button>
               )}
               {completed && (
