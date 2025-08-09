@@ -3,7 +3,9 @@ import Button from '@/components/base/Button'
 import NewsCategoryDropdown from '@/components/news/NewsCategoryDropdown'
 import NewsPriorityDropdown from '@/components/news/NewsPriorityDropdown'
 import newsFetch from '@/fetch/news'
+import { modalNewsId, notifyNewsUpdate, showNewsModal } from '@/store/news'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useStore } from '@nanostores/react'
 import { useEffect, useState } from 'react'
 import { Controller, useForm, type FieldErrors } from 'react-hook-form'
 import { z } from 'zod'
@@ -23,15 +25,14 @@ type FormValues = z.infer<typeof schema>
 
 interface NewsModalProps {
   onClose: () => void
-  onSuccess?: () => void
-  news?: any // 編集時の既存データ
-  isEditMode?: boolean
 }
 
-const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditMode = false }) => {
+const NewsModal: React.FC<NewsModalProps> = ({ onClose }) => {
   const [success, setSuccess] = useState('')
   const [error, setError] = useState('')
   const [completed, setCompleted] = useState(false) // 登録完了フラグ
+  const isModalVisible = useStore(showNewsModal)
+  const newsId = useStore(modalNewsId)
 
   const {
     control,
@@ -45,7 +46,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
     defaultValues: {
       title: '',
       content: '',
-      date: new Date().toISOString().split('T')[0] || '',
+      date: new Date().toISOString().split('T')[0],
       categories: [],
       priority: null,
       attachments: []
@@ -58,26 +59,38 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
     setError('')
     setCompleted(false)
 
-    if (isEditMode && news) {
-      // 編集モードの場合、既存データをフォームに設定
-      setValue('title', news.title || '')
-      setValue('content', news.content || '')
-      setValue('date', new Date(news.date).toISOString().split('T')[0] || '')
-      setValue('categories', news.categories || [])
-      setValue('priority', news.priority || null)
-      setValue('attachments', news.attachments || [])
-    } else {
-      // 新規作成モードの場合、フォームをリセット
+    if (newsId === 0) {
+      // フォームをリセット
       reset({
         title: '',
         content: '',
-        date: new Date().toISOString().split('T')[0] || '',
+        date: new Date().toISOString().split('T')[0],
         categories: [],
         priority: null,
         attachments: []
       })
+    } else {
+      // お知らせ情報を取得
+      ;(async () => {
+        try {
+          const newsData = await newsFetch.getNewsById(newsId)
+
+          // フォームの初期値を設定
+          reset({
+            title: newsData.title,
+            content: newsData.content,
+            date: new Date(newsData.date).toISOString().split('T')[0],
+            categories: newsData.categories || [],
+            priority: newsData.priority || null,
+            attachments: newsData.attachments || []
+          })
+        } catch (e) {
+          console.error(e)
+          setError('通信エラーが発生しました')
+        }
+      })()
     }
-  }, [isEditMode, news, reset, setValue])
+  }, [newsId, reset])
 
   const onSubmit = async (values: FormValues) => {
     // メッセージリセット
@@ -85,18 +98,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
     setError('')
 
     try {
-      if (isEditMode && news) {
-        // お知らせの更新の場合
-        await newsFetch.updateNews(news.id, {
-          title: values.title,
-          content: values.content,
-          date: values.date,
-          categories: values.categories,
-          priority: values.priority,
-          attachments: values.attachments || []
-        })
-        setSuccess('お知らせを更新しました')
-      } else {
+      if (newsId === 0) {
         // 新規お知らせの追加の場合
         await newsFetch.createNews({
           title: values.title,
@@ -107,15 +109,24 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
           attachments: values.attachments || []
         })
         setSuccess('お知らせを追加しました')
+      } else {
+        // お知らせの更新の場合
+        await newsFetch.updateNews(newsId, {
+          title: values.title,
+          content: values.content,
+          date: values.date,
+          categories: values.categories,
+          priority: values.priority,
+          attachments: values.attachments || []
+        })
+        setSuccess('お知らせを更新しました')
       }
 
       // 登録完了
       setCompleted(true)
 
-      // 成功時のコールバックを呼び出す
-      if (onSuccess) {
-        onSuccess()
-      }
+      // お知らせの更新を通知
+      notifyNewsUpdate()
     } catch (e: any) {
       console.error('News submission error:', e)
       setError(e.message || '通信エラーが発生しました')
@@ -124,6 +135,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
 
   const handleCancel: React.MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault()
+    showNewsModal.set(false)
     onClose()
   }
 
@@ -132,6 +144,8 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
     console.log('バリデーションエラー発生')
     console.log(errors)
   }
+
+  if (!isModalVisible) return null
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto bg-black/50">
@@ -156,12 +170,12 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
             </button>
           </div>
           <h2 className="mb-3 text-3xl font-bold text-gray-900">
-            {isEditMode ? 'お知らせを編集' : 'お知らせを作成'}
+            {newsId ? 'お知らせを編集' : 'お知らせを作成'}
           </h2>
         </div>
         {/* コンテンツ */}
         <div className="px-6 pt-0 pb-6">
-          <form onSubmit={handleSubmit(onSubmit as any, onInvalid)} className="space-y-6">
+          <form onSubmit={handleSubmit(onSubmit, onInvalid)} className="space-y-6">
             {success && <Alert message={success} type="success" />}
             {error && <Alert message={error} type="error" />}
 
@@ -340,7 +354,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
             <div className="flex justify-end space-x-3 pt-4">
               {!completed && (
                 <Button type="submit" variant="primary" disabled={isSubmitting}>
-                  {isEditMode ? '更新する' : '追加する'}
+                  {newsId ? '更新する' : '追加する'}
                 </Button>
               )}
               {completed && (

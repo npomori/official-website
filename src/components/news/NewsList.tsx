@@ -195,11 +195,6 @@ const NewsList: React.FC = () => {
     <div className="mx-auto max-w-4xl">
       <h1 className="mb-8 text-3xl font-bold">お知らせ</h1>
 
-      {/* お知らせ追加ボタン */}
-      <div className="mb-6">
-        <NewsModalLink />
-      </div>
-
       {/* フィルター */}
       <div className="mb-8">
         {/* デスクトップ表示: カテゴリーと優先度を縦並び */}
