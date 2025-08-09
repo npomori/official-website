@@ -1,50 +1,42 @@
-import Button from '@/components/base/Button'
-import React, { useState } from 'react'
+import NewsModal from '@/components/news/NewsModal'
+import { useState } from 'react'
+import { createPortal } from 'react-dom'
 
 const NewsModalLink: React.FC = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isModalVisible, setIsModalVisible] = useState(false)
 
-  const handleOpenModal = () => {
-    setIsModalOpen(true)
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault()
+    setIsModalVisible(true)
   }
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false)
+  const handleClose = () => {
+    setIsModalVisible(false)
   }
 
   const handleSuccess = () => {
-    setIsModalOpen(false)
-    // ページをリロードして新しいお知らせを表示
+    // Newsが追加された後にページをリロード
     window.location.reload()
   }
 
   return (
     <>
       <button
-        onClick={handleOpenModal}
+        onClick={handleClick}
         className="hover:bg-primary-600 flex w-full items-center px-4 py-2 text-white"
       >
-        <i className="fas fa-plus mr-2"></i>
-        お知らせ作成
+        <svg className="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+          />
+        </svg>
+        お知らせを追加
       </button>
-
-      {/* TODO: NewsModalコンポーネントを実装 */}
-      {isModalOpen && (
-        <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black">
-          <div className="mx-4 w-full max-w-2xl rounded-lg bg-white p-6">
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-xl font-bold">お知らせ作成</h2>
-              <button onClick={handleCloseModal} className="text-gray-500 hover:text-gray-700">
-                <i className="fas fa-times"></i>
-              </button>
-            </div>
-            <p className="mb-4 text-gray-600">お知らせ作成機能は現在開発中です。</p>
-            <div className="flex justify-end space-x-2">
-              <Button variant="secondary" onClick={handleCloseModal} text="キャンセル" />
-            </div>
-          </div>
-        </div>
-      )}
+      {isModalVisible &&
+        createPortal(<NewsModal onClose={handleClose} onSuccess={handleSuccess} />, document.body)}
     </>
   )
 }

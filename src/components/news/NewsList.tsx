@@ -1,5 +1,6 @@
 import Button from '@/components/base/Button'
 import Pagination from '@/components/base/Pagination'
+import NewsModalLink from '@/components/news/NewsModalLink'
 import newsCategories from '@/config/news-category.json'
 import newsPriority from '@/config/news-priority.json'
 import newsFetch from '@/fetch/news'
@@ -138,8 +139,7 @@ const NewsList: React.FC = () => {
 
     setIsDeleting(newsId)
     try {
-      // TODO: 削除APIを実装
-      console.log('削除処理:', newsId)
+      await newsFetch.deleteNews(newsId)
       await mutate() // データを再取得
     } catch (error) {
       console.error('削除エラー:', error)
@@ -151,7 +151,7 @@ const NewsList: React.FC = () => {
 
   // 編集処理
   const handleEdit = (news: News) => {
-    // TODO: 編集ページに遷移
+    // TODO: 編集機能は別途実装
     console.log('編集処理:', news)
   }
 
@@ -194,6 +194,11 @@ const NewsList: React.FC = () => {
   return (
     <div className="mx-auto max-w-4xl">
       <h1 className="mb-8 text-3xl font-bold">お知らせ</h1>
+
+      {/* お知らせ追加ボタン */}
+      <div className="mb-6">
+        <NewsModalLink />
+      </div>
 
       {/* フィルター */}
       <div className="mb-8">
