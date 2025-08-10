@@ -18,14 +18,12 @@ const schema = z
       .object({
         startDate: z
           .date({
-            invalid_type_error: '開始日の形式が正しくありません',
-            required_error: '開始日は必須です'
+            message: '開始日の形式が正しくありません'
           })
           .nullable(),
         endDate: z
           .date({
-            invalid_type_error: '終了日の形式が正しくありません',
-            required_error: '終了日は必須です'
+            message: '終了日の形式が正しくありません'
           })
           .nullable()
       })
@@ -281,6 +279,28 @@ const EventModal: React.FC<EventModalProps> = ({ onClose }) => {
   const handleCancel: React.MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault()
     onClose()
+  }
+
+  // 続けて追加ボタンのハンドラー
+  const handleContinueAdding = () => {
+    setCompleted(false)
+    setSuccess('')
+    setError('')
+
+    // フォームをリセット（日付もクリア）
+    reset({
+      title: '',
+      eventDate: {
+        startDate: null,
+        endDate: null
+      },
+      isTimeSettingEnabled: false,
+      eventTimeStart: '',
+      eventTimeEnd: '',
+      category: '',
+      description: '',
+      url: ''
+    })
   }
 
   const onInvalid = (errors: FieldErrors<FormValues>) => {
@@ -560,17 +580,24 @@ const EventModal: React.FC<EventModalProps> = ({ onClose }) => {
             </fieldset>
 
             {/* モーダルフッタ部 */}
-            <div className="flex justify-end space-x-3 pt-4">
-              {!completed && (
-                <Button type="submit" variant="primary" disabled={isSubmitting}>
-                  {eventId ? '更新する' : '追加する'}
+            <div className="flex items-center pt-4">
+              {completed && eventId === 0 && (
+                <Button type="button" variant="default" onClick={handleContinueAdding}>
+                  続けて追加
                 </Button>
               )}
-              {completed && (
-                <Button type="button" variant="default" onClick={handleCancel}>
-                  閉じる
-                </Button>
-              )}
+              <div className="ml-auto flex justify-end space-x-3">
+                {!completed && (
+                  <Button type="submit" variant="primary" disabled={isSubmitting}>
+                    {eventId ? '更新する' : '追加する'}
+                  </Button>
+                )}
+                {completed && (
+                  <Button type="button" variant="default" onClick={handleCancel}>
+                    閉じる
+                  </Button>
+                )}
+              </div>
             </div>
           </form>
         </div>
