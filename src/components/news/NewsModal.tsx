@@ -1,5 +1,6 @@
 import Alert from '@/components/base/Alert'
 import Button from '@/components/base/Button'
+import DateRangePicker from '@/components/DateRangePicker'
 import NewsCategoryDropdown from '@/components/news/NewsCategoryDropdown'
 import NewsPriorityDropdown from '@/components/news/NewsPriorityDropdown'
 import newsFetch from '@/fetch/news'
@@ -14,7 +15,7 @@ import { z } from 'zod'
 const schema = z.object({
   title: z.string().trim().min(1, { message: 'タイトルは必須です' }),
   content: z.string().trim().min(1, { message: '内容は必須です' }),
-  date: z.string().min(1, { message: '日付は必須です' }),
+  date: z.date({ message: '日付は必須です' }),
   categories: z.array(z.string()).min(1, { message: 'カテゴリーは必須です' }),
   priority: z.string().nullable(),
   attachments: z.array(z.string()).optional()
@@ -46,7 +47,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose }) => {
     defaultValues: {
       title: '',
       content: '',
-      date: new Date().toISOString().split('T')[0],
+      date: new Date(),
       categories: [],
       priority: null,
       attachments: []
@@ -64,7 +65,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose }) => {
       reset({
         title: '',
         content: '',
-        date: new Date().toISOString().split('T')[0],
+        date: new Date(),
         categories: [],
         priority: null,
         attachments: []
@@ -79,7 +80,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose }) => {
           reset({
             title: newsData.title,
             content: newsData.content,
-            date: new Date(newsData.date).toISOString().split('T')[0],
+            date: new Date(newsData.date),
             categories: newsData.categories || [],
             priority: newsData.priority || null,
             attachments: newsData.attachments || []
@@ -92,7 +93,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose }) => {
     }
   }, [newsId, reset])
 
-  const onSubmit = async (values: FormValues) => {
+  const onSubmit = async (values: any) => {
     // メッセージリセット
     setSuccess('')
     setError('')
@@ -103,7 +104,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose }) => {
         await newsFetch.createNews({
           title: values.title,
           content: values.content,
-          date: values.date,
+          date: values.date.toISOString().split('T')[0],
           categories: values.categories,
           priority: values.priority,
           attachments: values.attachments || []
@@ -114,7 +115,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose }) => {
         await newsFetch.updateNews(newsId, {
           title: values.title,
           content: values.content,
-          date: values.date,
+          date: values.date.toISOString().split('T')[0],
           categories: values.categories,
           priority: values.priority,
           attachments: values.attachments || []
@@ -205,14 +206,19 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose }) => {
                   <label htmlFor="date" className="mb-1 block font-medium text-gray-900">
                     日付
                   </label>
-                  <input
-                    type="date"
-                    id="date"
-                    {...register('date')}
-                    className={`block w-full rounded-lg border ${
-                      errors.date ? 'border-red-500' : 'border-gray-300'
-                    } focus:border-primary-500 focus:ring-primary-500 bg-gray-50 p-2.5 text-gray-900`}
-                    required
+                  <Controller
+                    name="date"
+                    control={control}
+                    render={({ field: { onChange, value } }) => (
+                      <DateRangePicker
+                        startDate={value}
+                        endDate={value}
+                        onChange={(startDate) => onChange(startDate)}
+                        isRangeMode={false}
+                        placeholder="日付を選択"
+                        showWeekday={true}
+                      />
+                    )}
                   />
                   {errors.date && (
                     <p className="mt-1 text-sm text-red-600">
