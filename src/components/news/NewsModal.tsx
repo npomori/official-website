@@ -205,6 +205,30 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose }) => {
                 <div className="col-span-4">
                   <label htmlFor="date" className="mb-1 block font-medium text-gray-900">
                     日付
+                    <span className="group relative ml-2 inline-flex items-center text-gray-500">
+                      <svg
+                        className="h-4 w-4 cursor-help"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                      <div className="absolute bottom-full left-0 mb-2 hidden w-[300px] transform rounded-lg bg-gray-900 p-3 text-sm text-white opacity-0 transition-opacity group-hover:block group-hover:opacity-100">
+                        <div className="space-y-2 whitespace-pre-wrap">
+                          <div>お知らせの公開日を設定します。</div>
+                          <div>• 今日の日付を設定：すぐに公開されます</div>
+                          <div>• 未来の日付を設定：その日が来るまで非表示になります</div>
+                          <div>• 過去の日付を設定：すぐに公開されます</div>
+                        </div>
+                        <div className="absolute -bottom-1 left-4 h-2 w-2 rotate-45 transform bg-gray-900"></div>
+                      </div>
+                    </span>
                   </label>
                   <Controller
                     name="date"
