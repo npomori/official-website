@@ -580,13 +580,13 @@ const EventModal: React.FC<EventModalProps> = ({ onClose }) => {
             </fieldset>
 
             {/* モーダルフッタ部 */}
-            <div className="flex items-center pt-4">
+            <div className="flex justify-between">
               {completed && eventId === 0 && (
                 <Button type="button" variant="default" onClick={handleContinueAdding}>
                   続けて追加
                 </Button>
               )}
-              <div className="ml-auto flex justify-end space-x-3">
+              <div className="ml-auto">
                 {!completed && (
                   <Button type="submit" variant="primary" disabled={isSubmitting}>
                     {eventId ? '更新する' : '追加する'}
