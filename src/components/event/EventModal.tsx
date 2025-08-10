@@ -580,7 +580,7 @@ const EventModal: React.FC<EventModalProps> = ({ onClose }) => {
             </fieldset>
 
             {/* モーダルフッタ部 */}
-            <div className="flex justify-between">
+            <div className="flex justify-between pt-4">
               {completed && eventId === 0 && (
                 <Button type="button" variant="default" onClick={handleContinueAdding}>
                   続けて追加
