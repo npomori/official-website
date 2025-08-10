@@ -92,7 +92,7 @@ const UserList: FC<UserListProps> = ({ users, onEdit, onDelete }) => {
                       <Button
                         type="button"
                         onClick={() => onEdit(user)}
-                        variant="primary"
+                        variant="info"
                         size="md"
                         icon="mdi:square-edit-outline"
                       >

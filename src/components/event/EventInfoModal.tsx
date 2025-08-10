@@ -450,7 +450,7 @@ const EventInfoModal: React.FC<EventInfoModalProps> = ({ isOpen, event, onClose,
             <div className="mt-6 flex items-center justify-between">
               <div className="flex items-center space-x-3 sm:space-x-4">
                 {!completed && (
-                  <Button type="button" variant="primary" onClick={handleEditEvent}>
+                  <Button type="button" variant="info" onClick={handleEditEvent}>
                     <svg
                       aria-hidden="true"
                       className="mr-1 -ml-1 h-5 w-5"

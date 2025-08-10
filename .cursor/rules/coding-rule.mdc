@@ -1,9 +1,29 @@
 ---
-description: 
+description: Basic coding rules for the entire project
 globs: 
 alwaysApply: true
 ---
 
-このファイルではコード作成にあたっての基本的なルールを規定します。
+# 基本コーディングルール
 
-- ローカルファイルのimportは相対パスはなく、パスエイリアス「@/」を使用する。
+## インポート規則
+- ローカルファイルのimportは相対パスではなく、パスエイリアス「@/」を使用する
+- インポート順序：外部ライブラリ → 内部モジュール → 相対パス
+
+## 命名規則
+- ファイル名：ReactコンポーネントはPascalCase、その他はcamelCase
+- 変数・関数：camelCase
+- 定数：UPPER_SNAKE_CASE
+- 型・インターフェース：PascalCase
+
+## コメント
+- 日本語でコメントを記述する
+- 複雑なロジックには必ずコメントを付ける
+- JSDocスタイルのコメントを使用する
+
+# Reactコンポーネント
+
+内部のコンポーネントを優先的に使用する
+
+## 入力フィールド
+- 日付の選択や日付範囲の選択はDateRangePickerコンポーネントを使用
