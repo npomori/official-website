@@ -430,6 +430,7 @@ const RecordList: React.FC = () => {
           onSuccess={handleEditSuccess}
           record={editingRecord}
           isEditMode={true}
+          recordId={editingRecord.id}
         />
       )}
     </div>

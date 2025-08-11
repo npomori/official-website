@@ -20,13 +20,15 @@ interface RecordModalProps {
   onSuccess?: () => void
   record?: any // 編集時の既存データ
   isEditMode?: boolean
+  recordId?: number // 編集モード時の記録ID
 }
 
 const RecordModal: React.FC<RecordModalProps> = ({
   onClose,
   onSuccess,
   record,
-  isEditMode = false
+  isEditMode = false,
+  recordId
 }) => {
   const [success, setSuccess] = useState('')
   const [error, setError] = useState('')
@@ -37,6 +39,8 @@ const RecordModal: React.FC<RecordModalProps> = ({
   const [imagePreviewUrls, setImagePreviewUrls] = useState<string[]>([])
   const [existingImageUrls, setExistingImageUrls] = useState<string[]>([]) // 既存画像のURL
   const [removedExistingImages, setRemovedExistingImages] = useState<string[]>([]) // 削除された既存画像
+  const [isLoading, setIsLoading] = useState(false)
+  const [fetchedRecord, setFetchedRecord] = useState<any>(null)
   const dateRangePickerRef = useRef<HTMLDivElement>(null)
 
   // 設定を取得
@@ -70,6 +74,32 @@ const RecordModal: React.FC<RecordModalProps> = ({
   // フォーカス制御用
   const rangeRef = useRef<HTMLDivElement>(null)
 
+  // 編集モード時にAPIからデータを取得
+  useEffect(() => {
+    const fetchRecordData = async () => {
+      if (isEditMode && recordId && !fetchedRecord) {
+        setIsLoading(true)
+        setError('')
+
+        try {
+          const response = await adminRecordFetch.getRecord(recordId)
+          if (response.success && response.data) {
+            setFetchedRecord(response.data)
+          } else {
+            setError('記録データの取得に失敗しました')
+          }
+        } catch (err) {
+          setError('記録データの取得に失敗しました')
+          console.error('Record fetch error:', err)
+        } finally {
+          setIsLoading(false)
+        }
+      }
+    }
+
+    fetchRecordData()
+  }, [isEditMode, recordId, fetchedRecord])
+
   useEffect(() => {
     // メッセージリセット
     setSuccess('')
@@ -82,31 +112,34 @@ const RecordModal: React.FC<RecordModalProps> = ({
     setExistingImageUrls([])
     setRemovedExistingImages([])
 
-    if (isEditMode && record) {
-      // 編集モードの場合、既存データをフォームに設定
-      setValue('location', record.location || '')
-      setValue('datetime', record.datetime || '')
-      setValue('weather', record.weather || '')
-      setValue('participants', record.participants || '')
-      setValue('reporter', record.reporter || '')
-      setValue('content', record.content || '')
-      setValue('nearMiss', record.nearMiss || '')
-      setValue('equipment', record.equipment || '')
-      setValue('remarks', record.remarks || '')
-      setValue('categories', record.categories || [])
+    // 編集モードの場合、取得したデータまたは既存データをフォームに設定
+    if (isEditMode) {
+      const recordData = fetchedRecord || record
+      if (recordData) {
+        setValue('location', recordData.location || '')
+        setValue('datetime', recordData.datetime || '')
+        setValue('weather', recordData.weather || '')
+        setValue('participants', recordData.participants || '')
+        setValue('reporter', recordData.reporter || '')
+        setValue('content', recordData.content || '')
+        setValue('nearMiss', recordData.nearMiss || '')
+        setValue('equipment', recordData.equipment || '')
+        setValue('remarks', recordData.remarks || '')
+        setValue('categories', recordData.categories || [])
 
-      // 既存の画像をプレビューに設定
-      if (record.images && record.images.length > 0) {
-        const recordConfig = getRecordUploadConfig()
-        const imageUrls = record.images.map((image: string) => `${recordConfig.url}/${image}`)
-        setImagePreviewUrls(imageUrls)
-        setExistingImageUrls(imageUrls) // 既存画像のURLを保存
+        // 既存の画像をプレビューに設定
+        if (recordData.images && recordData.images.length > 0) {
+          const recordConfig = getRecordUploadConfig()
+          const imageUrls = recordData.images.map((image: string) => `${recordConfig.url}/${image}`)
+          setImagePreviewUrls(imageUrls)
+          setExistingImageUrls(imageUrls) // 既存画像のURLを保存
+        }
       }
     } else {
       // フォームをリセット
       reset()
     }
-  }, [reset, isEditMode, record, setValue])
+  }, [reset, isEditMode, record, fetchedRecord, setValue])
 
   const onSubmit = async (values: FormValues) => {
     // メッセージリセット
@@ -287,7 +320,22 @@ const RecordModal: React.FC<RecordModalProps> = ({
         {/* スクロール可能なコンテンツエリア */}
         <div className="flex-1 overflow-y-auto px-6">
           <div className="space-y-6">
-            <fieldset disabled={completed}>
+            {isLoading && (
+              <div className="flex items-center justify-center py-8">
+                <div className="text-center">
+                  <div
+                    className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                    role="status"
+                  >
+                    <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !border-0 !p-0 !whitespace-nowrap ![clip:rect(0,0,0,0)]">
+                      読み込み中...
+                    </span>
+                  </div>
+                  <p className="mt-2 text-gray-600">データを読み込み中...</p>
+                </div>
+              </div>
+            )}
+            <fieldset disabled={completed || isLoading}>
               <div className="grid grid-cols-4 gap-4">
                 {/* 活動場所 */}
                 <div className="col-span-4">
@@ -635,7 +683,7 @@ const RecordModal: React.FC<RecordModalProps> = ({
         <div className="flex-shrink-0 border-t border-gray-200 bg-gray-50 px-6 py-4">
           <form onSubmit={handleSubmit(onSubmit, onInvalid)}>
             <div className="flex justify-end space-x-3">
-              {!completed && (
+              {!completed && !isLoading && (
                 <Button type="submit" variant="primary" disabled={isSubmitting}>
                   {isSubmitting
                     ? isEditMode
