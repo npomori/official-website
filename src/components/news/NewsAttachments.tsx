@@ -1,12 +1,5 @@
+import type { NewsAttachment } from '@/types/news'
 import React from 'react'
-
-interface NewsAttachment {
-  originalName: string
-  serverName: string
-  path: string
-  size: number
-  mimeType: string
-}
 
 interface NewsAttachmentsProps {
   attachments: NewsAttachment[]

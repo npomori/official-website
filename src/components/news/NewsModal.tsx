@@ -4,18 +4,11 @@ import DateRangePicker from '@/components/DateRangePicker'
 import NewsCategoryDropdown from '@/components/news/NewsCategoryDropdown'
 import NewsPriorityDropdown from '@/components/news/NewsPriorityDropdown'
 import adminNewsFetch from '@/fetch/admin/news'
+import type { NewsAttachment } from '@/types/news'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect, useState } from 'react'
 import { Controller, useForm, type FieldErrors } from 'react-hook-form'
 import { z } from 'zod'
-
-interface NewsAttachment {
-  originalName: string
-  serverName: string
-  path: string
-  size: number
-  mimeType: string
-}
 
 // フィールドのスキーマを定義
 const schema = z.object({

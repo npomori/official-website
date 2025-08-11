@@ -7,37 +7,10 @@ import newsFetch from '@/fetch/news'
 import useSWR from '@/hooks/swr'
 import { userStore } from '@/store/user'
 import { getConfig } from '@/types/config'
+import type { News, NewsAttachment } from '@/types/news'
 import type { UserAuth } from '@/types/user'
 import { useStore } from '@nanostores/react'
 import React, { useState } from 'react'
-
-interface NewsAttachment {
-  originalName: string
-  serverName: string
-  path: string
-  size: number
-  mimeType: string
-}
-
-interface News {
-  id: number
-  title: string
-  content: string
-  date: string
-  categories?: string[] | null
-  priority?: string | null
-  attachments?: NewsAttachment[] | null
-  author: string
-  status: string
-  creatorId: number
-  createdAt: string
-  updatedAt: string
-  creator: {
-    id: number
-    name: string
-    email: string
-  }
-}
 
 const NewsList: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1)

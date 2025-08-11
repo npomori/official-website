@@ -1,55 +1,5 @@
+import type { CreateNewsData, News, NewsAttachment, UpdateNewsData } from '@/types/news'
 import BaseDB from './base'
-
-interface NewsAttachment {
-  originalName: string
-  serverName: string
-  path: string
-  size: number
-  mimeType: string
-}
-
-interface News {
-  id: number
-  title: string
-  content: string
-  date: Date
-  categories?: string[] | null
-  priority?: string | null
-  attachments?: NewsAttachment[] | null
-  author: string
-  status: string
-  creatorId: number
-  createdAt: Date
-  updatedAt: Date
-  creator: {
-    id: number
-    name: string
-    email: string
-  }
-}
-
-interface CreateNewsData {
-  title: string
-  content: string
-  date: Date
-  categories?: string[]
-  priority?: string
-  attachments?: NewsAttachment[]
-  author: string
-  status?: string
-  creatorId: number
-}
-
-interface UpdateNewsData {
-  title?: string
-  content?: string
-  date?: Date
-  categories?: string[]
-  priority?: string
-  attachments?: NewsAttachment[]
-  author?: string
-  status?: string
-}
 
 class NewsDB extends BaseDB {
   // 管理画面用：お知らせ一覧を取得（ページネーション対応）

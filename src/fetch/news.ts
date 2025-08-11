@@ -1,32 +1,5 @@
 import { getConfig } from '@/types/config'
-
-interface NewsAttachment {
-  originalName: string
-  serverName: string
-  path: string
-  size: number
-  mimeType: string
-}
-
-interface News {
-  id: number
-  title: string
-  content: string
-  date: string
-  categories?: string[] | null
-  priority?: string | null
-  attachments?: NewsAttachment[] | null
-  author: string
-  status: string
-  creatorId: number
-  createdAt: string
-  updatedAt: string
-  creator: {
-    id: number
-    name: string
-    email: string
-  }
-}
+import type { News, NewsAttachment } from '@/types/news'
 
 interface NewsResponse {
   success: boolean
