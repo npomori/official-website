@@ -1,9 +1,6 @@
+import config from '@/config/config.json'
 import NewsDB from '@/server/db/news'
-import {
-  ALLOWED_NEWS_FILE_TYPES,
-  MAX_NEWS_FILE_SIZE_MB,
-  newsFileUploader
-} from '@/server/utils/file-upload'
+import { newsFileUploader } from '@/server/utils/file-upload'
 import type { APIRoute } from 'astro'
 
 // 管理者用のお知らせ一覧取得
@@ -89,14 +86,33 @@ export const POST: APIRoute = async ({ request, locals }) => {
       )
     }
 
+    // お知らせのファイルアップロード設定を取得
+    const newsConfig = config.upload.news
+
     // ファイルアップロード処理
     let uploadedAttachments: any[] = []
     const files = formData.getAll('files') as File[]
 
     if (files && files.length > 0) {
+      // ファイル数のバリデーション
+      if (!newsFileUploader.validateFileCount(files, newsConfig.maxFiles)) {
+        return new Response(
+          JSON.stringify({
+            success: false,
+            error: `ファイル数が多すぎます (最大${newsConfig.maxFiles}個)`
+          }),
+          {
+            status: 400,
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          }
+        )
+      }
+
       // ファイルのバリデーション
       for (const file of files) {
-        if (!newsFileUploader.validateFileType(file, ALLOWED_NEWS_FILE_TYPES)) {
+        if (!newsFileUploader.validateFileType(file, newsConfig.allowedTypes)) {
           return new Response(
             JSON.stringify({
               success: false,
@@ -111,11 +127,12 @@ export const POST: APIRoute = async ({ request, locals }) => {
           )
         }
 
-        if (!newsFileUploader.validateFileSize(file, MAX_NEWS_FILE_SIZE_MB)) {
+        if (!newsFileUploader.validateFileSize(file, newsConfig.maxFileSize)) {
+          const maxSizeMB = Math.round(newsConfig.maxFileSize / (1024 * 1024))
           return new Response(
             JSON.stringify({
               success: false,
-              error: `ファイルサイズが大きすぎます: ${file.name} (最大${MAX_NEWS_FILE_SIZE_MB}MB)`
+              error: `ファイルサイズが大きすぎます: ${file.name} (最大${maxSizeMB}MB)`
             }),
             {
               status: 400,

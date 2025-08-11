@@ -3,6 +3,7 @@ import Button from '@/components/base/Button'
 import DateRangePicker from '@/components/DateRangePicker'
 import NewsCategoryDropdown from '@/components/news/NewsCategoryDropdown'
 import NewsPriorityDropdown from '@/components/news/NewsPriorityDropdown'
+import config from '@/config/config.json'
 import adminNewsFetch from '@/fetch/admin/news'
 import type { NewsAttachment } from '@/types/news'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -37,6 +38,9 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]) // 選択されたファイル
   const [existingFiles, setExistingFiles] = useState<NewsAttachment[]>([]) // 既存ファイル
   const [removedFiles, setRemovedFiles] = useState<string[]>([]) // 削除されたファイル
+
+  // お知らせの設定を直接取得
+  const newsConfig = config.upload.news
 
   const {
     control,
@@ -160,6 +164,27 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || [])
     if (files.length > 0) {
+      // ファイル数のバリデーション
+      const currentFiles = selectedFiles.length + existingFiles.length - removedFiles.length
+      if (currentFiles + files.length > newsConfig.maxFiles) {
+        setError(`ファイル数が多すぎます (最大${newsConfig.maxFiles}個)`)
+        return
+      }
+
+      // ファイルサイズとタイプのバリデーション
+      for (const file of files) {
+        if (file.size > newsConfig.maxFileSize) {
+          const maxSizeMB = Math.round(newsConfig.maxFileSize / (1024 * 1024))
+          setError(`ファイルサイズが大きすぎます: ${file.name} (最大${maxSizeMB}MB)`)
+          return
+        }
+
+        if (!newsConfig.allowedTypes.includes(file.type)) {
+          setError(`ファイルタイプが許可されていません: ${file.name}`)
+          return
+        }
+      }
+
       setSelectedFiles((prev) => [...prev, ...files])
 
       // ファイル名をフォームに設定
@@ -436,14 +461,34 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
                             type="file"
                             multiple
                             className="hidden"
-                            accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif"
+                            accept={newsConfig.allowedTypes.join(',')}
                             onChange={handleFileSelect}
                             disabled={completed}
                           />
                         </label>
                       </div>
                       <p className="mt-3 text-sm text-gray-500">
-                        対応形式: PDF, Word, Excel, 画像ファイル (JPG, PNG, GIF)
+                        対応形式:{' '}
+                        {newsConfig.allowedTypes
+                          .map((type: string) => {
+                            const extensions: Record<string, string> = {
+                              'application/pdf': 'PDF',
+                              'application/msword': 'Word (.doc)',
+                              'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+                                'Word (.docx)',
+                              'application/vnd.ms-excel': 'Excel (.xls)',
+                              'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+                                'Excel (.xlsx)',
+                              'image/jpeg': 'JPEG',
+                              'image/png': 'PNG',
+                              'image/gif': 'GIF'
+                            }
+                            return extensions[type] || type
+                          })
+                          .join(', ')}
+                        <br />
+                        最大ファイル数: {newsConfig.maxFiles}個, 最大ファイルサイズ:{' '}
+                        {Math.round(newsConfig.maxFileSize / (1024 * 1024))}MB
                       </p>
                       {/* 選択されたファイル名の表示 */}
                       <Controller

@@ -38,9 +38,19 @@ interface RecordUploadConfig {
   }
 }
 
+interface NewsUploadConfig {
+  enabled: boolean
+  url: string
+  directory: string
+  maxFiles: number
+  maxFileSize: number
+  allowedTypes: string[]
+}
+
 interface UploadConfig {
   avatar: AvatarUploadConfig
   record: RecordUploadConfig
+  news: NewsUploadConfig
 }
 
 interface ApiConfig {
@@ -87,7 +97,7 @@ interface ContentConfig {
   news: NewsContentConfig
 }
 
-interface Config {
+export interface Config {
   site: SiteConfig
   upload: UploadConfig
   api: ApiConfig
@@ -105,5 +115,6 @@ export default config
 // 便利な関数をエクスポート
 export const getRecordUploadConfig = () => config.upload.record
 export const getAvatarUploadConfig = () => config.upload.avatar
+export const getNewsUploadConfig = () => config.upload.news
 export const getSiteConfig = () => config.site
 export const getConfig = () => config

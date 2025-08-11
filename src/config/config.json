@@ -33,6 +33,23 @@
         "width": 96,
         "height": 96
       }
+    },
+    "news": {
+      "enabled": true,
+      "url": "/uploads/news",
+      "directory": "public/uploads/news",
+      "maxFiles": 5,
+      "maxFileSize": 10485760,
+      "allowedTypes": [
+        "application/pdf",
+        "application/msword",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "application/vnd.ms-excel",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "image/jpeg",
+        "image/png",
+        "image/gif"
+      ]
     }
   },
   "api": {
