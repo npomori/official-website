@@ -15,8 +15,7 @@ export const GET: APIRoute = async ({ params }) => {
       })
     }
 
-    const newsDB = new NewsDB()
-    const news = await newsDB.getNewsById(id)
+    const news = await NewsDB.getNewsById(id)
 
     if (!news) {
       return new Response(JSON.stringify({ success: false, error: 'お知らせが見つかりません' }), {

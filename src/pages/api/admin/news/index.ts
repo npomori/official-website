@@ -12,11 +12,8 @@ export const GET: APIRoute = async ({ url }) => {
     const category = searchParams.get('category')
     const priority = searchParams.get('priority')
 
-    // NewsDBインスタンスを作成
-    const newsDB = new NewsDB()
-
     // お知らせ一覧を取得
-    const { news, totalCount } = await newsDB.getNewsForAdminWithPagination(page, limit)
+    const { news, totalCount } = await NewsDB.getNewsForAdminWithPagination(page, limit)
 
     const totalPages = Math.ceil(totalCount / limit)
 

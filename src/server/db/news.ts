@@ -326,4 +326,4 @@ class NewsDB extends BaseDB {
   }
 }
 
-export default NewsDB
+export default new NewsDB()
