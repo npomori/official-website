@@ -1,23 +1,22 @@
 import NewsModal from '@/components/news/NewsModal'
-import { modalNewsId, showNewsModal } from '@/store/news'
-import { useStore } from '@nanostores/react'
-import React from 'react'
+import { useState } from 'react'
 import { createPortal } from 'react-dom'
 
 const NewsModalLink: React.FC = () => {
-  const isModalVisible = useStore(showNewsModal)
+  const [isModalVisible, setIsModalVisible] = useState(false)
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault()
-
-    // お知らせIDを設定し、モーダルを表示
-    modalNewsId.set(0)
-    showNewsModal.set(true)
+    setIsModalVisible(true)
   }
 
   const handleClose = () => {
-    // モーダルを非表示
-    showNewsModal.set(false)
+    setIsModalVisible(false)
+  }
+
+  const handleSuccess = () => {
+    // お知らせが追加された後にページをリロード
+    window.location.reload()
   }
 
   return (
@@ -36,7 +35,8 @@ const NewsModalLink: React.FC = () => {
         </svg>
         お知らせを追加
       </button>
-      {isModalVisible && createPortal(<NewsModal onClose={handleClose} />, document.body)}
+      {isModalVisible &&
+        createPortal(<NewsModal onClose={handleClose} onSuccess={handleSuccess} />, document.body)}
     </>
   )
 }

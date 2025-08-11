@@ -11,6 +11,14 @@ import type { UserAuth } from '@/types/user'
 import { useStore } from '@nanostores/react'
 import React, { useState } from 'react'
 
+interface NewsAttachment {
+  originalName: string
+  serverName: string
+  path: string
+  size: number
+  mimeType: string
+}
+
 interface News {
   id: number
   title: string
@@ -18,7 +26,7 @@ interface News {
   date: string
   categories?: string[] | null
   priority?: string | null
-  attachments?: string[] | null
+  attachments?: NewsAttachment[] | null
   author: string
   status: string
   creatorId: number
@@ -418,11 +426,13 @@ const NewsList: React.FC = () => {
                           {newsItem.attachments.map((file, index) => (
                             <a
                               key={index}
-                              href="#"
+                              href={`/api/admin/news/download/${file.serverName}`}
                               className="inline-flex items-center rounded-lg bg-blue-50 px-3 py-1 text-base text-blue-700 transition-colors hover:bg-blue-100"
+                              target="_blank"
+                              rel="noopener noreferrer"
                             >
                               <i className="fas fa-file-alt mr-2"></i>
-                              {file}
+                              {file.originalName}
                             </a>
                           ))}
                         </div>

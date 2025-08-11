@@ -4,6 +4,14 @@ import useSWR from '@/hooks/swr'
 import { getConfig } from '@/types/config'
 import React from 'react'
 
+interface NewsAttachment {
+  originalName: string
+  serverName: string
+  path: string
+  size: number
+  mimeType: string
+}
+
 interface News {
   id: number
   title: string
@@ -11,7 +19,7 @@ interface News {
   date: string
   categories?: string[] | null
   priority?: string | null
-  attachments?: string[] | null
+  attachments?: NewsAttachment[] | null
   author: string
   status: string
   creatorId: number

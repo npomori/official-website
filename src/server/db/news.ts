@@ -1,5 +1,13 @@
 import BaseDB from './base'
 
+interface NewsAttachment {
+  originalName: string
+  serverName: string
+  path: string
+  size: number
+  mimeType: string
+}
+
 interface News {
   id: number
   title: string
@@ -7,7 +15,7 @@ interface News {
   date: Date
   categories?: string[] | null
   priority?: string | null
-  attachments?: string[] | null
+  attachments?: NewsAttachment[] | null
   author: string
   status: string
   creatorId: number
@@ -26,7 +34,7 @@ interface CreateNewsData {
   date: Date
   categories?: string[]
   priority?: string
-  attachments?: string[]
+  attachments?: NewsAttachment[]
   author: string
   status?: string
   creatorId: number
@@ -38,7 +46,7 @@ interface UpdateNewsData {
   date?: Date
   categories?: string[]
   priority?: string
-  attachments?: string[]
+  attachments?: NewsAttachment[]
   author?: string
   status?: string
 }
@@ -76,7 +84,17 @@ class NewsDB extends BaseDB {
         }
       })
 
-      return { news, totalCount }
+      // データベースから取得したデータを正しい型に変換
+      const convertedNews = news.map((item) => ({
+        ...item,
+        attachments: item.attachments
+          ? Array.isArray(item.attachments)
+            ? item.attachments
+            : []
+          : null
+      }))
+
+      return { news: convertedNews, totalCount }
     } catch (err) {
       console.error(err)
       return { news: [], totalCount: 0 }
@@ -139,7 +157,17 @@ class NewsDB extends BaseDB {
       const endIndex = startIndex + itemsPerPage
       const paginatedNews = filteredNews.slice(startIndex, endIndex)
 
-      return { news: paginatedNews, totalCount }
+      // データベースから取得したデータを正しい型に変換
+      const convertedNews = paginatedNews.map((item) => ({
+        ...item,
+        attachments: item.attachments
+          ? Array.isArray(item.attachments)
+            ? item.attachments
+            : []
+          : null
+      }))
+
+      return { news: convertedNews, totalCount }
     } catch (err) {
       console.error(err)
       return { news: [], totalCount: 0 }
@@ -206,9 +234,24 @@ class NewsDB extends BaseDB {
   // お知らせを削除
   async deleteNews(id: number): Promise<boolean> {
     try {
+      // お知らせを取得して添付ファイル情報を取得
+      const news = await BaseDB.prisma.news.findUnique({
+        where: { id },
+        select: { attachments: true }
+      })
+
+      // お知らせを削除
       await BaseDB.prisma.news.delete({
         where: { id }
       })
+
+      // 添付ファイルがあれば削除
+      if (news?.attachments && Array.isArray(news.attachments)) {
+        const { newsFileUploader } = await import('@/server/utils/file-upload')
+        const filenames = news.attachments.map((attachment: any) => attachment.serverName)
+        await newsFileUploader.deleteFiles(filenames)
+      }
+
       return true
     } catch (err) {
       console.error(err)
@@ -219,7 +262,7 @@ class NewsDB extends BaseDB {
   // お知らせを取得（ID指定）
   async getNewsById(id: number): Promise<News | null> {
     try {
-      return await BaseDB.prisma.news.findUnique({
+      const news = await BaseDB.prisma.news.findUnique({
         where: { id },
         include: {
           creator: {
@@ -231,6 +274,18 @@ class NewsDB extends BaseDB {
           }
         }
       })
+
+      if (!news) return null
+
+      // データベースから取得したデータを正しい型に変換
+      return {
+        ...news,
+        attachments: news.attachments
+          ? Array.isArray(news.attachments)
+            ? news.attachments
+            : []
+          : null
+      }
     } catch (err) {
       console.error(err)
       return null
@@ -240,7 +295,7 @@ class NewsDB extends BaseDB {
   // 最新のお知らせを取得（フロントエンド用）
   async getLatestNews(limit: number = 5): Promise<News[]> {
     try {
-      return await BaseDB.prisma.news.findMany({
+      const news = await BaseDB.prisma.news.findMany({
         where: {
           status: 'published'
         },
@@ -260,9 +315,63 @@ class NewsDB extends BaseDB {
           }
         }
       })
+
+      // データベースから取得したデータを正しい型に変換
+      return news.map((item) => ({
+        ...item,
+        attachments: item.attachments
+          ? Array.isArray(item.attachments)
+            ? item.attachments
+            : []
+          : null
+      }))
     } catch (err) {
       console.error(err)
       return []
+    }
+  }
+
+  // サーバー名から添付ファイル情報を取得
+  async getAttachmentByServerName(serverName: string): Promise<NewsAttachment | null> {
+    try {
+      const news = await BaseDB.prisma.news.findMany({
+        select: { attachments: true }
+      })
+
+      for (const item of news) {
+        if (item.attachments && Array.isArray(item.attachments)) {
+          const attachment = item.attachments.find((att: any) => {
+            if (typeof att === 'object' && att !== null && 'serverName' in att) {
+              return att.serverName === serverName
+            }
+            return false
+          })
+          if (attachment && typeof attachment === 'object' && attachment !== null) {
+            // 型安全性を確保
+            const typedAttachment = attachment as any
+            if (
+              typedAttachment.originalName &&
+              typedAttachment.serverName &&
+              typedAttachment.path &&
+              typeof typedAttachment.size === 'number' &&
+              typedAttachment.mimeType
+            ) {
+              return {
+                originalName: typedAttachment.originalName,
+                serverName: typedAttachment.serverName,
+                path: typedAttachment.path,
+                size: typedAttachment.size,
+                mimeType: typedAttachment.mimeType
+              } as NewsAttachment
+            }
+          }
+        }
+      }
+
+      return null
+    } catch (err) {
+      console.error(err)
+      return null
     }
   }
 }

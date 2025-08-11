@@ -3,13 +3,19 @@ import Button from '@/components/base/Button'
 import DateRangePicker from '@/components/DateRangePicker'
 import NewsCategoryDropdown from '@/components/news/NewsCategoryDropdown'
 import NewsPriorityDropdown from '@/components/news/NewsPriorityDropdown'
-import newsFetch from '@/fetch/news'
-import { modalNewsId, notifyNewsUpdate, showNewsModal } from '@/store/news'
+import adminNewsFetch from '@/fetch/admin/news'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useStore } from '@nanostores/react'
 import { useEffect, useState } from 'react'
 import { Controller, useForm, type FieldErrors } from 'react-hook-form'
 import { z } from 'zod'
+
+interface NewsAttachment {
+  originalName: string
+  serverName: string
+  path: string
+  size: number
+  mimeType: string
+}
 
 // フィールドのスキーマを定義
 const schema = z.object({
@@ -18,7 +24,7 @@ const schema = z.object({
   date: z.date({ message: '日付は必須です' }),
   categories: z.array(z.string()).min(1, { message: 'カテゴリーは必須です' }),
   priority: z.string().nullable(),
-  attachments: z.array(z.string()).optional()
+  attachments: z.array(z.any()).optional()
 })
 
 // フォームの入力値の型を上述のスキーマから作成
@@ -26,19 +32,24 @@ type FormValues = z.infer<typeof schema>
 
 interface NewsModalProps {
   onClose: () => void
+  onSuccess?: () => void
+  news?: any // 編集時の既存データ
+  isEditMode?: boolean
 }
 
-const NewsModal: React.FC<NewsModalProps> = ({ onClose }) => {
+const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditMode = false }) => {
   const [success, setSuccess] = useState('')
   const [error, setError] = useState('')
   const [completed, setCompleted] = useState(false) // 登録完了フラグ
-  const isModalVisible = useStore(showNewsModal)
-  const newsId = useStore(modalNewsId)
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]) // 選択されたファイル
+  const [existingFiles, setExistingFiles] = useState<NewsAttachment[]>([]) // 既存ファイル
+  const [removedFiles, setRemovedFiles] = useState<string[]>([]) // 削除されたファイル
 
   const {
     control,
     register,
     reset,
+    watch,
     handleSubmit,
     setValue,
     formState: { errors, isSubmitting }
@@ -59,8 +70,26 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose }) => {
     setSuccess('')
     setError('')
     setCompleted(false)
+    setSelectedFiles([])
+    setExistingFiles([])
+    setRemovedFiles([])
 
-    if (newsId === 0) {
+    if (isEditMode && news) {
+      // 編集モードの場合、既存データをフォームに設定
+      reset({
+        title: news.title || '',
+        content: news.content || '',
+        date: news.date ? new Date(news.date) : new Date(),
+        categories: news.categories || [],
+        priority: news.priority || null,
+        attachments: news.attachments || []
+      })
+
+      // 既存ファイルを設定
+      if (news.attachments && news.attachments.length > 0) {
+        setExistingFiles(news.attachments)
+      }
+    } else {
       // フォームをリセット
       reset({
         title: '',
@@ -70,28 +99,8 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose }) => {
         priority: null,
         attachments: []
       })
-    } else {
-      // お知らせ情報を取得
-      ;(async () => {
-        try {
-          const newsData = await newsFetch.getNewsById(newsId)
-
-          // フォームの初期値を設定
-          reset({
-            title: newsData.title,
-            content: newsData.content,
-            date: new Date(newsData.date),
-            categories: newsData.categories || [],
-            priority: newsData.priority || null,
-            attachments: newsData.attachments || []
-          })
-        } catch (e) {
-          console.error(e)
-          setError('通信エラーが発生しました')
-        }
-      })()
     }
-  }, [newsId, reset])
+  }, [reset, isEditMode, news])
 
   const onSubmit = async (values: any) => {
     // メッセージリセット
@@ -99,20 +108,9 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose }) => {
     setError('')
 
     try {
-      if (newsId === 0) {
-        // 新規お知らせの追加の場合
-        await newsFetch.createNews({
-          title: values.title,
-          content: values.content,
-          date: values.date.toISOString().split('T')[0],
-          categories: values.categories,
-          priority: values.priority,
-          attachments: values.attachments || []
-        })
-        setSuccess('お知らせを追加しました')
-      } else {
+      if (isEditMode && news) {
         // お知らせの更新の場合
-        await newsFetch.updateNews(newsId, {
+        await adminNewsFetch.updateNews(news.id, {
           title: values.title,
           content: values.content,
           date: values.date.toISOString().split('T')[0],
@@ -121,13 +119,33 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose }) => {
           attachments: values.attachments || []
         })
         setSuccess('お知らせを更新しました')
+      } else {
+        // 新規お知らせの追加の場合
+        const formData = new FormData()
+        formData.append('title', values.title)
+        formData.append('content', values.content)
+        formData.append('date', values.date.toISOString().split('T')[0])
+        formData.append('categories', JSON.stringify(values.categories))
+        if (values.priority) {
+          formData.append('priority', values.priority)
+        }
+
+        // 選択されたファイルを追加
+        selectedFiles.forEach((file) => {
+          formData.append('files', file)
+        })
+
+        await adminNewsFetch.createNewsWithFiles(formData)
+        setSuccess('お知らせを追加しました')
       }
 
       // 登録完了
       setCompleted(true)
 
-      // お知らせの更新を通知
-      notifyNewsUpdate()
+      // 成功時のコールバックを呼び出し
+      if (onSuccess) {
+        onSuccess()
+      }
     } catch (e: any) {
       console.error('News submission error:', e)
       setError(e.message || '通信エラーが発生しました')
@@ -136,7 +154,6 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose }) => {
 
   const handleCancel: React.MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault()
-    showNewsModal.set(false)
     onClose()
   }
 
@@ -146,7 +163,51 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose }) => {
     console.log(errors)
   }
 
-  if (!isModalVisible) return null
+  // ファイル選択ハンドラー
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(event.target.files || [])
+    if (files.length > 0) {
+      setSelectedFiles((prev) => [...prev, ...files])
+
+      // ファイル名をフォームに設定
+      const fileNames = files.map((file) => file.name)
+      const currentAttachments = watch('attachments') || []
+      setValue('attachments', [...currentAttachments, ...fileNames])
+    }
+  }
+
+  // ファイル削除ハンドラー
+  const removeFile = (fileName: string, index: number) => {
+    // 既存ファイルか新しいファイルかを判定
+    const existingFile = existingFiles.find((file) => file.originalName === fileName)
+    if (existingFile) {
+      // 既存ファイルの場合、削除リストに追加
+      setRemovedFiles((prev) => [...prev, existingFile.serverName])
+    } else {
+      // 新しいファイルの場合、selectedFilesから削除
+      const fileIndex = selectedFiles.findIndex((file) => file.name === fileName)
+      if (fileIndex !== -1) {
+        setSelectedFiles((prev) => prev.filter((_, i) => i !== fileIndex))
+      }
+    }
+
+    // フォームから削除
+    const currentAttachments = watch('attachments') || []
+    const updatedAttachments = currentAttachments.filter((_, i) => i !== index)
+    setValue('attachments', updatedAttachments)
+  }
+
+  // 現在のファイル一覧を取得（削除されたファイルを除外）
+  const getCurrentFiles = () => {
+    const currentAttachments = watch('attachments') || []
+    return currentAttachments.filter((file) => {
+      if (typeof file === 'string') {
+        return !removedFiles.includes(file)
+      } else {
+        return !removedFiles.includes(file.serverName)
+      }
+    })
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto bg-black/50">
@@ -171,7 +232,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose }) => {
             </button>
           </div>
           <h2 className="mb-3 text-3xl font-bold text-gray-900">
-            {newsId ? 'お知らせを編集' : 'お知らせを作成'}
+            {isEditMode ? 'お知らせを編集' : 'お知らせを作成'}
           </h2>
         </div>
         {/* コンテンツ */}
@@ -351,26 +412,114 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose }) => {
                 </div>
 
                 <div className="col-span-4">
-                  <label htmlFor="attachments" className="mb-1 block font-medium text-gray-900">
+                  <label className="mb-1 block font-medium text-gray-900">
                     添付ファイル(オプション)
                   </label>
-                  <input
-                    type="file"
-                    id="attachments"
-                    multiple
-                    className={`block w-full rounded-lg border ${
-                      errors.attachments ? 'border-red-500' : 'border-gray-300'
-                    } focus:border-primary-500 focus:ring-primary-500 bg-gray-50 p-2.5 text-gray-900`}
-                    accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif"
-                    onChange={(e) => {
-                      const files = Array.from(e.target.files || [])
-                      const fileNames = files.map((file) => file.name)
-                      setValue('attachments', fileNames)
-                    }}
-                  />
-                  <p className="mt-1 text-sm text-gray-500">
-                    対応形式: PDF, Word, Excel, 画像ファイル (JPG, PNG, GIF)
-                  </p>
+                  <div className="space-y-4">
+                    <div>
+                      <div className="flex w-full items-start">
+                        <label
+                          htmlFor="attachments"
+                          className="inline-flex cursor-pointer items-center rounded-lg bg-gray-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-700 focus:ring-2 focus:ring-gray-400 focus:outline-none"
+                        >
+                          <svg
+                            className="mr-2 h-4 w-4"
+                            aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 20 16"
+                          >
+                            <path
+                              stroke="currentColor"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                            ></path>
+                          </svg>
+                          ファイルを選択
+                          <input
+                            id="attachments"
+                            type="file"
+                            multiple
+                            className="hidden"
+                            accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif"
+                            onChange={handleFileSelect}
+                            disabled={completed}
+                          />
+                        </label>
+                      </div>
+                      <p className="mt-3 text-sm text-gray-500">
+                        対応形式: PDF, Word, Excel, 画像ファイル (JPG, PNG, GIF)
+                      </p>
+                      {/* 選択されたファイル名の表示 */}
+                      <Controller
+                        name="attachments"
+                        control={control}
+                        render={({ field: { value } }) => (
+                          <div>
+                            {getCurrentFiles().length > 0 && (
+                              <div className="mt-3">
+                                <p className="mb-2 text-sm font-medium text-gray-700">
+                                  選択されたファイル:
+                                </p>
+                                <div className="space-y-1">
+                                  {getCurrentFiles().map((file: any, index: number) => {
+                                    const fileName =
+                                      typeof file === 'string' ? file : file.originalName
+                                    return (
+                                      <div
+                                        key={index}
+                                        className="flex items-center justify-between rounded-md bg-gray-100 px-3 py-2"
+                                      >
+                                        <div className="flex items-center">
+                                          <svg
+                                            className="mr-2 h-4 w-4 text-gray-500"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                          >
+                                            <path
+                                              strokeLinecap="round"
+                                              strokeLinejoin="round"
+                                              strokeWidth="2"
+                                              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                            />
+                                          </svg>
+                                          <span className="text-sm text-gray-700">{fileName}</span>
+                                        </div>
+                                        <button
+                                          type="button"
+                                          onClick={() => removeFile(fileName, index)}
+                                          className="ml-2 rounded-full bg-red-500 p-1 text-white transition-colors hover:bg-red-600"
+                                          disabled={completed}
+                                          title="削除"
+                                        >
+                                          <svg
+                                            className="h-3 w-3"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                          >
+                                            <path
+                                              strokeLinecap="round"
+                                              strokeLinejoin="round"
+                                              strokeWidth="2"
+                                              d="M6 18L18 6M6 6l12 12"
+                                            />
+                                          </svg>
+                                        </button>
+                                      </div>
+                                    )
+                                  })}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      />
+                    </div>
+                  </div>
                   {errors.attachments && (
                     <p className="mt-1 text-sm text-red-600">
                       <span className="font-medium">{errors.attachments.message}</span>
@@ -384,7 +533,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose }) => {
             <div className="flex justify-end space-x-3 pt-4">
               {!completed && (
                 <Button type="submit" variant="primary" disabled={isSubmitting}>
-                  {newsId ? '更新する' : '追加する'}
+                  {isEditMode ? '更新する' : '追加する'}
                 </Button>
               )}
               {completed && (

@@ -1,5 +1,13 @@
 import { getConfig } from '@/types/config'
 
+interface NewsAttachment {
+  originalName: string
+  serverName: string
+  path: string
+  size: number
+  mimeType: string
+}
+
 interface News {
   id: number
   title: string
@@ -7,7 +15,7 @@ interface News {
   date: string
   categories?: string[] | null
   priority?: string | null
-  attachments?: string[] | null
+  attachments?: NewsAttachment[] | null
   author: string
   status: string
   creatorId: number
@@ -100,7 +108,7 @@ const newsFetch = {
     date: string
     categories: string[]
     priority?: string | null
-    attachments?: string[]
+    attachments?: NewsAttachment[]
   }): Promise<News> {
     try {
       const formData = new FormData()
@@ -142,7 +150,7 @@ const newsFetch = {
       date: string
       categories: string[]
       priority?: string | null
-      attachments?: string[]
+      attachments?: NewsAttachment[]
     }
   ): Promise<News> {
     try {
