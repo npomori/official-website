@@ -398,7 +398,7 @@ const NewsList: React.FC = () => {
                           {newsItem.attachments.map((file, index) => (
                             <a
                               key={index}
-                              href={`/api/news/download/${file.filename}`}
+                              href={`/api/news/download/${newsItem.id}/${file.filename}`}
                               className="inline-flex items-center rounded-lg bg-blue-50 px-3 py-1 text-base text-blue-700 transition-colors hover:bg-blue-100"
                               target="_blank"
                               rel="noopener noreferrer"

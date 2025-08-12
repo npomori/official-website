@@ -2,11 +2,16 @@ import type { NewsAttachment } from '@/types/news'
 import React from 'react'
 
 interface NewsAttachmentsProps {
+  newsId: number
   attachments: NewsAttachment[]
   className?: string
 }
 
-const NewsAttachments: React.FC<NewsAttachmentsProps> = ({ attachments, className = '' }) => {
+const NewsAttachments: React.FC<NewsAttachmentsProps> = ({
+  newsId,
+  attachments,
+  className = ''
+}) => {
   if (!attachments || attachments.length === 0) {
     return null
   }
@@ -28,7 +33,7 @@ const NewsAttachments: React.FC<NewsAttachmentsProps> = ({ attachments, classNam
 
   const handleDownload = async (attachment: NewsAttachment) => {
     try {
-      const response = await fetch(`/api/admin/news/download/${attachment.filename}`)
+      const response = await fetch(`/api/news/download/${newsId}/${attachment.filename}`)
 
       if (!response.ok) {
         throw new Error('ファイルのダウンロードに失敗しました')
