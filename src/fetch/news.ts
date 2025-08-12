@@ -1,5 +1,5 @@
 import { getConfig } from '@/types/config'
-import type { News, NewsAttachment } from '@/types/news'
+import type { News } from '@/types/news'
 
 interface NewsResponse {
   success: boolean
@@ -74,98 +74,6 @@ const newsFetch = {
     }
   },
 
-  // お知らせを作成
-  async createNews(newsData: {
-    title: string
-    content: string
-    date: string
-    categories: string[]
-    priority?: string | null
-    attachments?: NewsAttachment[]
-  }): Promise<News> {
-    try {
-      const formData = new FormData()
-      formData.append('title', newsData.title)
-      formData.append('content', newsData.content)
-      formData.append('date', newsData.date)
-      formData.append('categories', JSON.stringify(newsData.categories))
-      if (newsData.priority) {
-        formData.append('priority', newsData.priority)
-      }
-      if (newsData.attachments) {
-        formData.append('attachments', JSON.stringify(newsData.attachments))
-      }
-
-      const response = await fetch('/api/news', {
-        method: 'POST',
-        body: formData
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.error || 'お知らせの作成に失敗しました')
-      }
-
-      return data.data
-    } catch (error) {
-      console.error('News creation error:', error)
-      throw error
-    }
-  },
-
-  // お知らせを更新
-  async updateNews(
-    id: number,
-    newsData: {
-      title: string
-      content: string
-      date: string
-      categories: string[]
-      priority?: string | null
-      attachments?: NewsAttachment[]
-    }
-  ): Promise<News> {
-    try {
-      const response = await fetch(`/api/news/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(newsData)
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.error || 'お知らせの更新に失敗しました')
-      }
-
-      return data.data
-    } catch (error) {
-      console.error('News update error:', error)
-      throw error
-    }
-  },
-
-  // お知らせを削除
-  async deleteNews(id: number): Promise<void> {
-    try {
-      const response = await fetch(`/api/news/${id}`, {
-        method: 'DELETE'
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.error || 'お知らせの削除に失敗しました')
-      }
-    } catch (error) {
-      console.error('News deletion error:', error)
-      throw error
-    }
-  },
-
   // 最新のお知らせを取得
   async getLatestNews(limit: number = 5): Promise<News[]> {
     try {
@@ -173,7 +81,9 @@ const newsFetch = {
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || '最新のお知らせの取得に失敗しました')
+        const errorMessage =
+          typeof data?.error === 'string' ? data.error : '最新のお知らせの取得に失敗しました'
+        throw new Error(String(errorMessage))
       }
 
       return data.data.news
