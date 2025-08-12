@@ -184,10 +184,10 @@ const NewsList: React.FC = () => {
             <div className="flex flex-wrap gap-2">
               <button
                 onClick={handleResetFilter}
-                className={`rounded-full px-3 py-1 text-sm font-medium transition-colors ${
+                className={`cursor-pointer rounded-full px-3 py-1 text-sm font-medium transition-colors ${
                   selectedCategory === null && selectedPriority === null
                     ? 'bg-primary-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    : 'border border-gray-300 bg-transparent text-gray-700 hover:bg-gray-50'
                 }`}
               >
                 すべて
@@ -196,7 +196,7 @@ const NewsList: React.FC = () => {
                 <button
                   key={category.value}
                   onClick={() => handleCategoryClick(category.value)}
-                  className={`rounded-full px-3 py-1 text-sm font-medium transition-colors ${
+                  className={`cursor-pointer rounded-full px-3 py-1 text-sm font-medium transition-colors ${
                     selectedCategory === category.value ? 'text-white' : 'hover:opacity-80'
                   }`}
                   style={{
@@ -219,7 +219,7 @@ const NewsList: React.FC = () => {
                 <button
                   key={priority.value}
                   onClick={() => handlePriorityClick(priority.value)}
-                  className={`rounded px-3 py-1 text-sm font-medium transition-colors ${
+                  className={`cursor-pointer rounded px-3 py-1 text-sm font-medium transition-colors ${
                     selectedPriority === priority.value ? 'text-white' : 'hover:opacity-80'
                   }`}
                   style={{
@@ -242,10 +242,10 @@ const NewsList: React.FC = () => {
             {/* すべてボタン */}
             <button
               onClick={handleResetFilter}
-              className={`rounded-full px-3 py-1 text-sm font-medium transition-colors ${
+              className={`cursor-pointer rounded-full px-3 py-1 text-sm font-medium transition-colors ${
                 selectedCategory === null && selectedPriority === null
                   ? 'bg-primary-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  : 'border border-gray-300 bg-transparent text-gray-700 hover:bg-gray-50'
               }`}
             >
               すべて
@@ -256,7 +256,7 @@ const NewsList: React.FC = () => {
               <button
                 key={category.value}
                 onClick={() => handleCategoryClick(category.value)}
-                className={`rounded-full px-3 py-1 text-sm font-medium transition-colors ${
+                className={`cursor-pointer rounded-full px-3 py-1 text-sm font-medium transition-colors ${
                   selectedCategory === category.value ? 'text-white' : 'hover:opacity-80'
                 }`}
                 style={{
@@ -275,7 +275,7 @@ const NewsList: React.FC = () => {
               <button
                 key={priority.value}
                 onClick={() => handlePriorityClick(priority.value)}
-                className={`rounded px-3 py-1 text-sm font-medium transition-colors ${
+                className={`cursor-pointer rounded px-3 py-1 text-sm font-medium transition-colors ${
                   selectedPriority === priority.value ? 'text-white' : 'hover:opacity-80'
                 }`}
                 style={{
