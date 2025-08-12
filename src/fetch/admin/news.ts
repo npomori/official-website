@@ -1,3 +1,4 @@
+import config from '@/config/config.json'
 import { getConfig } from '@/types/config'
 import type { News, NewsAttachment } from '@/types/news'
 
@@ -43,7 +44,7 @@ class AdminNewsFetch {
         params.append('priority', priority)
       }
 
-      const response = await fetch(`/api/admin/news?${params.toString()}`)
+      const response = await fetch(`${config.api.adminUrl}/news?${params.toString()}`)
       const data = await response.json()
 
       if (!response.ok) {
@@ -60,7 +61,7 @@ class AdminNewsFetch {
   // 管理者用の個別のお知らせを取得
   async getNewsById(id: number): Promise<News> {
     try {
-      const response = await fetch(`/api/admin/news/${id}`)
+      const response = await fetch(`${config.api.adminUrl}/news/${id}`)
       const data = await response.json()
 
       if (!response.ok) {
@@ -77,7 +78,7 @@ class AdminNewsFetch {
   // 管理者用のお知らせを作成（ファイルアップロード対応）
   async createNewsWithFiles(formData: FormData): Promise<News> {
     try {
-      const response = await fetch('/api/admin/news', {
+      const response = await fetch(`${config.api.adminUrl}/news`, {
         method: 'POST',
         body: formData
       })
@@ -117,7 +118,7 @@ class AdminNewsFetch {
         formData.append('attachments', JSON.stringify(newsData.attachments))
       }
 
-      const response = await fetch('/api/admin/news', {
+      const response = await fetch(`${config.api.adminUrl}/news`, {
         method: 'POST',
         body: formData
       })
@@ -148,7 +149,7 @@ class AdminNewsFetch {
     }
   ): Promise<News> {
     try {
-      const response = await fetch(`/api/admin/news/${id}`, {
+      const response = await fetch(`${config.api.adminUrl}/news/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -172,7 +173,7 @@ class AdminNewsFetch {
   // 管理者用のお知らせを削除
   async deleteNews(id: number): Promise<void> {
     try {
-      const response = await fetch(`/api/admin/news/${id}`, {
+      const response = await fetch(`${config.api.adminUrl}/news/${id}`, {
         method: 'DELETE'
       })
 

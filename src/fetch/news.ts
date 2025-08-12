@@ -1,3 +1,4 @@
+import config from '@/config/config.json'
 import { getConfig } from '@/types/config'
 import type { News } from '@/types/news'
 
@@ -43,7 +44,7 @@ class NewsFetch {
         params.append('priority', priority)
       }
 
-      const response = await fetch(`/api/news?${params.toString()}`)
+      const response = await fetch(`${config.api.rootUrl}/news?${params.toString()}`)
       const data = await response.json()
 
       if (!response.ok) {
@@ -60,7 +61,7 @@ class NewsFetch {
   // 個別のお知らせを取得
   async getNewsById(id: number): Promise<News> {
     try {
-      const response = await fetch(`/api/news/${id}`)
+      const response = await fetch(`${config.api.rootUrl}/news/${id}`)
       const data = await response.json()
 
       if (!response.ok) {
@@ -77,7 +78,7 @@ class NewsFetch {
   // 最新のお知らせを取得
   async getLatestNews(limit: number = 5): Promise<News[]> {
     try {
-      const response = await fetch(`/api/news?limit=${limit}`)
+      const response = await fetch(`${config.api.rootUrl}/news?limit=${limit}`)
       const data = await response.json()
 
       if (!response.ok) {
