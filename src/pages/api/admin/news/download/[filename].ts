@@ -18,7 +18,7 @@ export const GET: APIRoute = async ({ params }) => {
     }
 
     // データベースから添付ファイル情報を取得
-    const attachment = await NewsDB.getAttachmentByServerName(filename)
+    const attachment = await NewsDB.getAttachmentByFilename(filename)
 
     // 添付ファイル情報が見つからない場合、ファイル名をそのまま使用（旧形式のデータ対応）
     let originalFileName = filename

@@ -4,10 +4,7 @@ import { join } from 'path'
 
 interface UploadedFile {
   originalName: string
-  serverName: string
-  path: string
-  size: number
-  mimeType: string
+  filename: string
 }
 
 export class FileUploader {
@@ -47,10 +44,7 @@ export class FileUploader {
 
       return {
         originalName: file.name,
-        serverName: serverFileName,
-        path: join(subDirectory || '', serverFileName),
-        size: file.size,
-        mimeType: file.type
+        filename: serverFileName
       }
     } catch (error) {
       console.error('File upload error:', error)
@@ -91,7 +85,7 @@ export class FileUploader {
   /**
    * ファイルタイプを検証
    */
-  validateFileType(file: any, allowedTypes: string[]): boolean {
+  validateFileType(file: { type: string }, allowedTypes: string[]): boolean {
     return allowedTypes.includes(file.type)
   }
 

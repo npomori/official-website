@@ -58,8 +58,7 @@ export const GET: APIRoute = async ({ params, locals }) => {
       )
     }
 
-    const recordDB = new RecordDB()
-    const record = await recordDB.getRecordById(recordId)
+    const record = await RecordDB.getRecordById(recordId)
 
     if (!record) {
       return new Response(
@@ -141,8 +140,7 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
     }
 
     // 既存の記録を取得
-    const recordDB = new RecordDB()
-    const existingRecord = await recordDB.getRecordById(recordId)
+    const existingRecord = await RecordDB.getRecordById(recordId)
 
     if (!existingRecord) {
       return new Response(
@@ -429,8 +427,7 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
     }
 
     // 既存の記録を取得
-    const recordDB = new RecordDB()
-    const existingRecord = await recordDB.getRecordById(recordId)
+    const existingRecord = await RecordDB.getRecordById(recordId)
 
     if (!existingRecord) {
       return new Response(

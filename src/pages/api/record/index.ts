@@ -15,8 +15,7 @@ export const GET: APIRoute = async ({ url }) => {
     const itemsPerPage = limit > 0 ? limit : defaultLimit
 
     // RecordDBを使用してフロントエンド用の記録を取得（ページネーション対応）
-    const recordDB = new RecordDB()
-    const { records, totalCount } = await recordDB.getRecordsForFrontendWithPagination(
+    const { records, totalCount } = await RecordDB.getRecordsForFrontendWithPagination(
       page,
       itemsPerPage,
       category

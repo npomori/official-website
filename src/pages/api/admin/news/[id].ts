@@ -77,10 +77,8 @@ export const PUT: APIRoute = async ({ params, request }) => {
       })
     }
 
-    const newsDB = new NewsDB()
-
     // お知らせが存在するか確認
-    const existingNews = await newsDB.getNewsById(id)
+    const existingNews = await NewsDB.getNewsById(id)
 
     if (!existingNews) {
       return new Response(JSON.stringify({ success: false, error: 'お知らせが見つかりません' }), {
@@ -104,7 +102,7 @@ export const PUT: APIRoute = async ({ params, request }) => {
       updateData.priority = priority
     }
 
-    const updatedNews = await newsDB.updateNews(id, updateData)
+    const updatedNews = await NewsDB.updateNews(id, updateData)
 
     if (!updatedNews) {
       return new Response(
@@ -157,10 +155,8 @@ export const DELETE: APIRoute = async ({ params }) => {
       })
     }
 
-    const newsDB = new NewsDB()
-
     // お知らせが存在するか確認
-    const existingNews = await newsDB.getNewsById(id)
+    const existingNews = await NewsDB.getNewsById(id)
 
     if (!existingNews) {
       return new Response(JSON.stringify({ success: false, error: 'お知らせが見つかりません' }), {
@@ -172,7 +168,7 @@ export const DELETE: APIRoute = async ({ params }) => {
     }
 
     // お知らせを削除
-    const success = await newsDB.deleteNews(id)
+    const success = await NewsDB.deleteNews(id)
 
     if (!success) {
       return new Response(

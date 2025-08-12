@@ -349,4 +349,4 @@ class RecordDB extends BaseDB {
   }
 }
 
-export default RecordDB
+export default new RecordDB()

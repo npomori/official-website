@@ -161,9 +161,6 @@ export const POST: APIRoute = async ({ request, locals }) => {
       }
     }
 
-    // NewsDBインスタンスを作成
-    const newsDB = new NewsDB()
-
     // お知らせを作成
     const newsData: any = {
       title,
@@ -180,7 +177,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       newsData.priority = priority
     }
 
-    const news = await newsDB.createNews(newsData)
+    const news = await NewsDB.createNews(newsData)
 
     return new Response(
       JSON.stringify({

@@ -1,9 +1,6 @@
 export interface NewsAttachment {
   originalName: string
-  serverName: string
-  path: string
-  size: number
-  mimeType: string
+  filename: string
 }
 
 export interface News {

@@ -198,7 +198,17 @@ class NewsDB extends BaseDB {
       // 添付ファイルがあれば削除
       if (news?.attachments && Array.isArray(news.attachments)) {
         const { newsFileUploader } = await import('@/server/utils/file-upload')
-        const filenames = news.attachments.map((attachment: any) => attachment.serverName)
+        const filenames: string[] = []
+        for (const att of news.attachments) {
+          if (
+            att &&
+            typeof att === 'object' &&
+            'filename' in att &&
+            typeof att.filename === 'string'
+          ) {
+            filenames.push(att.filename)
+          }
+        }
         await newsFileUploader.deleteFiles(filenames)
       }
 
@@ -228,14 +238,26 @@ class NewsDB extends BaseDB {
       if (!news) return null
 
       // データベースから取得したデータを正しい型に変換
+      const convertedAttachments: NewsAttachment[] | null =
+        news.attachments && Array.isArray(news.attachments)
+          ? news.attachments
+              .filter(
+                (att) =>
+                  typeof att === 'object' &&
+                  att !== null &&
+                  'originalName' in att &&
+                  'filename' in att
+              )
+              .map((att) => ({
+                originalName: (att as any).originalName,
+                filename: (att as any).filename
+              }))
+          : null
+
       return {
         ...news,
-        attachments: news.attachments
-          ? Array.isArray(news.attachments)
-            ? news.attachments
-            : []
-          : null
-      }
+        attachments: convertedAttachments
+      } as News
     } catch (err) {
       console.error(err)
       return null
@@ -281,8 +303,8 @@ class NewsDB extends BaseDB {
     }
   }
 
-  // サーバー名から添付ファイル情報を取得
-  async getAttachmentByServerName(serverName: string): Promise<NewsAttachment | null> {
+  // ファイル名から添付ファイル情報を取得
+  async getAttachmentByFilename(filename: string): Promise<NewsAttachment | null> {
     try {
       const news = await BaseDB.prisma.news.findMany({
         select: { attachments: true }
@@ -290,28 +312,19 @@ class NewsDB extends BaseDB {
 
       for (const item of news) {
         if (item.attachments && Array.isArray(item.attachments)) {
-          const attachment = item.attachments.find((att: any) => {
-            if (typeof att === 'object' && att !== null && 'serverName' in att) {
-              return att.serverName === serverName
+          const attachment = item.attachments.find((att: unknown) => {
+            if (typeof att === 'object' && att !== null && 'filename' in att) {
+              return (att as { filename: string }).filename === filename
             }
             return false
           })
           if (attachment && typeof attachment === 'object' && attachment !== null) {
             // 型安全性を確保
-            const typedAttachment = attachment as any
-            if (
-              typedAttachment.originalName &&
-              typedAttachment.serverName &&
-              typedAttachment.path &&
-              typeof typedAttachment.size === 'number' &&
-              typedAttachment.mimeType
-            ) {
+            const typedAttachment = attachment as { originalName?: string; filename?: string }
+            if (typedAttachment.originalName && typedAttachment.filename) {
               return {
                 originalName: typedAttachment.originalName,
-                serverName: typedAttachment.serverName,
-                path: typedAttachment.path,
-                size: typedAttachment.size,
-                mimeType: typedAttachment.mimeType
+                filename: typedAttachment.filename
               } as NewsAttachment
             }
           }

@@ -35,9 +35,8 @@ export const GET: APIRoute = async ({ url, locals }) => {
     const itemsPerPage = limit > 0 ? limit : defaultLimit
 
     // RecordDBを使用して管理画面用の記録を取得（ページネーション対応）
-    const recordDB = new RecordDB()
     const { records: paginatedRecords, totalCount } =
-      await recordDB.getRecordsForAdminWithPagination(page, itemsPerPage)
+      await RecordDB.getRecordsForAdminWithPagination(page, itemsPerPage)
 
     // ページネーション情報を計算
     const totalPages = Math.ceil(totalCount / itemsPerPage)
@@ -252,8 +251,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     }
 
     // データベースに記録を保存
-    const recordDB = new RecordDB()
-    const record = await recordDB.createRecord({
+    const record = await RecordDB.createRecord({
       location: validationResult.data.location,
       datetime: validationResult.data.datetime,
       eventDate: eventDate,

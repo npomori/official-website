@@ -11,22 +11,15 @@ const NewsAttachments: React.FC<NewsAttachmentsProps> = ({ attachments, classNam
     return null
   }
 
-  const formatFileSize = (bytes: number): string => {
-    if (bytes === 0) return '0 Bytes'
-    const k = 1024
-    const sizes = ['Bytes', 'KB', 'MB', 'GB']
-    const i = Math.floor(Math.log(bytes) / Math.log(k))
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
-  }
-
-  const getFileIcon = (mimeType: string): string => {
-    if (mimeType.includes('pdf')) {
+  const getFileIcon = (filename: string): string => {
+    const ext = filename.toLowerCase().split('.').pop()
+    if (ext === 'pdf') {
       return '📄'
-    } else if (mimeType.includes('word') || mimeType.includes('document')) {
+    } else if (['doc', 'docx'].includes(ext || '')) {
       return '📝'
-    } else if (mimeType.includes('excel') || mimeType.includes('spreadsheet')) {
+    } else if (['xls', 'xlsx'].includes(ext || '')) {
       return '📊'
-    } else if (mimeType.includes('image')) {
+    } else if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext || '')) {
       return '🖼️'
     } else {
       return '📎'
@@ -35,7 +28,7 @@ const NewsAttachments: React.FC<NewsAttachmentsProps> = ({ attachments, classNam
 
   const handleDownload = async (attachment: NewsAttachment) => {
     try {
-      const response = await fetch(`/api/admin/news/download/${attachment.serverName}`)
+      const response = await fetch(`/api/admin/news/download/${attachment.filename}`)
 
       if (!response.ok) {
         throw new Error('ファイルのダウンロードに失敗しました')
@@ -67,10 +60,9 @@ const NewsAttachments: React.FC<NewsAttachmentsProps> = ({ attachments, classNam
             className="flex items-center justify-between rounded-lg bg-gray-50 p-2 transition-colors hover:bg-gray-100"
           >
             <div className="flex items-center space-x-2">
-              <span className="text-lg">{getFileIcon(attachment.mimeType)}</span>
+              <span className="text-lg">{getFileIcon(attachment.originalName)}</span>
               <div>
                 <p className="text-sm font-medium text-gray-900">{attachment.originalName}</p>
-                <p className="text-xs text-gray-500">{formatFileSize(attachment.size)}</p>
               </div>
             </div>
             <button
