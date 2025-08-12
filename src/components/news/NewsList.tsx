@@ -1,13 +1,12 @@
 import Button from '@/components/base/Button'
 import Pagination from '@/components/base/Pagination'
-import NewsModalLink from '@/components/news/NewsModalLink'
 import newsCategories from '@/config/news-category.json'
 import newsPriority from '@/config/news-priority.json'
 import newsFetch from '@/fetch/news'
 import useSWR from '@/hooks/swr'
 import { userStore } from '@/store/user'
 import { getConfig } from '@/types/config'
-import type { News, NewsAttachment } from '@/types/news'
+import type { News } from '@/types/news'
 import type { UserAuth } from '@/types/user'
 import { useStore } from '@nanostores/react'
 import React, { useState } from 'react'
@@ -399,7 +398,7 @@ const NewsList: React.FC = () => {
                           {newsItem.attachments.map((file, index) => (
                             <a
                               key={index}
-                              href={`/api/admin/news/download/${file.serverName}`}
+                              href={`/api/news/download/${file.filename}`}
                               className="inline-flex items-center rounded-lg bg-blue-50 px-3 py-1 text-base text-blue-700 transition-colors hover:bg-blue-100"
                               target="_blank"
                               rel="noopener noreferrer"

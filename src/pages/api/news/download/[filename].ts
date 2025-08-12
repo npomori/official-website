@@ -88,6 +88,14 @@ function getMimeType(filename: string): string {
       return 'image/png'
     case 'gif':
       return 'image/gif'
+    case 'txt':
+      return 'text/plain'
+    case 'csv':
+      return 'text/csv'
+    case 'zip':
+      return 'application/zip'
+    case 'rar':
+      return 'application/x-rar-compressed'
     default:
       return 'application/octet-stream'
   }

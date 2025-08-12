@@ -1,4 +1,5 @@
 import type { CreateNewsData, News, NewsAttachment, UpdateNewsData } from '@/types/news'
+import type { Prisma } from '@prisma/client'
 import BaseDB from './base'
 
 class NewsDB extends BaseDB {
@@ -34,15 +35,31 @@ class NewsDB extends BaseDB {
         }
       })
 
-      // データベースから取得したデータを正しい型に変換
-      const convertedNews = news.map((item) => ({
-        ...item,
-        attachments: item.attachments
-          ? Array.isArray(item.attachments)
-            ? item.attachments
-            : []
+      // データベースから取得したデータを正しい型に変換（オブジェクト形式のみ）
+      const convertedNews = news.map((item) => {
+        const attachments: NewsAttachment[] | null = Array.isArray(item.attachments)
+          ? (item.attachments as unknown[])
+              .filter(
+                (att) =>
+                  typeof att === 'object' &&
+                  att !== null &&
+                  'originalName' in (att as any) &&
+                  'filename' in (att as any)
+              )
+              .map((att) => ({
+                originalName: String((att as any).originalName),
+                filename: String((att as any).filename)
+              }))
           : null
-      }))
+        const categories: string[] | null = Array.isArray(item.categories)
+          ? (item.categories as unknown[]).map((v) => String(v))
+          : null
+        return {
+          ...item,
+          attachments,
+          categories
+        } as unknown as News
+      })
 
       return { news: convertedNews, totalCount }
     } catch (err) {
@@ -107,15 +124,31 @@ class NewsDB extends BaseDB {
       const endIndex = startIndex + itemsPerPage
       const paginatedNews = filteredNews.slice(startIndex, endIndex)
 
-      // データベースから取得したデータを正しい型に変換
-      const convertedNews = paginatedNews.map((item) => ({
-        ...item,
-        attachments: item.attachments
-          ? Array.isArray(item.attachments)
-            ? item.attachments
-            : []
+      // データベースから取得したデータを正しい型に変換（オブジェクト形式のみ）
+      const convertedNews = paginatedNews.map((item) => {
+        const attachments: NewsAttachment[] | null = Array.isArray(item.attachments)
+          ? (item.attachments as unknown[])
+              .filter(
+                (att) =>
+                  typeof att === 'object' &&
+                  att !== null &&
+                  'originalName' in (att as any) &&
+                  'filename' in (att as any)
+              )
+              .map((att) => ({
+                originalName: String((att as any).originalName),
+                filename: String((att as any).filename)
+              }))
           : null
-      }))
+        const categories: string[] | null = Array.isArray(item.categories)
+          ? (item.categories as unknown[]).map((v) => String(v))
+          : null
+        return {
+          ...item,
+          attachments,
+          categories
+        } as unknown as News
+      })
 
       return { news: convertedNews, totalCount }
     } catch (err) {
@@ -126,16 +159,16 @@ class NewsDB extends BaseDB {
 
   // お知らせを作成
   async createNews(data: CreateNewsData): Promise<News> {
-    return await BaseDB.prisma.news.create({
+    const created = await BaseDB.prisma.news.create({
       data: {
         title: data.title,
         content: data.content,
         date: data.date,
-        categories: data.categories || [],
-        priority: data.priority || null,
-        attachments: data.attachments || [],
+        categories: (data.categories ?? []) as unknown as Prisma.InputJsonValue,
+        priority: data.priority ?? null,
+        attachments: (data.attachments ?? []) as unknown as Prisma.InputJsonValue,
         author: data.author,
-        status: data.status || 'published',
+        status: data.status ?? 'published',
         creatorId: data.creatorId
       },
       include: {
@@ -148,20 +181,40 @@ class NewsDB extends BaseDB {
         }
       }
     })
+
+    const attachments: NewsAttachment[] | null = Array.isArray(created.attachments)
+      ? (created.attachments as unknown[])
+          .filter(
+            (att) =>
+              typeof att === 'object' &&
+              att !== null &&
+              'originalName' in (att as any) &&
+              'filename' in (att as any)
+          )
+          .map((att) => ({
+            originalName: String((att as any).originalName),
+            filename: String((att as any).filename)
+          }))
+      : null
+    const categories: string[] | null = Array.isArray(created.categories)
+      ? (created.categories as unknown[]).map((v) => String(v))
+      : null
+
+    return { ...(created as any), attachments, categories } as News
   }
 
   // お知らせを更新
   async updateNews(id: number, data: UpdateNewsData): Promise<News | null> {
     try {
-      return await BaseDB.prisma.news.update({
+      const updated = await BaseDB.prisma.news.update({
         where: { id },
         data: {
           title: data.title,
           content: data.content,
           date: data.date,
-          categories: data.categories,
+          categories: (data.categories ?? null) as unknown as Prisma.InputJsonValue,
           priority: data.priority,
-          attachments: data.attachments,
+          attachments: (data.attachments ?? null) as unknown as Prisma.InputJsonValue,
           author: data.author,
           status: data.status
         },
@@ -175,6 +228,26 @@ class NewsDB extends BaseDB {
           }
         }
       })
+
+      const attachments: NewsAttachment[] | null = Array.isArray(updated.attachments)
+        ? (updated.attachments as unknown[])
+            .filter(
+              (att) =>
+                typeof att === 'object' &&
+                att !== null &&
+                'originalName' in (att as any) &&
+                'filename' in (att as any)
+            )
+            .map((att) => ({
+              originalName: String((att as any).originalName),
+              filename: String((att as any).filename)
+            }))
+        : null
+      const categories: string[] | null = Array.isArray(updated.categories)
+        ? (updated.categories as unknown[]).map((v) => String(v))
+        : null
+
+      return { ...(updated as any), attachments, categories } as News
     } catch (err) {
       console.error(err)
       return null
@@ -237,26 +310,29 @@ class NewsDB extends BaseDB {
 
       if (!news) return null
 
-      // データベースから取得したデータを正しい型に変換
-      const convertedAttachments: NewsAttachment[] | null =
-        news.attachments && Array.isArray(news.attachments)
-          ? news.attachments
-              .filter(
-                (att) =>
-                  typeof att === 'object' &&
-                  att !== null &&
-                  'originalName' in att &&
-                  'filename' in att
-              )
-              .map((att) => ({
-                originalName: (att as any).originalName,
-                filename: (att as any).filename
-              }))
-          : null
+      // データベースから取得したデータを正しい型に変換（オブジェクト形式のみ）
+      const convertedAttachments: NewsAttachment[] | null = Array.isArray(news.attachments)
+        ? (news.attachments as unknown[])
+            .filter(
+              (att) =>
+                typeof att === 'object' &&
+                att !== null &&
+                'originalName' in (att as any) &&
+                'filename' in (att as any)
+            )
+            .map((att) => ({
+              originalName: String((att as any).originalName),
+              filename: String((att as any).filename)
+            }))
+        : null
+      const categories: string[] | null = Array.isArray(news.categories)
+        ? (news.categories as unknown[]).map((v) => String(v))
+        : null
 
       return {
-        ...news,
-        attachments: convertedAttachments
+        ...(news as any),
+        attachments: convertedAttachments,
+        categories
       } as News
     } catch (err) {
       console.error(err)
@@ -288,15 +364,27 @@ class NewsDB extends BaseDB {
         }
       })
 
-      // データベースから取得したデータを正しい型に変換
-      return news.map((item) => ({
-        ...item,
-        attachments: item.attachments
-          ? Array.isArray(item.attachments)
-            ? item.attachments
-            : []
+      // データベースから取得したデータを正しい型に変換（オブジェクト形式のみ）
+      return news.map((item) => {
+        const attachments: NewsAttachment[] | null = Array.isArray(item.attachments)
+          ? (item.attachments as unknown[])
+              .filter(
+                (att) =>
+                  typeof att === 'object' &&
+                  att !== null &&
+                  'originalName' in (att as any) &&
+                  'filename' in (att as any)
+              )
+              .map((att) => ({
+                originalName: String((att as any).originalName),
+                filename: String((att as any).filename)
+              }))
           : null
-      }))
+        const categories: string[] | null = Array.isArray(item.categories)
+          ? (item.categories as unknown[]).map((v) => String(v))
+          : null
+        return { ...(item as any), attachments, categories } as News
+      })
     } catch (err) {
       console.error(err)
       return []
@@ -319,7 +407,6 @@ class NewsDB extends BaseDB {
             return false
           })
           if (attachment && typeof attachment === 'object' && attachment !== null) {
-            // 型安全性を確保
             const typedAttachment = attachment as { originalName?: string; filename?: string }
             if (typedAttachment.originalName && typedAttachment.filename) {
               return {
