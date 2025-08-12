@@ -402,6 +402,7 @@ const NewsList: React.FC = () => {
                               className="inline-flex items-center rounded-lg bg-blue-50 px-3 py-1 text-base text-blue-700 transition-colors hover:bg-blue-100"
                               target="_blank"
                               rel="noopener noreferrer"
+                              download={file.originalName}
                             >
                               <i className="fas fa-file-alt mr-2"></i>
                               {file.originalName}
