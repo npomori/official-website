@@ -99,6 +99,7 @@ model News {
   categories  Json?    // カテゴリ（募集、保険、イベント、定例活動、講習、会報、事務局、会員向け、一般向けなど、JSON配列として保存）
   priority    String?  // 優先度（重要、至急、要確認など）
   attachments Json?    // 添付ファイル（JSON配列として保存）
+  downloadStats Json?  // ファイルごとのダウンロード統計（JSON形式で保存）
   author      String   // 作成者
   status      String   @default("published") // 状態（draft: 下書き、published: 公開、scheduled: 予約投稿、archived: アーカイブ）
   creatorId   Int      // お知らせ作成者
