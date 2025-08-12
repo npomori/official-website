@@ -2,7 +2,8 @@ import Button from '@/components/base/Button'
 import Pagination from '@/components/base/Pagination'
 import newsCategories from '@/config/news-category.json'
 import newsPriority from '@/config/news-priority.json'
-import newsFetch from '@/fetch/news'
+import AdminNewsFetch from '@/fetch/admin/news'
+import NewsFetch from '@/fetch/news'
 import useSWR from '@/hooks/swr'
 import { userStore } from '@/store/user'
 import { getConfig } from '@/types/config'
@@ -28,7 +29,7 @@ const NewsList: React.FC = () => {
   const { data, error, isLoading, mutate } = useSWR(
     `news-${currentPage}-${itemsPerPage}-${selectedCategory || 'all'}-${selectedPriority || 'all'}`,
     () =>
-      newsFetch.getNews(
+      NewsFetch.getNews(
         currentPage,
         itemsPerPage,
         selectedCategory || undefined,
@@ -119,7 +120,7 @@ const NewsList: React.FC = () => {
 
     setIsDeleting(newsId)
     try {
-      await newsFetch.deleteNews(newsId)
+      await AdminNewsFetch.deleteNews(newsId)
       await mutate() // データを再取得
     } catch (error) {
       console.error('削除エラー:', error)

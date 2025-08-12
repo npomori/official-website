@@ -17,7 +17,7 @@ interface NewsResponse {
   error?: string
 }
 
-const newsFetch = {
+class NewsFetch {
   // お知らせ一覧を取得
   async getNews(
     page: number = 1,
@@ -55,7 +55,7 @@ const newsFetch = {
       console.error('News fetch error:', error)
       throw error
     }
-  },
+  }
 
   // 個別のお知らせを取得
   async getNewsById(id: number): Promise<News> {
@@ -72,7 +72,7 @@ const newsFetch = {
       console.error('News fetch error:', error)
       throw error
     }
-  },
+  }
 
   // 最新のお知らせを取得
   async getLatestNews(limit: number = 5): Promise<News[]> {
@@ -94,4 +94,4 @@ const newsFetch = {
   }
 }
 
-export default newsFetch
+export default new NewsFetch()

@@ -1,5 +1,5 @@
 import newsPriority from '@/config/news-priority.json'
-import newsFetch from '@/fetch/news'
+import NewsFetch from '@/fetch/news'
 import useSWR from '@/hooks/swr'
 import { getConfig } from '@/types/config'
 import type { News, NewsAttachment } from '@/types/news'
@@ -15,7 +15,7 @@ const NewsSection: React.FC = () => {
     data: latestNews,
     error,
     isLoading
-  } = useSWR(`latest-news-${itemsPerPage}`, () => newsFetch.getLatestNews(itemsPerPage))
+  } = useSWR(`latest-news-${itemsPerPage}`, () => NewsFetch.getLatestNews(itemsPerPage))
 
   // 日付をフォーマットする関数
   const formatDate = (dateString: string): string => {

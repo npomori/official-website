@@ -4,7 +4,7 @@ import DateRangePicker from '@/components/DateRangePicker'
 import NewsCategoryDropdown from '@/components/news/NewsCategoryDropdown'
 import NewsPriorityDropdown from '@/components/news/NewsPriorityDropdown'
 import config from '@/config/config.json'
-import adminNewsFetch from '@/fetch/admin/news'
+import AdminNewsFetch from '@/fetch/admin/news'
 import type { NewsAttachment } from '@/types/news'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect, useState } from 'react'
@@ -107,7 +107,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
     try {
       if (isEditMode && news) {
         // お知らせの更新の場合
-        await adminNewsFetch.updateNews(news.id, {
+        await AdminNewsFetch.updateNews(news.id, {
           title: values.title,
           content: values.content,
           date: values.date.toISOString().split('T')[0],
@@ -132,7 +132,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
           formData.append('files', file)
         })
 
-        await adminNewsFetch.createNewsWithFiles(formData)
+        await AdminNewsFetch.createNewsWithFiles(formData)
         setSuccess('お知らせを追加しました')
       }
 

@@ -17,7 +17,7 @@ interface NewsResponse {
   error?: string
 }
 
-const adminNewsFetch = {
+class AdminNewsFetch {
   // 管理者用のお知らせ一覧を取得
   async getNews(
     page: number = 1,
@@ -55,7 +55,7 @@ const adminNewsFetch = {
       console.error('Admin news fetch error:', error)
       throw error
     }
-  },
+  }
 
   // 管理者用の個別のお知らせを取得
   async getNewsById(id: number): Promise<News> {
@@ -72,7 +72,7 @@ const adminNewsFetch = {
       console.error('Admin news fetch error:', error)
       throw error
     }
-  },
+  }
 
   // 管理者用のお知らせを作成（ファイルアップロード対応）
   async createNewsWithFiles(formData: FormData): Promise<News> {
@@ -93,7 +93,7 @@ const adminNewsFetch = {
       console.error('Admin news creation error:', error)
       throw error
     }
-  },
+  }
 
   // 管理者用のお知らせを作成（従来の方法）
   async createNews(newsData: {
@@ -133,7 +133,7 @@ const adminNewsFetch = {
       console.error('Admin news creation error:', error)
       throw error
     }
-  },
+  }
 
   // 管理者用のお知らせを更新
   async updateNews(
@@ -167,7 +167,7 @@ const adminNewsFetch = {
       console.error('Admin news update error:', error)
       throw error
     }
-  },
+  }
 
   // 管理者用のお知らせを削除
   async deleteNews(id: number): Promise<void> {
@@ -188,4 +188,4 @@ const adminNewsFetch = {
   }
 }
 
-export default adminNewsFetch
+export default new AdminNewsFetch()
