@@ -5,29 +5,16 @@ import NewsCategoryDropdown from '@/components/news/NewsCategoryDropdown'
 import NewsPriorityDropdown from '@/components/news/NewsPriorityDropdown'
 import config from '@/config/config.json'
 import AdminNewsFetch from '@/fetch/admin/news'
+import { newsCreateSchema, type NewsCreate } from '@/schemas/news'
 import type { NewsAttachment } from '@/types/news'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect, useState } from 'react'
 import { Controller, useForm, type FieldErrors } from 'react-hook-form'
-import { z } from 'zod'
-
-// フィールドのスキーマを定義
-const schema = z.object({
-  title: z.string().trim().min(1, { message: 'タイトルは必須です' }),
-  content: z.string().trim().min(1, { message: '内容は必須です' }),
-  date: z.date({ message: '日付は必須です' }),
-  categories: z.array(z.string()).min(1, { message: 'カテゴリーは必須です' }),
-  priority: z.string().nullable(),
-  attachments: z.array(z.any()).optional()
-})
-
-// フォームの入力値の型を上述のスキーマから作成
-type FormValues = z.infer<typeof schema>
 
 interface NewsModalProps {
   onClose: () => void
   onSuccess?: () => void
-  news?: any // 編集時の既存データ
+  news?: NewsCreate & { id?: string } // 編集時の既存データ
   isEditMode?: boolean
 }
 
@@ -50,8 +37,8 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
     handleSubmit,
     setValue,
     formState: { errors, isSubmitting }
-  } = useForm<FormValues>({
-    resolver: zodResolver(schema),
+  } = useForm<NewsCreate>({
+    resolver: zodResolver(newsCreateSchema),
     defaultValues: {
       title: '',
       content: '',
@@ -84,7 +71,15 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
 
       // 既存ファイルを設定
       if (news.attachments && news.attachments.length > 0) {
-        setExistingFiles(news.attachments)
+        // NewsAttachment型のみを設定
+        const validAttachments = news.attachments.filter(
+          (attachment): attachment is NewsAttachment =>
+            typeof attachment === 'object' &&
+            attachment !== null &&
+            'originalName' in attachment &&
+            'filename' in attachment
+        )
+        setExistingFiles(validAttachments)
       }
     } else {
       // フォームをリセット
@@ -99,21 +94,27 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
     }
   }, [reset, isEditMode, news])
 
-  const onSubmit = async (values: any) => {
+  const onSubmit = async (values: NewsCreate) => {
     // メッセージリセット
     setSuccess('')
     setError('')
 
     try {
-      if (isEditMode && news) {
+      if (!values.date) {
+        setError('日付が設定されていません')
+        return
+      }
+
+      const dateString = values.date!.toISOString().split('T')[0]
+
+      if (isEditMode && news?.id) {
         // お知らせの更新の場合
-        await AdminNewsFetch.updateNews(news.id, {
+        await AdminNewsFetch.updateNews(parseInt(news.id), {
           title: values.title,
           content: values.content,
-          date: values.date.toISOString().split('T')[0],
+          date: dateString as string,
           categories: values.categories,
-          priority: values.priority,
-          attachments: values.attachments || []
+          priority: values.priority
         })
         setSuccess('お知らせを更新しました')
       } else {
@@ -121,7 +122,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
         const formData = new FormData()
         formData.append('title', values.title)
         formData.append('content', values.content)
-        formData.append('date', values.date.toISOString().split('T')[0])
+        formData.append('date', dateString as string)
         formData.append('categories', JSON.stringify(values.categories))
         if (values.priority) {
           formData.append('priority', values.priority)
@@ -143,9 +144,10 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
       if (onSuccess) {
         onSuccess()
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error('News submission error:', e)
-      setError(e.message || '通信エラーが発生しました')
+      const errorMessage = e instanceof Error ? e.message : '通信エラーが発生しました'
+      setError(errorMessage)
     }
   }
 
@@ -154,7 +156,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
     onClose()
   }
 
-  const onInvalid = (errors: FieldErrors<FormValues>) => {
+  const onInvalid = (errors: FieldErrors<NewsCreate>) => {
     // デバッグ用
     console.log('バリデーションエラー発生')
     console.log(errors)
@@ -200,7 +202,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
     const existingFile = existingFiles.find((file) => file.originalName === fileName)
     if (existingFile) {
       // 既存ファイルの場合、削除リストに追加
-      setRemovedFiles((prev) => [...prev, existingFile.serverName])
+      setRemovedFiles((prev) => [...prev, existingFile.filename])
     } else {
       // 新しいファイルの場合、selectedFilesから削除
       const fileIndex = selectedFiles.findIndex((file) => file.name === fileName)
@@ -211,7 +213,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
 
     // フォームから削除
     const currentAttachments = watch('attachments') || []
-    const updatedAttachments = currentAttachments.filter((_, i) => i !== index)
+    const updatedAttachments = currentAttachments.filter((_, i: number) => i !== index)
     setValue('attachments', updatedAttachments)
   }
 
@@ -221,9 +223,10 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
     return currentAttachments.filter((file) => {
       if (typeof file === 'string') {
         return !removedFiles.includes(file)
-      } else {
-        return !removedFiles.includes(file.serverName)
+      } else if (file && typeof file === 'object' && 'filename' in file) {
+        return !removedFiles.includes(file.filename)
       }
+      return true
     })
   }
 
@@ -494,7 +497,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
                       <Controller
                         name="attachments"
                         control={control}
-                        render={({ field: { value } }) => (
+                        render={() => (
                           <div>
                             {getCurrentFiles().length > 0 && (
                               <div className="mt-3">
@@ -502,9 +505,13 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
                                   選択されたファイル:
                                 </p>
                                 <div className="space-y-1">
-                                  {getCurrentFiles().map((file: any, index: number) => {
+                                  {getCurrentFiles().map((file, index: number) => {
                                     const fileName =
-                                      typeof file === 'string' ? file : file.originalName
+                                      typeof file === 'string'
+                                        ? file
+                                        : file && typeof file === 'object' && 'originalName' in file
+                                          ? file.originalName
+                                          : 'unknown'
                                     return (
                                       <div
                                         key={index}

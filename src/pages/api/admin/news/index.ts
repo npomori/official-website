@@ -1,7 +1,10 @@
 import config from '@/config/config.json'
+import { validateNewsApi } from '@/schemas/news'
 import NewsDB from '@/server/db/news'
 import { newsFileUploader } from '@/server/utils/file-upload'
+import type { CreateNewsData } from '@/types/news'
 import type { APIRoute } from 'astro'
+import { z } from 'zod'
 
 // 管理者用のお知らせ一覧取得
 export const GET: APIRoute = async ({ url }) => {
@@ -9,8 +12,6 @@ export const GET: APIRoute = async ({ url }) => {
     const searchParams = url.searchParams
     const page = parseInt(searchParams.get('page') || '1')
     const limit = parseInt(searchParams.get('limit') || '10')
-    const category = searchParams.get('category')
-    const priority = searchParams.get('priority')
 
     // お知らせ一覧を取得
     const { news, totalCount } = await NewsDB.getNewsForAdminWithPagination(page, limit)
@@ -65,29 +66,48 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const content = formData.get('content') as string
     const date = formData.get('date') as string
     const categories = JSON.parse(formData.get('categories') as string)
-    const priority = (formData.get('priority') as string) || undefined
+    const priority = (formData.get('priority') as string) || null
 
-    // バリデーション
-    if (!title || !content || !date || !categories || categories.length === 0) {
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: '必須項目が不足しています'
-        }),
-        {
-          status: 400,
-          headers: {
-            'Content-Type': 'application/json'
+    // zodスキーマでバリデーション
+    try {
+      validateNewsApi({
+        title,
+        content,
+        date,
+        categories,
+        priority
+      })
+    } catch (validationError) {
+      if (validationError instanceof z.ZodError) {
+        const errorMessages = validationError.issues
+          .map((err: z.ZodIssue) => `${err.path.join('.')}: ${err.message}`)
+          .join(', ')
+
+        return new Response(
+          JSON.stringify({
+            success: false,
+            error: 'バリデーションエラー',
+            details: errorMessages
+          }),
+          {
+            status: 400,
+            headers: {
+              'Content-Type': 'application/json'
+            }
           }
-        }
-      )
+        )
+      }
+      throw validationError
     }
 
     // お知らせのファイルアップロード設定を取得
     const newsConfig = config.upload.news
 
     // ファイルアップロード処理
-    let uploadedAttachments: any[] = []
+    let uploadedAttachments: Array<{
+      originalName: string
+      filename: string
+    }> = []
     const files = formData.getAll('files') as File[]
 
     if (files && files.length > 0) {
@@ -162,7 +182,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     }
 
     // お知らせを作成
-    const newsData: any = {
+    const newsData: CreateNewsData = {
       title,
       content,
       date: new Date(date),

@@ -1,5 +1,8 @@
+import { validateNewsApi } from '@/schemas/news'
 import NewsDB from '@/server/db/news'
+import type { UpdateNewsData } from '@/types/news'
 import type { APIRoute } from 'astro'
+import { z } from 'zod'
 
 // 管理者用の個別お知らせ取得
 export const GET: APIRoute = async ({ params }) => {
@@ -67,14 +70,36 @@ export const PUT: APIRoute = async ({ params, request }) => {
     const body = await request.json()
     const { title, content, date, categories, priority, attachments } = body
 
-    // バリデーション
-    if (!title || !content || !date || !categories || categories.length === 0) {
-      return new Response(JSON.stringify({ success: false, error: '必須項目が不足しています' }), {
-        status: 400,
-        headers: {
-          'Content-Type': 'application/json'
-        }
+    // zodスキーマでバリデーション
+    try {
+      validateNewsApi({
+        title,
+        content,
+        date,
+        categories,
+        priority: priority || null
       })
+    } catch (validationError) {
+      if (validationError instanceof z.ZodError) {
+        const errorMessages = validationError.issues
+          .map((err: z.ZodIssue) => `${err.path.join('.')}: ${err.message}`)
+          .join(', ')
+
+        return new Response(
+          JSON.stringify({
+            success: false,
+            error: 'バリデーションエラー',
+            details: errorMessages
+          }),
+          {
+            status: 400,
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          }
+        )
+      }
+      throw validationError
     }
 
     // お知らせが存在するか確認
@@ -90,10 +115,10 @@ export const PUT: APIRoute = async ({ params, request }) => {
     }
 
     // お知らせを更新
-    const updateData: any = {
+    const updateData: UpdateNewsData = {
       title,
       content,
-      date: new Date(date),
+      date: new Date(date as string),
       categories,
       attachments: attachments || []
     }
