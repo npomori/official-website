@@ -22,6 +22,9 @@ class NewsDB extends BaseDB {
         orderBy: [
           {
             date: 'desc'
+          },
+          {
+            id: 'desc'
           }
         ],
         include: {
@@ -79,14 +82,24 @@ class NewsDB extends BaseDB {
     totalCount: number
   }> {
     try {
-      // まず全ての公開済みお知らせを取得
+      // 今日の日付を取得（日本時間）
+      const today = new Date()
+      today.setHours(23, 59, 59, 999) // 今日の23:59:59まで
+
+      // まず全ての公開済みお知らせを取得（本日以前の日付のみ）
       const allNews = await BaseDB.prisma.news.findMany({
         where: {
-          status: 'published'
+          status: 'published',
+          date: {
+            lte: today
+          }
         },
         orderBy: [
           {
             date: 'desc'
+          },
+          {
+            id: 'desc'
           }
         ],
         include: {
@@ -343,14 +356,24 @@ class NewsDB extends BaseDB {
   // 最新のお知らせを取得（フロントエンド用）
   async getLatestNews(limit: number = 5): Promise<News[]> {
     try {
+      // 今日の日付を取得（日本時間）
+      const today = new Date()
+      today.setHours(23, 59, 59, 999) // 今日の23:59:59まで
+
       const news = await BaseDB.prisma.news.findMany({
         where: {
-          status: 'published'
+          status: 'published',
+          date: {
+            lte: today
+          }
         },
         take: limit,
         orderBy: [
           {
             date: 'desc'
+          },
+          {
+            id: 'desc'
           }
         ],
         include: {
@@ -582,6 +605,9 @@ class NewsDB extends BaseDB {
         orderBy: [
           {
             date: 'desc'
+          },
+          {
+            id: 'desc'
           }
         ],
         include: {

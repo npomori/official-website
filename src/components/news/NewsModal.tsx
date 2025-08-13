@@ -105,7 +105,9 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
         return
       }
 
-      const dateString = values.date!.toISOString().split('T')[0]
+      // 日本時間に合わせて日付を設定
+      //const dateString = values.date!.toISOString().split('T')[0]
+      const dateString = values.date!.toLocaleString('sv-SE').split(' ')[0]
 
       if (isEditMode && news?.id) {
         // お知らせの更新の場合
