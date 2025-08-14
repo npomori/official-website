@@ -2,6 +2,7 @@
 import { Icon } from 'astro-icon/components'
 import EventModalLink from '@/components/event/EventModalLink'
 import NewsModalLink from '@/components/news/NewsModalLink'
+import NewsListModalLink from '@/components/news/NewsListModalLink'
 import RecordModalLink from '@/components/record/RecordModalLink'
 
 interface Props {
@@ -61,6 +62,11 @@ const showDashboard = user && (user.role === 'ADMIN' || user.role === 'MODERATOR
               <NewsModalLink client:load />
             </li>
           )}
+          {isNewsPage && (
+            <li>
+              <NewsListModalLink client:load />
+            </li>
+          )}
           {showDashboard && (
             <li>
               <a href="/admin" class="hover:bg-primary-600 flex items-center px-4 py-2 text-white">
@@ -87,6 +93,11 @@ const showDashboard = user && (user.role === 'ADMIN' || user.role === 'MODERATOR
           {isNewsPage && (
             <li>
               <NewsModalLink client:load />
+            </li>
+          )}
+          {isNewsPage && (
+            <li>
+              <NewsListModalLink client:load />
             </li>
           )}
           {showDashboard && (
