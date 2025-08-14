@@ -2,7 +2,10 @@ import Alert from '@/components/base/Alert'
 import Button from '@/components/base/Button'
 import NewsModal from '@/components/news/NewsModal'
 import AdminNewsFetch from '@/fetch/admin/news'
+import { userStore } from '@/store/user'
 import type { News } from '@/types/news'
+import type { UserAuth } from '@/types/user'
+import { useStore } from '@nanostores/react'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { useEffect, useState } from 'react'
@@ -39,6 +42,26 @@ const NewsListModal: React.FC<NewsListModalProps> = ({ isOpen, onClose }) => {
   const [isDeleting, setIsDeleting] = useState<number | null>(null)
   const [editingNews, setEditingNews] = useState<News | null>(null)
   const [showNewsModal, setShowNewsModal] = useState(false)
+
+  // ユーザー情報を取得
+  const user = useStore(userStore) as UserAuth | null
+
+  // 編集・削除ボタンの表示条件をチェック
+  const canEditNews = (news: News): boolean => {
+    if (!user) return false
+
+    // ADMIN、MODERATORは常に編集可能
+    if (user.role === 'ADMIN' || user.role === 'MODERATOR') {
+      return true
+    }
+
+    // EDITORは自分が作成したお知らせのみ編集可能
+    if (user.role === 'EDITOR') {
+      return news.creatorId === user.id
+    }
+
+    return false
+  }
 
   // お知らせ一覧を取得（フロントエンドで表示されない項目のみ）
   const fetchNewsList = async (page: number = 1) => {
@@ -266,26 +289,28 @@ const NewsListModal: React.FC<NewsListModalProps> = ({ isOpen, onClose }) => {
                   </div>
 
                   {/* 編集・削除ボタン */}
-                  <div className="ml-4 flex gap-2">
-                    <Button
-                      variant="info"
-                      size="md"
-                      onClick={() => handleEdit(news)}
-                      disabled={isDeleting === news.id}
-                      icon="mdi:pencil"
-                      text="編集"
-                      title="編集"
-                    />
-                    <Button
-                      variant="error"
-                      size="md"
-                      onClick={() => handleDelete(news.id, news.title)}
-                      disabled={isDeleting === news.id}
-                      icon={isDeleting === news.id ? 'mdi:loading' : 'mdi:delete'}
-                      text="削除"
-                      title="削除"
-                    />
-                  </div>
+                  {canEditNews(news) && (
+                    <div className="ml-4 flex gap-2">
+                      <Button
+                        variant="info"
+                        size="md"
+                        onClick={() => handleEdit(news)}
+                        disabled={isDeleting === news.id}
+                        icon="mdi:pencil"
+                        text="編集"
+                        title="編集"
+                      />
+                      <Button
+                        variant="error"
+                        size="md"
+                        onClick={() => handleDelete(news.id, news.title)}
+                        disabled={isDeleting === news.id}
+                        icon={isDeleting === news.id ? 'mdi:loading' : 'mdi:delete'}
+                        text="削除"
+                        title="削除"
+                      />
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
