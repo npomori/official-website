@@ -352,7 +352,53 @@ class NewsDB extends BaseDB {
       return null
     }
   }
+  // お知らせを取得（ID指定）（フロントエンド用）
+  async getNewsForFrontendById(id: number): Promise<News | null> {
+    try {
+      const news = await BaseDB.prisma.news.findUnique({
+        where: { id },
+        include: {
+          creator: {
+            select: {
+              id: true,
+              name: true,
+              email: true
+            }
+          }
+        }
+      })
 
+      if (!news) return null
+
+      // データベースから取得したデータを正しい型に変換（オブジェクト形式のみ）
+      const convertedAttachments: NewsAttachment[] | null = Array.isArray(news.attachments)
+        ? (news.attachments as unknown[])
+            .filter(
+              (att) =>
+                typeof att === 'object' &&
+                att !== null &&
+                'originalName' in (att as any) &&
+                'filename' in (att as any)
+            )
+            .map((att) => ({
+              originalName: String((att as any).originalName),
+              filename: String((att as any).filename)
+            }))
+        : null
+      const categories: string[] | null = Array.isArray(news.categories)
+        ? (news.categories as unknown[]).map((v) => String(v))
+        : null
+
+      return {
+        ...(news as any),
+        attachments: convertedAttachments,
+        categories
+      } as News
+    } catch (err) {
+      console.error(err)
+      return null
+    }
+  }
   // 最新のお知らせを取得（フロントエンド用）
   async getLatestNews(limit: number = 5): Promise<News[]> {
     try {
