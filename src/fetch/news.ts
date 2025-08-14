@@ -11,8 +11,6 @@ interface NewsResponse {
       itemsPerPage: number
       totalCount: number
       totalPages: number
-      hasNextPage: boolean
-      hasPrevPage: boolean
     }
   }
   error?: string

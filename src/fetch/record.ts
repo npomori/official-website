@@ -28,8 +28,6 @@ interface PaginationInfo {
   itemsPerPage: number
   totalCount: number
   totalPages: number
-  hasNextPage: boolean
-  hasPrevPage: boolean
 }
 
 interface RecordListResponse {

@@ -25,8 +25,6 @@ export const GET: APIRoute = async ({ url }) => {
 
     // ページネーション情報を計算
     const totalPages = Math.ceil(totalCount / itemsPerPage)
-    const hasNextPage = page < totalPages
-    const hasPrevPage = page > 1
 
     return new Response(
       JSON.stringify({
@@ -37,9 +35,7 @@ export const GET: APIRoute = async ({ url }) => {
             currentPage: page,
             itemsPerPage,
             totalCount,
-            totalPages,
-            hasNextPage,
-            hasPrevPage
+            totalPages
           }
         }
       }),
