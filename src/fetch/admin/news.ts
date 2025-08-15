@@ -48,7 +48,7 @@ class AdminNewsFetch {
       if (!response.ok) {
         throw new Error((data?.error as string) || 'お知らせの取得に失敗しました')
       }
-      console.log(data)
+
       return data
     } catch (error) {
       console.error('Admin news fetch error:', error)
