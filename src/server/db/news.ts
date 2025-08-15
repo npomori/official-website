@@ -47,11 +47,11 @@ class NewsDB extends BaseDB {
             creatorId: true,
             createdAt: true,
             updatedAt: true,
+            downloadStats: true,
             creator: {
               select: {
                 id: true,
-                name: true,
-                email: true
+                name: true
               }
             }
           }
@@ -172,8 +172,7 @@ class NewsDB extends BaseDB {
         creator: {
           select: {
             id: true,
-            name: true,
-            email: true
+            name: true
           }
         }
       }
@@ -219,8 +218,7 @@ class NewsDB extends BaseDB {
           creator: {
             select: {
               id: true,
-              name: true,
-              email: true
+              name: true
             }
           }
         }
@@ -298,8 +296,7 @@ class NewsDB extends BaseDB {
           creator: {
             select: {
               id: true,
-              name: true,
-              email: true
+              name: true
             }
           }
         }
@@ -661,8 +658,7 @@ class NewsDB extends BaseDB {
           creator: {
             select: {
               id: true,
-              name: true,
-              email: true
+              name: true
             }
           }
         }

@@ -109,20 +109,11 @@ const NewsList: React.FC = () => {
       return true
     }
 
-    // EDITORは自分のお知らせのみ編集可能（n日間制限付き）
+    // EDITORは自分のお知らせのみ編集可能
     if (user.role === 'EDITOR') {
-      if (newsItem.creator.id !== user.id) {
-        return false
+      if (newsItem.creator.id === user.id) {
+        return true
       }
-
-      // 作成日からn日以内の制限
-      const createdAt = new Date(newsItem.createdAt)
-      const now = new Date()
-      const diffTime = Math.abs(now.getTime() - createdAt.getTime())
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-      const editDays = config.content?.news?.editDays || 7
-
-      return diffDays <= editDays
     }
 
     return false

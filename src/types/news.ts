@@ -16,10 +16,16 @@ export interface News {
   creatorId: number
   createdAt: Date | string
   updatedAt: Date | string
+  downloadStats?: {
+    [filename: string]: {
+      count: number
+      firstDownloadAt?: string
+      lastDownloadAt?: string
+    }
+  } | null
   creator: {
     id: number
     name: string
-    email: string
   }
 }
 
