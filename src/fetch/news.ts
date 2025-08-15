@@ -1,11 +1,11 @@
 import config from '@/config/config.json'
 import { getConfig } from '@/types/config'
-import type { News } from '@/types/news'
+import type { PublicNews } from '@/types/news'
 
 interface NewsResponse {
   success: boolean
   data: {
-    news: News[]
+    news: PublicNews[]
     pagination: {
       currentPage: number
       itemsPerPage: number
@@ -57,7 +57,7 @@ class NewsFetch {
   }
 
   // 個別のお知らせを取得
-  async getNewsById(id: number): Promise<News> {
+  async getNewsById(id: number): Promise<PublicNews> {
     try {
       const response = await fetch(`${config.api.rootUrl}/news/${id}`)
       const data = await response.json()
@@ -74,7 +74,7 @@ class NewsFetch {
   }
 
   // 最新のお知らせを取得
-  async getLatestNews(limit: number = 5): Promise<News[]> {
+  async getLatestNews(limit: number = 5): Promise<PublicNews[]> {
     try {
       const response = await fetch(`${config.api.rootUrl}/news?limit=${limit}`)
       const data = await response.json()

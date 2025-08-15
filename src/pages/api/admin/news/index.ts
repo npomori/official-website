@@ -65,6 +65,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const date = formData.get('date') as string
     const categories = JSON.parse(formData.get('categories') as string)
     const priority = (formData.get('priority') as string) || null
+    const author = formData.get('author') as string
 
     // zodスキーマでバリデーション
     try {
@@ -73,7 +74,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
         content,
         date,
         categories,
-        priority
+        priority,
+        author
       })
     } catch (validationError) {
       if (validationError instanceof z.ZodError) {
@@ -186,7 +188,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       date: new Date(date + 'T00:00:00+09:00'), // 日本時間に変換
       categories,
       attachments: uploadedAttachments,
-      author: '管理者', // 管理者として作成
+      author: author, // フォームから取得した作成者名を使用
       status: 'published',
       creatorId: locals.user?.id || 1 // 認証されたユーザーIDまたはデフォルト値
     }

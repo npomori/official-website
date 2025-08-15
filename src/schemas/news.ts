@@ -22,7 +22,12 @@ export const newsBaseSchema = z.object({
     .max(5000, { message: '内容は5000文字以内で入力してください' }),
   date: z.date({ message: '日付は必須です' }),
   categories: z.array(z.string()).min(1, { message: 'カテゴリーは必須です' }),
-  priority: z.string().nullable()
+  priority: z.string().nullable(),
+  author: z
+    .string()
+    .trim()
+    .min(1, { message: '作成者は必須です' })
+    .max(50, { message: '作成者は50文字以内で入力してください' })
 })
 
 // フロントエンド用（ファイル含む）

@@ -45,3 +45,14 @@ export interface UpdateNewsData {
   author?: string
   status?: string
 }
+
+export interface PublicNews {
+  id: number
+  title: string
+  content: string
+  date: Date | string
+  categories?: string[] | null
+  priority?: string | null
+  attachments?: NewsAttachment[] | null
+  author: string
+}

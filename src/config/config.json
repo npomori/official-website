@@ -84,7 +84,8 @@
       "editDays": 7
     },
     "news": {
-      "editDays": 7
+      "editDays": 7,
+      "defaultAuthor": "事務局"
     }
   }
 }

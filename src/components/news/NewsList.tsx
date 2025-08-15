@@ -7,7 +7,7 @@ import NewsFetch from '@/fetch/news'
 import useSWR from '@/hooks/swr'
 import { userStore } from '@/store/user'
 import { getConfig } from '@/types/config'
-import type { News } from '@/types/news'
+import type { News, PublicNews } from '@/types/news'
 import type { UserAuth } from '@/types/user'
 import { useStore } from '@nanostores/react'
 import React, { useState } from 'react'
@@ -25,16 +25,27 @@ const NewsList: React.FC = () => {
   const config = getConfig()
   const itemsPerPage = config.pagination.newsList.itemsPerPage
 
+  // 管理権限をチェック
+  const hasAdminRole =
+    user?.role === 'ADMIN' || user?.role === 'MODERATOR' || user?.role === 'EDITOR'
+
   // SWRでデータを取得（カテゴリーフィルター対応）
   const { data, error, isLoading, mutate } = useSWR(
-    `news-${currentPage}-${itemsPerPage}-${selectedCategory || 'all'}-${selectedPriority || 'all'}`,
+    `news-${currentPage}-${itemsPerPage}-${selectedCategory || 'all'}-${selectedPriority || 'all'}-${hasAdminRole ? 'admin' : 'public'}`,
     () =>
-      NewsFetch.getNews(
-        currentPage,
-        itemsPerPage,
-        selectedCategory || undefined,
-        selectedPriority || undefined
-      )
+      hasAdminRole
+        ? AdminNewsFetch.getNews(
+            currentPage,
+            itemsPerPage,
+            selectedCategory || undefined,
+            selectedPriority || undefined
+          )
+        : NewsFetch.getNews(
+            currentPage,
+            itemsPerPage,
+            selectedCategory || undefined,
+            selectedPriority || undefined
+          )
   )
 
   // カテゴリーIDから日本語名に変換する関数
@@ -85,8 +96,13 @@ const NewsList: React.FC = () => {
   }
 
   // 編集・削除ボタンの表示条件をチェック
-  const canEditNews = (news: News): boolean => {
+  const canEditNews = (newsItem: News | PublicNews): boolean => {
     if (!user) return false
+
+    // PublicNews型の場合は編集不可（管理者情報が含まれていない）
+    if (!('creator' in newsItem) || !('createdAt' in newsItem)) {
+      return false
+    }
 
     // ADMIN、MODERATORは常に編集可能
     if (user.role === 'ADMIN' || user.role === 'MODERATOR') {
@@ -95,12 +111,12 @@ const NewsList: React.FC = () => {
 
     // EDITORは自分のお知らせのみ編集可能（n日間制限付き）
     if (user.role === 'EDITOR') {
-      if (news.creator.id !== user.id) {
+      if (newsItem.creator.id !== user.id) {
         return false
       }
 
       // 作成日からn日以内の制限
-      const createdAt = new Date(news.createdAt)
+      const createdAt = new Date(newsItem.createdAt)
       const now = new Date()
       const diffTime = Math.abs(now.getTime() - createdAt.getTime())
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
@@ -131,7 +147,7 @@ const NewsList: React.FC = () => {
   }
 
   // 編集処理
-  const handleEdit = (news: News) => {
+  const handleEdit = (news: PublicNews) => {
     // TODO: 編集機能は別途実装
     console.log('編集処理:', news)
   }
@@ -305,7 +321,7 @@ const NewsList: React.FC = () => {
       ) : (
         <section className="mb-12">
           <div className="space-y-8">
-            {news.map((newsItem: News) => (
+            {news.map((newsItem: PublicNews) => (
               <article key={newsItem.id} className="overflow-hidden rounded-lg bg-white shadow-lg">
                 <div className="p-6">
                   <div className="mb-4 flex items-center justify-between">

@@ -46,7 +46,7 @@ class AdminNewsFetch {
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || 'お知らせの取得に失敗しました')
+        throw new Error((data?.error as string) || 'お知らせの取得に失敗しました')
       }
 
       return data
@@ -63,7 +63,7 @@ class AdminNewsFetch {
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || 'お知らせの取得に失敗しました')
+        throw new Error((data?.error as string) || 'お知らせの取得に失敗しました')
       }
 
       return data.data
@@ -84,7 +84,7 @@ class AdminNewsFetch {
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || 'お知らせの作成に失敗しました')
+        throw new Error((data?.error as string) || 'お知らせの作成に失敗しました')
       }
 
       return data.data
@@ -101,6 +101,7 @@ class AdminNewsFetch {
     date: string
     categories: string[]
     priority?: string | null
+    author: string
     attachments?: NewsAttachment[]
   }): Promise<News> {
     try {
@@ -109,6 +110,7 @@ class AdminNewsFetch {
       formData.append('content', newsData.content)
       formData.append('date', newsData.date)
       formData.append('categories', JSON.stringify(newsData.categories))
+      formData.append('author', newsData.author)
       if (newsData.priority) {
         formData.append('priority', newsData.priority)
       }
@@ -124,7 +126,7 @@ class AdminNewsFetch {
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || 'お知らせの作成に失敗しました')
+        throw new Error((data?.error as string) || 'お知らせの作成に失敗しました')
       }
 
       return data.data
@@ -143,6 +145,7 @@ class AdminNewsFetch {
       date: string
       categories: string[]
       priority?: string | null
+      author: string
       attachments?: NewsAttachment[]
     }
   ): Promise<News> {
@@ -158,7 +161,7 @@ class AdminNewsFetch {
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || 'お知らせの更新に失敗しました')
+        throw new Error((data?.error as string) || 'お知らせの更新に失敗しました')
       }
 
       return data.data
@@ -178,7 +181,7 @@ class AdminNewsFetch {
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || 'お知らせの削除に失敗しました')
+        throw new Error((data?.error as string) || 'お知らせの削除に失敗しました')
       }
     } catch (error) {
       console.error('Admin news deletion error:', error)

@@ -45,6 +45,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
       date: new Date(),
       categories: [],
       priority: null,
+      author: config.content.news.defaultAuthor || '未設定',
       attachments: []
     }
   })
@@ -66,6 +67,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
         date: news.date ? new Date(news.date) : new Date(),
         categories: news.categories || [],
         priority: news.priority || null,
+        author: news.author || config.content.news.defaultAuthor || '未設定',
         attachments: news.attachments || []
       })
 
@@ -89,6 +91,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
         date: new Date(),
         categories: [],
         priority: null,
+        author: config.content.news.defaultAuthor || '未設定',
         attachments: []
       })
     }
@@ -116,7 +119,8 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
           content: values.content,
           date: dateString as string,
           categories: values.categories,
-          priority: values.priority
+          priority: values.priority,
+          author: values.author
         })
         setSuccess('お知らせを更新しました')
       } else {
@@ -126,6 +130,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
         formData.append('content', values.content)
         formData.append('date', dateString as string)
         formData.append('categories', JSON.stringify(values.categories))
+        formData.append('author', values.author)
         if (values.priority) {
           formData.append('priority', values.priority)
         }
@@ -375,6 +380,26 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
                   {errors.priority && (
                     <p className="mt-1 text-sm text-red-600">
                       <span className="font-medium">{errors.priority.message}</span>
+                    </p>
+                  )}
+                </div>
+
+                <div className="col-span-4">
+                  <label htmlFor="author" className="mb-1 block font-medium text-gray-900">
+                    作成者
+                  </label>
+                  <input
+                    type="text"
+                    id="author"
+                    {...register('author')}
+                    className={`block w-full rounded-lg border ${
+                      errors.author ? 'border-red-500' : 'border-gray-300'
+                    } focus:border-primary-500 focus:ring-primary-500 bg-gray-50 p-2.5 text-gray-900`}
+                    required
+                  />
+                  {errors.author && (
+                    <p className="mt-1 text-sm text-red-600">
+                      <span className="font-medium">{errors.author.message}</span>
                     </p>
                   )}
                 </div>

@@ -1,4 +1,4 @@
-import type { CreateNewsData, News, NewsAttachment, UpdateNewsData } from '@/types/news'
+import type { CreateNewsData, News, NewsAttachment, PublicNews, UpdateNewsData } from '@/types/news'
 import type { Prisma } from '@prisma/client'
 import BaseDB from './base'
 
@@ -78,7 +78,7 @@ class NewsDB extends BaseDB {
     category?: string,
     priority?: string
   ): Promise<{
-    news: News[]
+    news: PublicNews[]
     totalCount: number
   }> {
     try {
@@ -158,10 +158,15 @@ class NewsDB extends BaseDB {
           ? (item.categories as unknown[]).map((v) => String(v))
           : null
         return {
-          ...item,
+          id: item.id,
+          title: item.title,
+          content: item.content,
+          date: item.date,
+          categories,
+          priority: item.priority,
           attachments,
-          categories
-        } as unknown as News
+          author: item.author
+        } as PublicNews
       })
 
       return { news: convertedNews, totalCount }
@@ -354,7 +359,7 @@ class NewsDB extends BaseDB {
     }
   }
   // お知らせを取得（ID指定）（フロントエンド用）
-  async getNewsForFrontendById(id: number): Promise<News | null> {
+  async getNewsForFrontendById(id: number): Promise<PublicNews | null> {
     try {
       const news = await BaseDB.prisma.news.findUnique({
         where: { id },
@@ -391,17 +396,22 @@ class NewsDB extends BaseDB {
         : null
 
       return {
-        ...(news as any),
+        id: news.id,
+        title: news.title,
+        content: news.content,
+        date: news.date,
+        categories,
+        priority: news.priority,
         attachments: convertedAttachments,
-        categories
-      } as News
+        author: news.author
+      } as PublicNews
     } catch (err) {
       console.error(err)
       return null
     }
   }
   // 最新のお知らせを取得（フロントエンド用）
-  async getLatestNews(limit: number = 5): Promise<News[]> {
+  async getLatestNews(limit: number = 5): Promise<PublicNews[]> {
     try {
       // 翌日の日付を取得（日本時間）
       const tomorrow = new Date()
@@ -454,7 +464,16 @@ class NewsDB extends BaseDB {
         const categories: string[] | null = Array.isArray(item.categories)
           ? (item.categories as unknown[]).map((v) => String(v))
           : null
-        return { ...(item as any), attachments, categories } as News
+        return {
+          id: item.id,
+          title: item.title,
+          content: item.content,
+          date: item.date,
+          categories,
+          priority: item.priority,
+          attachments,
+          author: item.author
+        } as PublicNews
       })
     } catch (err) {
       console.error(err)
