@@ -72,7 +72,7 @@ class NewsDB extends BaseDB {
   }
 
   // フロント画面用：お知らせ一覧を取得（公開済みのみ、ページネーション対応）
-  async getNewsForFrontendWithPagination(
+  async getPublicNewsWithPagination(
     page: number,
     itemsPerPage: number,
     category?: string,
@@ -82,16 +82,17 @@ class NewsDB extends BaseDB {
     totalCount: number
   }> {
     try {
-      // 今日の日付を取得（日本時間）
-      const today = new Date()
-      today.setHours(23, 59, 59, 999) // 今日の23:59:59まで
+      // 翌日の日付を取得（日本時間）
+      const tomorrow = new Date()
+      tomorrow.setDate(tomorrow.getDate() + 1)
+      tomorrow.setHours(0, 0, 0, 0) // 翌日の0:00:00
 
       // まず全ての公開済みお知らせを取得（本日以前の日付のみ）
       const allNews = await BaseDB.prisma.news.findMany({
         where: {
           status: 'published',
           date: {
-            lte: today
+            lt: tomorrow
           }
         },
         orderBy: [
@@ -402,15 +403,16 @@ class NewsDB extends BaseDB {
   // 最新のお知らせを取得（フロントエンド用）
   async getLatestNews(limit: number = 5): Promise<News[]> {
     try {
-      // 今日の日付を取得（日本時間）
-      const today = new Date()
-      today.setHours(23, 59, 59, 999) // 今日の23:59:59まで
+      // 翌日の日付を取得（日本時間）
+      const tomorrow = new Date()
+      tomorrow.setDate(tomorrow.getDate() + 1)
+      tomorrow.setHours(0, 0, 0, 0) // 翌日の0:00:00
 
       const news = await BaseDB.prisma.news.findMany({
         where: {
           status: 'published',
           date: {
-            lte: today
+            lt: tomorrow
           }
         },
         take: limit,
