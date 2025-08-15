@@ -183,7 +183,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const newsData: CreateNewsData = {
       title,
       content,
-      date: new Date(date),
+      date: new Date(date + 'T00:00:00+09:00'), // 日本時間に変換
       categories,
       attachments: uploadedAttachments,
       author: '管理者', // 管理者として作成

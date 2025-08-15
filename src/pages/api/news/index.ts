@@ -16,7 +16,7 @@ export const GET: APIRoute = async ({ url }) => {
     const itemsPerPage = limit > 0 ? limit : defaultLimit
 
     // NewsDBを使用してフロントエンド用のお知らせを取得（ページネーション対応）
-    const { news, totalCount } = await NewsDB.getNewsForFrontendWithPagination(
+    const { news, totalCount } = await NewsDB.getPublicNewsWithPagination(
       page,
       itemsPerPage,
       category,

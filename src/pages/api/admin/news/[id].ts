@@ -118,7 +118,7 @@ export const PUT: APIRoute = async ({ params, request }) => {
     const updateData: UpdateNewsData = {
       title,
       content,
-      date: new Date(date as string),
+      date: new Date((date as string) + 'T00:00:00+09:00'), // 日本時間に変換
       categories,
       attachments: attachments || []
     }
