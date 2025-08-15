@@ -312,7 +312,7 @@ const NewsList: React.FC = () => {
       ) : (
         <section className="mb-12">
           <div className="space-y-8">
-            {news.map((newsItem: PublicNews) => (
+            {news.map((newsItem: News | PublicNews) => (
               <article key={newsItem.id} className="overflow-hidden rounded-lg bg-white shadow-lg">
                 <div className="p-6">
                   <div className="mb-4 flex items-center justify-between">
@@ -403,19 +403,30 @@ const NewsList: React.FC = () => {
                           添付ファイル:
                         </h4>
                         <div className="flex flex-wrap gap-2">
-                          {newsItem.attachments.map((file, index) => (
-                            <a
-                              key={index}
-                              href={`/api/news/download/${newsItem.id}/${file.filename}`}
-                              className="inline-flex items-center rounded-lg bg-blue-50 px-3 py-1 text-base text-blue-700 transition-colors hover:bg-blue-100"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              download={file.originalName}
-                            >
-                              <i className="fas fa-file-alt mr-2"></i>
-                              {file.originalName}
-                            </a>
-                          ))}
+                          {newsItem.attachments.map((file, index) => {
+                            // 管理者権限がある場合、downloadStatsからダウンロード数を取得
+                            const downloadCount =
+                              hasAdminRole && 'downloadStats' in newsItem
+                                ? (newsItem as News).downloadStats?.[file.filename]?.count || 0
+                                : null
+
+                            return (
+                              <a
+                                key={index}
+                                href={`/api/news/download/${newsItem.id}/${file.filename}`}
+                                className="inline-flex items-center rounded-lg bg-blue-50 px-3 py-1 text-base text-blue-700 transition-colors hover:bg-blue-100"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                download={file.originalName}
+                              >
+                                <i className="fas fa-file-alt mr-2"></i>
+                                {file.originalName}
+                                {downloadCount !== null && (
+                                  <span className="ml-1 text-gray-500">({downloadCount})</span>
+                                )}
+                              </a>
+                            )
+                          })}
                         </div>
                       </div>
                     )}
