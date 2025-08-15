@@ -15,10 +15,11 @@ export const GET: APIRoute = async ({ url }) => {
     const defaultLimit = config.pagination?.newsList?.itemsPerPage || 10
     const itemsPerPage = limit > 0 ? limit : defaultLimit
 
-    // NewsDBを使用してフロントエンド用のお知らせを取得（ページネーション対応）
-    const { news, totalCount } = await NewsDB.getPublicNewsWithPagination(
+    // 管理権限なしでフロントエンド用のお知らせを取得（ページネーション対応）
+    const { news, totalCount } = await NewsDB.getNewsWithPagination(
       page,
       itemsPerPage,
+      false, // 管理権限なし
       category,
       priority
     )

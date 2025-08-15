@@ -2,6 +2,7 @@ import config from '@/config/config.json'
 import { validateNewsApi } from '@/schemas/news'
 import NewsDB from '@/server/db/news'
 import { newsFileUploader } from '@/server/utils/file-upload'
+import { getConfig } from '@/types/config'
 import type { CreateNewsData } from '@/types/news'
 import type { APIRoute } from 'astro'
 import { z } from 'zod'
@@ -12,11 +13,25 @@ export const GET: APIRoute = async ({ url }) => {
     const searchParams = url.searchParams
     const page = parseInt(searchParams.get('page') || '1')
     const limit = parseInt(searchParams.get('limit') || '10')
+    const category = searchParams.get('category') || undefined
+    const priority = searchParams.get('priority') || undefined
 
-    // お知らせ一覧を取得
-    const { news, totalCount } = await NewsDB.getNewsForAdminWithPagination(page, limit)
+    // 設定からデフォルト値を取得
+    const config = getConfig()
+    const defaultLimit = config.pagination?.newsList?.itemsPerPage || 10
+    const itemsPerPage = limit > 0 ? limit : defaultLimit
 
-    const totalPages = Math.ceil(totalCount / limit)
+    // 管理権限ありでフロントエンド用のお知らせを取得（ページネーション対応）
+    const { news, totalCount } = await NewsDB.getNewsWithPagination(
+      page,
+      itemsPerPage,
+      true, // 管理権限あり
+      category,
+      priority
+    )
+
+    // ページネーション情報を計算
+    const totalPages = Math.ceil(totalCount / itemsPerPage)
 
     return new Response(
       JSON.stringify({
@@ -25,7 +40,7 @@ export const GET: APIRoute = async ({ url }) => {
           news,
           pagination: {
             currentPage: page,
-            itemsPerPage: limit,
+            itemsPerPage,
             totalCount,
             totalPages
           }
@@ -39,11 +54,11 @@ export const GET: APIRoute = async ({ url }) => {
       }
     )
   } catch (error) {
-    console.error('Admin news fetch error:', error)
+    console.error('News API Error:', error)
     return new Response(
       JSON.stringify({
         success: false,
-        error: 'お知らせの取得に失敗しました'
+        error: 'お知らせデータの取得に失敗しました'
       }),
       {
         status: 500,

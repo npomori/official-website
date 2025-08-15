@@ -3,82 +3,15 @@ import type { Prisma } from '@prisma/client'
 import BaseDB from './base'
 
 class NewsDB extends BaseDB {
-  // 管理画面用：お知らせ一覧を取得（ページネーション対応）
-  async getNewsForAdminWithPagination(
-    page: number,
-    itemsPerPage: number
-  ): Promise<{
-    news: News[]
-    totalCount: number
-  }> {
-    try {
-      // 総件数を取得
-      const totalCount = await BaseDB.prisma.news.count()
-
-      // お知らせデータを取得
-      const news = await BaseDB.prisma.news.findMany({
-        skip: (page - 1) * itemsPerPage,
-        take: itemsPerPage,
-        orderBy: [
-          {
-            date: 'desc'
-          },
-          {
-            id: 'desc'
-          }
-        ],
-        include: {
-          creator: {
-            select: {
-              id: true,
-              name: true,
-              email: true
-            }
-          }
-        }
-      })
-
-      // データベースから取得したデータを正しい型に変換（オブジェクト形式のみ）
-      const convertedNews = news.map((item) => {
-        const attachments: NewsAttachment[] | null = Array.isArray(item.attachments)
-          ? (item.attachments as unknown[])
-              .filter(
-                (att) =>
-                  typeof att === 'object' &&
-                  att !== null &&
-                  'originalName' in (att as any) &&
-                  'filename' in (att as any)
-              )
-              .map((att) => ({
-                originalName: String((att as any).originalName),
-                filename: String((att as any).filename)
-              }))
-          : null
-        const categories: string[] | null = Array.isArray(item.categories)
-          ? (item.categories as unknown[]).map((v) => String(v))
-          : null
-        return {
-          ...item,
-          attachments,
-          categories
-        } as unknown as News
-      })
-
-      return { news: convertedNews, totalCount }
-    } catch (err) {
-      console.error(err)
-      return { news: [], totalCount: 0 }
-    }
-  }
-
-  // フロント画面用：お知らせ一覧を取得（公開済みのみ、ページネーション対応）
-  async getPublicNewsWithPagination(
+  // 管理権限に応じてお知らせ一覧を取得（ページネーション対応）
+  async getNewsWithPagination(
     page: number,
     itemsPerPage: number,
+    hasAdminRole: boolean,
     category?: string,
     priority?: string
   ): Promise<{
-    news: PublicNews[]
+    news: (News | PublicNews)[]
     totalCount: number
   }> {
     try {
@@ -87,14 +20,57 @@ class NewsDB extends BaseDB {
       tomorrow.setDate(tomorrow.getDate() + 1)
       tomorrow.setHours(0, 0, 0, 0) // 翌日の0:00:00
 
-      // まず全ての公開済みお知らせを取得（本日以前の日付のみ）
-      const allNews = await BaseDB.prisma.news.findMany({
-        where: {
-          status: 'published',
-          date: {
-            lt: tomorrow
+      // 管理権限に応じて取得条件を設定
+      const whereCondition: Prisma.NewsWhereInput = {}
+
+      if (!hasAdminRole) {
+        // 管理権限なしの場合は公開済みのみ（本日以前の日付のみ）
+        whereCondition.status = 'published'
+        whereCondition.date = {
+          lt: tomorrow
+        }
+      }
+
+      // Prismaのselect条件を管理権限に応じて設定
+      const selectCondition = hasAdminRole
+        ? {
+            // 管理権限ありの場合はすべてのカラムを取得
+            id: true,
+            title: true,
+            content: true,
+            date: true,
+            categories: true,
+            priority: true,
+            attachments: true,
+            author: true,
+            status: true,
+            creatorId: true,
+            createdAt: true,
+            updatedAt: true,
+            creator: {
+              select: {
+                id: true,
+                name: true,
+                email: true
+              }
+            }
           }
-        },
+        : {
+            // 管理権限なしの場合はPublicNewsに必要なカラムのみ取得
+            id: true,
+            title: true,
+            content: true,
+            date: true,
+            categories: true,
+            priority: true,
+            attachments: true,
+            author: true
+          }
+
+      // まず全てのお知らせを取得
+      const allNews = await BaseDB.prisma.news.findMany({
+        where: whereCondition,
+        select: selectCondition,
         orderBy: [
           {
             date: 'desc'
@@ -102,16 +78,7 @@ class NewsDB extends BaseDB {
           {
             id: 'desc'
           }
-        ],
-        include: {
-          creator: {
-            select: {
-              id: true,
-              name: true,
-              email: true
-            }
-          }
-        }
+        ]
       })
 
       // カテゴリーフィルターを適用
@@ -138,7 +105,7 @@ class NewsDB extends BaseDB {
       const endIndex = startIndex + itemsPerPage
       const paginatedNews = filteredNews.slice(startIndex, endIndex)
 
-      // データベースから取得したデータを正しい型に変換（オブジェクト形式のみ）
+      // データベースから取得したデータを正しい型に変換
       const convertedNews = paginatedNews.map((item) => {
         const attachments: NewsAttachment[] | null = Array.isArray(item.attachments)
           ? (item.attachments as unknown[])
@@ -157,16 +124,27 @@ class NewsDB extends BaseDB {
         const categories: string[] | null = Array.isArray(item.categories)
           ? (item.categories as unknown[]).map((v) => String(v))
           : null
-        return {
-          id: item.id,
-          title: item.title,
-          content: item.content,
-          date: item.date,
-          categories,
-          priority: item.priority,
-          attachments,
-          author: item.author
-        } as PublicNews
+
+        if (hasAdminRole) {
+          // 管理権限ありの場合はNews型として返却
+          return {
+            ...item,
+            attachments,
+            categories
+          } as unknown as News
+        } else {
+          // 管理権限なしの場合はPublicNews型として返却
+          return {
+            id: item.id,
+            title: item.title,
+            content: item.content,
+            date: item.date,
+            categories,
+            priority: item.priority,
+            attachments,
+            author: item.author
+          } as PublicNews
+        }
       })
 
       return { news: convertedNews, totalCount }
@@ -359,18 +337,19 @@ class NewsDB extends BaseDB {
     }
   }
   // お知らせを取得（ID指定）（フロントエンド用）
-  async getNewsForFrontendById(id: number): Promise<PublicNews | null> {
+  async getPublicNewsById(id: number): Promise<PublicNews | null> {
     try {
       const news = await BaseDB.prisma.news.findUnique({
         where: { id },
-        include: {
-          creator: {
-            select: {
-              id: true,
-              name: true,
-              email: true
-            }
-          }
+        select: {
+          id: true,
+          title: true,
+          content: true,
+          date: true,
+          categories: true,
+          priority: true,
+          attachments: true,
+          author: true
         }
       })
 
@@ -434,14 +413,15 @@ class NewsDB extends BaseDB {
             id: 'desc'
           }
         ],
-        include: {
-          creator: {
-            select: {
-              id: true,
-              name: true,
-              email: true
-            }
-          }
+        select: {
+          id: true,
+          title: true,
+          content: true,
+          date: true,
+          categories: true,
+          priority: true,
+          attachments: true,
+          author: true
         }
       })
 
