@@ -66,22 +66,11 @@ const NewsListModal: React.FC<NewsListModalProps> = ({ isOpen, onClose }) => {
     setLoading(true)
     setError('')
     try {
-      const response: NewsResponse = await AdminNewsFetch.getNews(page, 100) // 多めに取得してフィルタリング
+      const response: NewsResponse = await AdminNewsFetch.getHiddenNews(page, 100) // フロントエンドで表示されない項目のみを取得
 
-      // フロントエンドで表示されない項目のみをフィルタリング
-      const today = new Date()
-      today.setHours(23, 59, 59, 999) // 今日の23:59:59まで
-
-      const hiddenNews = response.data.news.filter((news) => {
-        const newsDate = new Date(news.date)
-        // 未来の日付 または 非公開のお知らせのみ表示
-        return newsDate > today || news.status !== 'published'
-      })
-
-      setNewsList(hiddenNews)
-      // 簡易的なページネーション（フィルタリング後のデータ用）
-      setTotalPages(Math.ceil(hiddenNews.length / 20))
-      setCurrentPage(1) // 常に1ページ目を表示
+      setNewsList(response.data.news)
+      setTotalPages(response.data.pagination.totalPages)
+      setCurrentPage(response.data.pagination.currentPage)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'お知らせの取得に失敗しました')
     } finally {
@@ -202,6 +191,8 @@ const NewsListModal: React.FC<NewsListModalProps> = ({ isOpen, onClose }) => {
       date: typeof news.date === 'string' ? new Date(news.date) : news.date,
       categories: news.categories || [],
       priority: news.priority || null,
+      isMemberOnly: false, // デフォルト値を設定
+      author: news.author,
       attachments: news.attachments || [],
       id: news.id.toString()
     }

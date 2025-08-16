@@ -15,20 +15,30 @@ export const GET: APIRoute = async ({ url }) => {
     const limit = parseInt(searchParams.get('limit') || '10')
     const category = searchParams.get('category') || undefined
     const priority = searchParams.get('priority') || undefined
+    const hidden = searchParams.get('hidden') === 'true' // フロントエンドで表示されない項目のフラグ
 
     // 設定からデフォルト値を取得
     const config = getConfig()
     const defaultLimit = config.pagination?.newsList?.itemsPerPage || 10
     const itemsPerPage = limit > 0 ? limit : defaultLimit
 
-    // 管理権限ありでフロントエンド用のお知らせを取得（ページネーション対応）
-    const { news, totalCount } = await NewsDB.getNewsWithPagination(
-      page,
-      itemsPerPage,
-      true, // 管理権限あり
-      category,
-      priority
-    )
+    let result
+
+    if (hidden) {
+      // フロントエンドで表示されない項目（非公開・未来の日付）を取得
+      result = await NewsDB.getHiddenNewsWithPagination(page, itemsPerPage)
+    } else {
+      // 管理権限ありでフロントエンド用のお知らせを取得（ページネーション対応）
+      result = await NewsDB.getNewsWithPagination(
+        page,
+        itemsPerPage,
+        true, // 管理権限あり
+        category,
+        priority
+      )
+    }
+
+    const { news, totalCount } = result
 
     // ページネーション情報を計算
     const totalPages = Math.ceil(totalCount / itemsPerPage)

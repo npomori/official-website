@@ -3,7 +3,7 @@ import type { Prisma } from '@prisma/client'
 import BaseDB from './base'
 
 class NewsDB extends BaseDB {
-  // 管理権限に応じてお知らせ一覧を取得（ページネーション対応）
+  // 管理権限に応じてフロント画面に表示するお知らせ一覧を取得（ページネーション対応）
   async getNewsWithPagination(
     page: number,
     itemsPerPage: number,
@@ -20,15 +20,12 @@ class NewsDB extends BaseDB {
       tomorrow.setDate(tomorrow.getDate() + 1)
       tomorrow.setHours(0, 0, 0, 0) // 翌日の0:00:00
 
-      // 管理権限に応じて取得条件を設定
+      // 取得条件を設定
       const whereCondition: Prisma.NewsWhereInput = {}
-
-      if (!hasAdminRole) {
-        // 管理権限なしの場合は公開済みのみ（本日以前の日付のみ）
-        whereCondition.status = 'published'
-        whereCondition.date = {
-          lt: tomorrow
-        }
+      whereCondition.status = 'published' // 公開済みのみ
+      whereCondition.date = {
+        // 本日以前の日付のみ取得
+        lt: tomorrow
       }
 
       // Prismaのselect条件を管理権限に応じて設定
@@ -150,6 +147,116 @@ class NewsDB extends BaseDB {
       return { news: convertedNews, totalCount }
     } catch (err) {
       console.error(err)
+      return { news: [], totalCount: 0 }
+    }
+  }
+
+  // フロントエンドで表示されない項目（非公開・未来の日付）を取得
+  async getHiddenNewsWithPagination(
+    page: number,
+    itemsPerPage: number
+  ): Promise<{
+    news: News[]
+    totalCount: number
+  }> {
+    try {
+      // 今日の日付を取得（日本時間）
+      const today = new Date()
+      today.setHours(23, 59, 59, 999) // 今日の23:59:59
+
+      // 非公開または未来の日付の条件を設定
+      const whereCondition: Prisma.NewsWhereInput = {
+        OR: [
+          // 非公開のお知らせ
+          {
+            status: {
+              not: 'published'
+            }
+          },
+          // 未来の日付のお知らせ
+          {
+            date: {
+              gt: today
+            }
+          }
+        ]
+      }
+
+      // 管理権限ありの場合のselect条件
+      const selectCondition = {
+        id: true,
+        title: true,
+        content: true,
+        date: true,
+        categories: true,
+        priority: true,
+        attachments: true,
+        author: true,
+        status: true,
+        creatorId: true,
+        createdAt: true,
+        updatedAt: true,
+        downloadStats: true,
+        creator: {
+          select: {
+            id: true,
+            name: true
+          }
+        }
+      }
+
+      // まず全ての該当するお知らせを取得
+      const allNews = await BaseDB.prisma.news.findMany({
+        where: whereCondition,
+        select: selectCondition,
+        orderBy: [
+          {
+            date: 'desc'
+          },
+          {
+            id: 'desc'
+          }
+        ]
+      })
+
+      // 総件数を取得
+      const totalCount = allNews.length
+
+      // ページネーションを適用
+      const startIndex = (page - 1) * itemsPerPage
+      const endIndex = startIndex + itemsPerPage
+      const paginatedNews = allNews.slice(startIndex, endIndex)
+
+      // データベースから取得したデータを正しい型に変換
+      const convertedNews = paginatedNews.map((item) => {
+        const attachments: NewsAttachment[] | null = Array.isArray(item.attachments)
+          ? (item.attachments as unknown[])
+              .filter(
+                (att) =>
+                  typeof att === 'object' &&
+                  att !== null &&
+                  'originalName' in (att as any) &&
+                  'filename' in (att as any)
+              )
+              .map((att) => ({
+                originalName: String((att as any).originalName),
+                filename: String((att as any).filename)
+              }))
+          : null
+        const categories: string[] | null = Array.isArray(item.categories)
+          ? (item.categories as unknown[]).map((v) => String(v))
+          : null
+
+        return {
+          ...item,
+          attachments,
+          categories
+        } as unknown as News
+      })
+
+      return { news: convertedNews, totalCount }
+    } catch (err) {
+      console.error('Hidden news fetch error:', err)
       return { news: [], totalCount: 0 }
     }
   }

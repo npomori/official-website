@@ -56,6 +56,35 @@ class AdminNewsFetch {
     }
   }
 
+  // フロントエンドで表示されない項目（非公開・未来の日付）を取得
+  async getHiddenNews(page: number = 1, limit?: number): Promise<NewsResponse> {
+    try {
+      const config = getConfig()
+      const defaultLimit = config.pagination?.newsList?.itemsPerPage || 10
+      const itemsPerPage = limit || defaultLimit
+
+      const params = new URLSearchParams({
+        page: page.toString(),
+        limit: itemsPerPage.toString(),
+        hidden: 'true' // 非公開・未来の日付の項目のみを取得
+      })
+
+      const response = await fetch(`${config.api.adminUrl}/news?${params.toString()}`)
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(
+          (data?.error as string) || 'フロントエンドで表示されないお知らせの取得に失敗しました'
+        )
+      }
+
+      return data
+    } catch (error) {
+      console.error('Admin hidden news fetch error:', error)
+      throw error
+    }
+  }
+
   // 管理者用の個別のお知らせを取得
   async getNewsById(id: number): Promise<News> {
     try {
