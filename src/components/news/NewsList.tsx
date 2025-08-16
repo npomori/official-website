@@ -17,6 +17,7 @@ const NewsList: React.FC = () => {
   const [isDeleting, setIsDeleting] = useState<number | null>(null)
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [selectedPriority, setSelectedPriority] = useState<string | null>(null)
+  const [isFilterLoading, setIsFilterLoading] = useState(false) // フィルタ専用のローディング状態
 
   // ユーザー情報を取得
   const user = useStore(userStore) as UserAuth | null
@@ -45,7 +46,14 @@ const NewsList: React.FC = () => {
             itemsPerPage,
             selectedCategory || undefined,
             selectedPriority || undefined
-          )
+          ),
+    {
+      // フィルタ変更時のちらつきを防ぐ設定
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+      keepPreviousData: true, // 前のデータを保持
+      dedupingInterval: 1000 // 重複リクエストを防ぐ
+    }
   )
 
   // カテゴリーIDから日本語名に変換する関数
@@ -73,26 +81,56 @@ const NewsList: React.FC = () => {
   }
 
   // カテゴリーをクリックした時の処理
-  const handleCategoryClick = (categoryId: string) => {
+  const handleCategoryClick = async (categoryId: string) => {
     const newCategory = selectedCategory === categoryId ? null : categoryId
     setSelectedCategory(newCategory)
     setSelectedPriority(null) // 優先度をリセット
     setCurrentPage(1) // フィルタ変更時は最初のページに戻る
+
+    // フィルタ専用のローディング状態を設定
+    setIsFilterLoading(true)
+
+    // データを再取得
+    try {
+      await mutate()
+    } finally {
+      setIsFilterLoading(false)
+    }
   }
 
   // 優先度をクリックした時の処理
-  const handlePriorityClick = (priorityId: string) => {
+  const handlePriorityClick = async (priorityId: string) => {
     const newPriority = selectedPriority === priorityId ? null : priorityId
     setSelectedPriority(newPriority)
     setSelectedCategory(null) // カテゴリーをリセット
     setCurrentPage(1) // フィルタ変更時は最初のページに戻る
+
+    // フィルタ専用のローディング状態を設定
+    setIsFilterLoading(true)
+
+    // データを再取得
+    try {
+      await mutate()
+    } finally {
+      setIsFilterLoading(false)
+    }
   }
 
   // フィルタをリセット
-  const handleResetFilter = () => {
+  const handleResetFilter = async () => {
     setSelectedCategory(null)
     setSelectedPriority(null)
     setCurrentPage(1)
+
+    // フィルタ専用のローディング状態を設定
+    setIsFilterLoading(true)
+
+    // データを再取得
+    try {
+      await mutate()
+    } finally {
+      setIsFilterLoading(false)
+    }
   }
 
   // 編集・削除ボタンの表示条件をチェック
@@ -143,8 +181,8 @@ const NewsList: React.FC = () => {
     console.log('編集処理:', news)
   }
 
-  // ローディング中
-  if (isLoading) {
+  // ローディング中（初回読み込み時のみ）
+  if (isLoading && !data) {
     return (
       <div className="mx-auto max-w-4xl">
         <div className="py-12 text-center">
@@ -185,6 +223,16 @@ const NewsList: React.FC = () => {
 
       {/* フィルター */}
       <div className="mb-8">
+        {/* フィルタローディングインジケーター */}
+        {isFilterLoading && (
+          <div className="mb-4 flex items-center justify-center">
+            <div className="flex items-center space-x-2 text-sm text-gray-500">
+              <div className="border-t-primary-600 h-4 w-4 animate-spin rounded-full border-2 border-gray-300"></div>
+              <span>フィルタ適用中...</span>
+            </div>
+          </div>
+        )}
+
         {/* デスクトップ表示: カテゴリーと優先度を縦並び */}
         <div className="hidden lg:block">
           {/* カテゴリーフィルター */}
@@ -192,7 +240,8 @@ const NewsList: React.FC = () => {
             <div className="flex flex-wrap gap-2">
               <button
                 onClick={handleResetFilter}
-                className={`cursor-pointer rounded-full px-3 py-1 text-sm font-medium transition-colors ${
+                disabled={isFilterLoading}
+                className={`cursor-pointer rounded-full px-3 py-1 text-sm font-medium transition-colors disabled:opacity-50 ${
                   selectedCategory === null && selectedPriority === null
                     ? 'bg-primary-600 text-white'
                     : 'border border-gray-300 bg-transparent text-gray-700 hover:bg-gray-50'
@@ -204,7 +253,8 @@ const NewsList: React.FC = () => {
                 <button
                   key={category.value}
                   onClick={() => handleCategoryClick(category.value)}
-                  className={`cursor-pointer rounded-full px-3 py-1 text-sm font-medium transition-colors ${
+                  disabled={isFilterLoading}
+                  className={`cursor-pointer rounded-full px-3 py-1 text-sm font-medium transition-colors disabled:opacity-50 ${
                     selectedCategory === category.value ? 'text-white' : 'hover:opacity-80'
                   }`}
                   style={{
@@ -227,7 +277,8 @@ const NewsList: React.FC = () => {
                 <button
                   key={priority.value}
                   onClick={() => handlePriorityClick(priority.value)}
-                  className={`cursor-pointer rounded px-3 py-1 text-sm font-medium transition-colors ${
+                  disabled={isFilterLoading}
+                  className={`cursor-pointer rounded px-3 py-1 text-sm font-medium transition-colors disabled:opacity-50 ${
                     selectedPriority === priority.value ? 'text-white' : 'hover:opacity-80'
                   }`}
                   style={{
@@ -250,7 +301,8 @@ const NewsList: React.FC = () => {
             {/* すべてボタン */}
             <button
               onClick={handleResetFilter}
-              className={`cursor-pointer rounded-full px-3 py-1 text-sm font-medium transition-colors ${
+              disabled={isFilterLoading}
+              className={`cursor-pointer rounded-full px-3 py-1 text-sm font-medium transition-colors disabled:opacity-50 ${
                 selectedCategory === null && selectedPriority === null
                   ? 'bg-primary-600 text-white'
                   : 'border border-gray-300 bg-transparent text-gray-700 hover:bg-gray-50'
@@ -264,7 +316,8 @@ const NewsList: React.FC = () => {
               <button
                 key={category.value}
                 onClick={() => handleCategoryClick(category.value)}
-                className={`cursor-pointer rounded-full px-3 py-1 text-sm font-medium transition-colors ${
+                disabled={isFilterLoading}
+                className={`cursor-pointer rounded-full px-3 py-1 text-sm font-medium transition-colors disabled:opacity-50 ${
                   selectedCategory === category.value ? 'text-white' : 'hover:opacity-80'
                 }`}
                 style={{
@@ -283,7 +336,8 @@ const NewsList: React.FC = () => {
               <button
                 key={priority.value}
                 onClick={() => handlePriorityClick(priority.value)}
-                className={`cursor-pointer rounded px-3 py-1 text-sm font-medium transition-colors ${
+                disabled={isFilterLoading}
+                className={`cursor-pointer rounded px-3 py-1 text-sm font-medium transition-colors disabled:opacity-50 ${
                   selectedPriority === priority.value ? 'text-white' : 'hover:opacity-80'
                 }`}
                 style={{
