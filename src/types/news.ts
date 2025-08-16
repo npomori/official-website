@@ -11,6 +11,7 @@ export interface News {
   categories?: string[] | null
   priority?: string | null
   attachments?: NewsAttachment[] | null
+  isMemberOnly: boolean
   author: string
   status: string
   creatorId: number
@@ -36,6 +37,7 @@ export interface CreateNewsData {
   categories?: string[]
   priority?: string
   attachments?: NewsAttachment[]
+  isMemberOnly?: boolean
   author: string
   status?: string
   creatorId: number
@@ -48,6 +50,7 @@ export interface UpdateNewsData {
   categories?: string[]
   priority?: string
   attachments?: NewsAttachment[]
+  isMemberOnly?: boolean
   author?: string
   status?: string
 }
@@ -60,5 +63,6 @@ export interface PublicNews {
   categories?: string[] | null
   priority?: string | null
   attachments?: NewsAttachment[] | null
+  isMemberOnly: boolean
   author: string
 }

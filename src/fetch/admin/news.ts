@@ -101,6 +101,7 @@ class AdminNewsFetch {
     date: string
     categories: string[]
     priority?: string | null
+    isMemberOnly?: boolean
     author: string
     attachments?: NewsAttachment[]
   }): Promise<News> {
@@ -113,6 +114,9 @@ class AdminNewsFetch {
       formData.append('author', newsData.author)
       if (newsData.priority) {
         formData.append('priority', newsData.priority)
+      }
+      if (newsData.isMemberOnly !== undefined) {
+        formData.append('isMemberOnly', newsData.isMemberOnly.toString())
       }
       if (newsData.attachments) {
         formData.append('attachments', JSON.stringify(newsData.attachments))
@@ -145,6 +149,7 @@ class AdminNewsFetch {
       date: string
       categories: string[]
       priority?: string | null
+      isMemberOnly?: boolean
       author: string
       attachments?: NewsAttachment[]
     }

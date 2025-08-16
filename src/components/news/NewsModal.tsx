@@ -37,7 +37,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
     handleSubmit,
     setValue,
     formState: { errors, isSubmitting }
-  } = useForm<NewsCreate>({
+  } = useForm({
     resolver: zodResolver(newsCreateSchema),
     defaultValues: {
       title: '',
@@ -45,6 +45,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
       date: new Date(),
       categories: [],
       priority: null,
+      isMemberOnly: false,
       author: config.content.news.defaultAuthor || '未設定',
       attachments: []
     }
@@ -67,6 +68,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
         date: news.date ? new Date(news.date) : new Date(),
         categories: news.categories || [],
         priority: news.priority || null,
+        isMemberOnly: news.isMemberOnly || false,
         author: news.author || config.content.news.defaultAuthor || '未設定',
         attachments: news.attachments || []
       })
@@ -91,6 +93,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
         date: new Date(),
         categories: [],
         priority: null,
+        isMemberOnly: false,
         author: config.content.news.defaultAuthor || '未設定',
         attachments: []
       })
@@ -120,6 +123,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
           date: dateString as string,
           categories: values.categories,
           priority: values.priority,
+          isMemberOnly: values.isMemberOnly,
           author: values.author
         })
         setSuccess('お知らせを更新しました')
@@ -130,6 +134,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
         formData.append('content', values.content)
         formData.append('date', dateString as string)
         formData.append('categories', JSON.stringify(values.categories))
+        formData.append('isMemberOnly', values.isMemberOnly.toString())
         formData.append('author', values.author)
         if (values.priority) {
           formData.append('priority', values.priority)
@@ -400,6 +405,50 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
                   {errors.author && (
                     <p className="mt-1 text-sm text-red-600">
                       <span className="font-medium">{errors.author.message}</span>
+                    </p>
+                  )}
+                </div>
+
+                <div className="col-span-4">
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id="isMemberOnly"
+                      {...register('isMemberOnly')}
+                      className="text-primary-600 focus:ring-primary-500 h-4 w-4 rounded border-gray-300"
+                    />
+                    <label htmlFor="isMemberOnly" className="ml-2 font-medium text-gray-900">
+                      会員限定コンテンツ
+                      <span className="group relative ml-2 inline-flex items-center text-gray-500">
+                        <svg
+                          className="h-4 w-4 cursor-help"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                          />
+                        </svg>
+                        <div className="absolute bottom-full left-0 mb-2 hidden w-[300px] transform rounded-lg bg-gray-900 p-3 text-sm text-white opacity-0 transition-opacity group-hover:block group-hover:opacity-100">
+                          <div className="space-y-2 whitespace-pre-wrap">
+                            <div>
+                              チェックすると、ログイン中の会員のみがアクセスできるお知らせになります。
+                            </div>
+                            <div>• チェックあり：会員限定</div>
+                            <div>• チェックなし：一般公開</div>
+                          </div>
+                          <div className="absolute -bottom-1 left-4 h-2 w-2 rotate-45 transform bg-gray-900"></div>
+                        </div>
+                      </span>
+                    </label>
+                  </div>
+                  {errors.isMemberOnly && (
+                    <p className="mt-1 text-sm text-red-600">
+                      <span className="font-medium">{errors.isMemberOnly.message}</span>
                     </p>
                   )}
                 </div>
