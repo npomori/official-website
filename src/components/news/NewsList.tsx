@@ -349,6 +349,13 @@ const NewsList: React.FC = () => {
                     </div>
 
                     <div className="flex items-center gap-4">
+                      {/* 会員限定 */}
+                      {user && newsItem.isMemberOnly && (
+                        <span className="rounded border border-orange-500 bg-orange-50 px-3 py-1 text-sm font-bold text-orange-700">
+                          会員限定
+                        </span>
+                      )}
+
                       {/* 優先度 */}
                       {newsItem.priority && (
                         <button
