@@ -3,7 +3,7 @@ import type { APIRoute } from 'astro'
 import { promises as fs } from 'fs'
 import path from 'path'
 
-export const GET: APIRoute = async ({ params }) => {
+export const GET: APIRoute = async ({ params, locals }) => {
   try {
     // URLパラメータから情報を取得
     const paramsArray = params.params?.split('/') || []
@@ -33,11 +33,23 @@ export const GET: APIRoute = async ({ params }) => {
       })
     }
 
+    // ユーザーのログイン状態を取得
+    const user = locals.user
+    const isLoggedIn = !!user
+
     // お知らせとファイルの存在確認
     const news = await newsDB.getNewsById(newsId)
     if (!news) {
       return new Response(JSON.stringify({ error: 'News not found' }), {
         status: 404,
+        headers: { 'Content-Type': 'application/json' }
+      })
+    }
+
+    // 会員限定コンテンツの場合、ログインチェック
+    if (news.isMemberOnly && !isLoggedIn) {
+      return new Response(JSON.stringify({ error: 'ログインが必要です' }), {
+        status: 401,
         headers: { 'Content-Type': 'application/json' }
       })
     }

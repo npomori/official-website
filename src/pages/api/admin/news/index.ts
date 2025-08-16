@@ -33,6 +33,7 @@ export const GET: APIRoute = async ({ url }) => {
         page,
         itemsPerPage,
         true, // 管理権限あり
+        true, // 管理者は常にログイン済み
         category,
         priority
       )
@@ -84,12 +85,12 @@ export const GET: APIRoute = async ({ url }) => {
 export const POST: APIRoute = async ({ request, locals }) => {
   try {
     const formData = await request.formData()
-
     const title = formData.get('title') as string
     const content = formData.get('content') as string
     const date = formData.get('date') as string
     const categories = JSON.parse(formData.get('categories') as string)
     const priority = (formData.get('priority') as string) || null
+    const isMemberOnly = formData.get('isMemberOnly') === 'true'
     const author = formData.get('author') as string
 
     // zodスキーマでバリデーション
@@ -100,6 +101,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
         date,
         categories,
         priority,
+        isMemberOnly,
         author
       })
     } catch (validationError) {
@@ -213,6 +215,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       date: new Date(date + 'T00:00:00+09:00'), // 日本時間に変換
       categories,
       attachments: uploadedAttachments,
+      isMemberOnly,
       author: author, // フォームから取得した作成者名を使用
       status: 'published',
       creatorId: locals.user?.id || 1 // 認証されたユーザーIDまたはデフォルト値

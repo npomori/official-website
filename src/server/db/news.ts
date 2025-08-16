@@ -8,6 +8,7 @@ class NewsDB extends BaseDB {
     page: number,
     itemsPerPage: number,
     hasAdminRole: boolean,
+    isLoggedIn: boolean = false,
     category?: string,
     priority?: string
   ): Promise<{
@@ -28,6 +29,11 @@ class NewsDB extends BaseDB {
         lt: tomorrow
       }
 
+      // ログインしていない場合は会員限定コンテンツを除外
+      if (!isLoggedIn) {
+        whereCondition.isMemberOnly = false
+      }
+
       // Prismaのselect条件を管理権限に応じて設定
       const selectCondition = hasAdminRole
         ? {
@@ -45,6 +51,7 @@ class NewsDB extends BaseDB {
             createdAt: true,
             updatedAt: true,
             downloadStats: true,
+            isMemberOnly: true,
             creator: {
               select: {
                 id: true,
@@ -61,6 +68,7 @@ class NewsDB extends BaseDB {
             categories: true,
             priority: true,
             attachments: true,
+            isMemberOnly: true,
             author: true
           }
 
@@ -139,6 +147,7 @@ class NewsDB extends BaseDB {
             categories,
             priority: item.priority,
             attachments,
+            isMemberOnly: item.isMemberOnly,
             author: item.author
           } as PublicNews
         }
@@ -271,6 +280,7 @@ class NewsDB extends BaseDB {
         categories: (data.categories ?? []) as unknown as Prisma.InputJsonValue,
         priority: data.priority ?? null,
         attachments: (data.attachments ?? []) as unknown as Prisma.InputJsonValue,
+        isMemberOnly: data.isMemberOnly ?? false,
         author: data.author,
         status: data.status ?? 'published',
         creatorId: data.creatorId
@@ -318,6 +328,7 @@ class NewsDB extends BaseDB {
           categories: (data.categories ?? null) as unknown as Prisma.InputJsonValue,
           priority: data.priority,
           attachments: (data.attachments ?? null) as unknown as Prisma.InputJsonValue,
+          isMemberOnly: data.isMemberOnly,
           author: data.author,
           status: data.status
         },
@@ -441,10 +452,20 @@ class NewsDB extends BaseDB {
     }
   }
   // お知らせを取得（ID指定）（フロントエンド用）
-  async getPublicNewsById(id: number): Promise<PublicNews | null> {
+  async getPublicNewsById(id: number, isLoggedIn: boolean = false): Promise<PublicNews | null> {
     try {
-      const news = await BaseDB.prisma.news.findUnique({
-        where: { id },
+      const whereCondition: Prisma.NewsWhereInput = {
+        id,
+        status: 'published'
+      }
+
+      // ログインしていない場合は会員限定コンテンツを除外
+      if (!isLoggedIn) {
+        whereCondition.isMemberOnly = false
+      }
+
+      const news = await BaseDB.prisma.news.findFirst({
+        where: whereCondition,
         select: {
           id: true,
           title: true,
@@ -453,6 +474,7 @@ class NewsDB extends BaseDB {
           categories: true,
           priority: true,
           attachments: true,
+          isMemberOnly: true,
           author: true
         }
       })
@@ -486,6 +508,7 @@ class NewsDB extends BaseDB {
         categories,
         priority: news.priority,
         attachments: convertedAttachments,
+        isMemberOnly: news.isMemberOnly,
         author: news.author
       } as PublicNews
     } catch (err) {
@@ -494,20 +517,27 @@ class NewsDB extends BaseDB {
     }
   }
   // 最新のお知らせを取得（フロントエンド用）
-  async getLatestNews(limit: number = 5): Promise<PublicNews[]> {
+  async getLatestNews(limit: number = 5, isLoggedIn: boolean = false): Promise<PublicNews[]> {
     try {
       // 翌日の日付を取得（日本時間）
       const tomorrow = new Date()
       tomorrow.setDate(tomorrow.getDate() + 1)
       tomorrow.setHours(0, 0, 0, 0) // 翌日の0:00:00
 
+      const whereCondition: Prisma.NewsWhereInput = {
+        status: 'published',
+        date: {
+          lt: tomorrow
+        }
+      }
+
+      // ログインしていない場合は会員限定コンテンツを除外
+      if (!isLoggedIn) {
+        whereCondition.isMemberOnly = false
+      }
+
       const news = await BaseDB.prisma.news.findMany({
-        where: {
-          status: 'published',
-          date: {
-            lt: tomorrow
-          }
-        },
+        where: whereCondition,
         take: limit,
         orderBy: [
           {
@@ -525,6 +555,7 @@ class NewsDB extends BaseDB {
           categories: true,
           priority: true,
           attachments: true,
+          isMemberOnly: true,
           author: true
         }
       })
@@ -556,6 +587,7 @@ class NewsDB extends BaseDB {
           categories,
           priority: item.priority,
           attachments,
+          isMemberOnly: item.isMemberOnly,
           author: item.author
         } as PublicNews
       })

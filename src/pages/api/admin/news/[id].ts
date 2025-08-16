@@ -68,7 +68,7 @@ export const PUT: APIRoute = async ({ params, request }) => {
     }
 
     const body = await request.json()
-    const { title, content, date, categories, priority, attachments } = body
+    const { title, content, date, categories, priority, isMemberOnly, author, attachments } = body
 
     // zodスキーマでバリデーション
     try {
@@ -77,7 +77,9 @@ export const PUT: APIRoute = async ({ params, request }) => {
         content,
         date,
         categories,
-        priority: priority || null
+        priority: priority || null,
+        isMemberOnly: isMemberOnly || false,
+        author
       })
     } catch (validationError) {
       if (validationError instanceof z.ZodError) {
@@ -120,6 +122,8 @@ export const PUT: APIRoute = async ({ params, request }) => {
       content,
       date: new Date((date as string) + 'T00:00:00+09:00'), // 日本時間に変換
       categories,
+      isMemberOnly,
+      author,
       attachments: attachments || []
     }
 

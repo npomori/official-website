@@ -1,7 +1,7 @@
 import { NewsDB } from '@/server/db'
 import type { APIRoute } from 'astro'
 
-export const GET: APIRoute = async ({ params }) => {
+export const GET: APIRoute = async ({ params, locals }) => {
   try {
     const newsId = parseInt(params.id!)
 
@@ -20,8 +20,12 @@ export const GET: APIRoute = async ({ params }) => {
       )
     }
 
+    // ユーザーのログイン状態を取得
+    const user = locals.user
+    const isLoggedIn = !!user
+
     // NewsDBを使用してお知らせを取得
-    const news = await NewsDB.getPublicNewsById(newsId)
+    const news = await NewsDB.getPublicNewsById(newsId, isLoggedIn)
 
     if (!news) {
       return new Response(
