@@ -100,6 +100,7 @@ model News {
   priority    String?  // 優先度（重要、至急、要確認など）
   attachments Json?    // 添付ファイル（JSON配列として保存）
   downloadStats Json?  // ファイルごとのダウンロード統計（JSON形式で保存）
+  isMemberOnly Boolean @default(false) // 会員限定コンテンツかどうか
   author      String   // 作成者
   status      String   @default("published") // 状態（draft: 下書き、published: 公開、scheduled: 予約投稿、archived: アーカイブ）
   creatorId   Int      // お知らせ作成者
