@@ -151,11 +151,6 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
 
       // 登録完了
       setCompleted(true)
-
-      // 成功時のコールバックを呼び出し
-      if (onSuccess) {
-        onSuccess()
-      }
     } catch (e: unknown) {
       console.error('News submission error:', e)
       const errorMessage = e instanceof Error ? e.message : '通信エラーが発生しました'
@@ -165,6 +160,12 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
 
   const handleCancel: React.MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault()
+
+    // 登録完了後の「閉じる」ボタンの場合はページ更新を実行
+    if (completed && onSuccess) {
+      onSuccess()
+    }
+
     onClose()
   }
 
