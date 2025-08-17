@@ -6,6 +6,7 @@ export default {
   useTabs: false,
   tabWidth: 2,
   printWidth: 100,
+  endOfLine: 'lf',
 
   plugins: ['prettier-plugin-astro', 'prettier-plugin-tailwindcss'],
   overrides: [
