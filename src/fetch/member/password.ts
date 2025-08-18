@@ -4,7 +4,7 @@ class MemberPasswordFetch {
   async updatePassword(
     id: number,
     data: { currentPassword: string; newPassword: string }
-  ): Promise<any> {
+  ): Promise<Response> {
     const response = await fetch(`${config.api.memberUrl}/password/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },

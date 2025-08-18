@@ -19,6 +19,34 @@ alwaysApply: true
 - フェッチクラスの格納ディレクトリ: src/fetch
 - データの更新、削除処理はadminフェッチクラスまたはmemberフェッチクラスを使用すること
 
+# APIエンドポイント
+
+## JSONデータを返す場合の型定義例
+```
+// 共通のAPIレスポンス型
+export interface ApiResponse<T> {  
+  message?: string
+  errors?: { [k: string]: string }
+  data?: T
+}
+
+// 具体的なデータ型
+export interface Article {
+  id: number
+  title: string
+  content: string
+}
+
+// 使用例
+const res: ApiResponse<Article> = {
+  data: {
+    id: 1,
+    title: "サンプル記事",
+    content: "本文..."
+  }
+}
+```
+
 # 型定義
 
 - 共通で使用する型定義はsrc/typesディレクトリに格納すること

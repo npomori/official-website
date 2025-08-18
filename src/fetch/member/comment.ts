@@ -6,39 +6,27 @@ interface CommentRequest {
 }
 
 class MemberCommentFetch {
-  async getComments(eventId: number): Promise<any> {
-    try {
-      const response = await fetch(`${config.api.memberUrl}/comment?eventId=${eventId}`)
-      return response
-    } catch (e) {
-      return null
-    }
+  async getComments(eventId: number): Promise<Response> {
+    const response = await fetch(`${config.api.memberUrl}/comment?eventId=${eventId}`)
+    return response
   }
 
-  async addComment(params: CommentRequest): Promise<any> {
-    try {
-      const response = await fetch(`${config.api.memberUrl}/comment`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(params)
-      })
-      return response
-    } catch (e) {
-      return null
-    }
+  async addComment(params: CommentRequest): Promise<Response> {
+    const response = await fetch(`${config.api.memberUrl}/comment`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(params)
+    })
+    return response
   }
 
-  async deleteComment(commentId: string): Promise<any> {
-    try {
-      const response = await fetch(`${config.api.memberUrl}/comment/${commentId}`, {
-        method: 'DELETE'
-      })
-      return response
-    } catch (e) {
-      return null
-    }
+  async deleteComment(commentId: string): Promise<Response> {
+    const response = await fetch(`${config.api.memberUrl}/comment/${commentId}`, {
+      method: 'DELETE'
+    })
+    return response
   }
 }
 

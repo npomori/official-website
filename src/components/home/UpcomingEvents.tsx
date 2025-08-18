@@ -24,7 +24,14 @@ const UpcomingEvents: React.FC = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const data = await eventFetch.getUpcomingEvents(itemsPerPage)
+        //const data = await eventFetch.getUpcomingEvents(itemsPerPage)
+        const response = await eventFetch.getUpcomingEvents(itemsPerPage)
+        if (!response.ok) {
+          const errorData = await response.json()
+          setError(`データの取得に失敗しました: ${errorData.message}`)
+          return
+        }
+        const data: Event[] = await response.json()
         setEvents(data)
       } catch (err) {
         setError(err instanceof Error ? err.message : '予期せぬエラーが発生しました')
@@ -33,7 +40,7 @@ const UpcomingEvents: React.FC = () => {
       }
     }
 
-    fetchEvents()
+    void fetchEvents()
   }, [itemsPerPage])
 
   // 日付をフォーマットする関数
