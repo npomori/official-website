@@ -220,6 +220,53 @@ class EventDB extends BaseDB {
     }
   }
 
+  /**
+   * 今後のイベントを取得
+   * @param limit - 取得する件数
+   */
+  async getUpcomingEvents(limit: number = 3): Promise<PublicEvent[]> {
+    try {
+      const now = new Date()
+      const events = await BaseDB.prisma.event.findMany({
+        select: {
+          id: true,
+          title: true,
+          start: true,
+          end: true,
+          isAllDay: true,
+          categoryId: true,
+          _count: {
+            select: {
+              Comments: true
+            }
+          }
+        },
+        where: {
+          start: {
+            gte: now
+          }
+        },
+        orderBy: {
+          start: 'asc'
+        },
+        take: limit
+      })
+
+      return events.map((event) => ({
+        id: event.id,
+        title: event.title,
+        start: event.start,
+        end: event.end,
+        isAllDay: event.isAllDay,
+        categoryId: event.categoryId,
+        commentCount: event._count.Comments
+      }))
+    } catch (err) {
+      console.error(err)
+      return []
+    }
+  }
+
   async deleteEvent(id: number): Promise<Event | null> {
     try {
       // イベントを取得

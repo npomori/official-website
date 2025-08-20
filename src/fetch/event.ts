@@ -10,6 +10,13 @@ class EventFetch extends BaseApiFetch {
   async getEvents(start: string, end: string) {
     return this.request<EventResponse[]>(`${config.api.rootUrl}/event?start=${start}&end=${end}`)
   }
+
+  async getUpcomingEvents(limit?: number) {
+    const url = limit
+      ? `${config.api.rootUrl}/event/upcoming?limit=${limit}`
+      : `${config.api.rootUrl}/event/upcoming`
+    return this.request<EventResponse[]>(url)
+  }
 }
 
 export default new EventFetch()

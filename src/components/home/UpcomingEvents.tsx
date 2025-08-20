@@ -1,38 +1,37 @@
 import eventFetch from '@/fetch/event'
 import { getConfig } from '@/types/config'
+import type { EventResponse } from '@/types/event'
 import React, { useEffect, useState } from 'react'
 
-interface Event {
+/*interface Event {
   id: number
   title: string
   start: string
   end: string
-  isAllDay: boolean
-  categoryId: string
-  commentCount: number
-}
+  allDay: boolean
+  color: string
+  commentCount?: number
+  categoryIndex: number
+}*/
 
 const UpcomingEvents: React.FC = () => {
   // 設定から表示件数を取得
   const config = getConfig()
   const itemsPerPage = config.home.events.itemsPerPage
 
-  const [events, setEvents] = useState<Event[]>([])
+  const [events, setEvents] = useState<EventResponse[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        //const data = await eventFetch.getUpcomingEvents(itemsPerPage)
-        const response = await eventFetch.getUpcomingEvents(itemsPerPage)
-        if (!response.ok) {
-          const errorData = await response.json()
-          setError(`データの取得に失敗しました: ${errorData.message}`)
+        const result = await eventFetch.getUpcomingEvents(itemsPerPage)
+        if (!result.success) {
+          setError(result.message || 'データの取得に失敗しました')
           return
         }
-        const data: Event[] = await response.json()
-        setEvents(data)
+        setEvents(result.data || [])
       } catch (err) {
         setError(err instanceof Error ? err.message : '予期せぬエラーが発生しました')
       } finally {

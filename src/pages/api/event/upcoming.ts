@@ -16,24 +16,34 @@ export const GET: APIRoute = async ({ request }) => {
       title: event.title,
       start: formatDate(event.start, event.isAllDay),
       end: formatDate(event.end, event.isAllDay),
-      isAllDay: event.isAllDay,
-      categoryId: event.categoryId,
-      commentCount: event.commentCount
+      isAllDay: event.isAllDay
     }))
 
-    return new Response(JSON.stringify(mappedEvents), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json'
+    return new Response(
+      JSON.stringify({
+        success: true,
+        data: mappedEvents
+      }),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json'
+        }
       }
-    })
+    )
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : '予期せぬエラーが発生しました'
-    return new Response(JSON.stringify({ error: errorMessage }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json'
+    return new Response(
+      JSON.stringify({
+        success: false,
+        message: errorMessage
+      }),
+      {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json'
+        }
       }
-    })
+    )
   }
 }
