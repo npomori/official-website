@@ -25,110 +25,90 @@ class AdminNewsFetch extends BaseApiFetch {
     category?: string,
     priority?: string
   ): Promise<NewsResponse> {
-    try {
-      const config = getConfig()
-      const defaultLimit = config.pagination?.newsList?.itemsPerPage || 10
-      const itemsPerPage = limit || defaultLimit
+    const config = getConfig()
+    const defaultLimit = config.pagination?.newsList?.itemsPerPage || 10
+    const itemsPerPage = limit || defaultLimit
 
-      const params = new URLSearchParams({
-        page: page.toString(),
-        limit: itemsPerPage.toString()
-      })
+    const params = new URLSearchParams({
+      page: page.toString(),
+      limit: itemsPerPage.toString()
+    })
 
-      if (category) {
-        params.append('category', category)
-      }
+    if (category) {
+      params.append('category', category)
+    }
 
-      if (priority) {
-        params.append('priority', priority)
-      }
+    if (priority) {
+      params.append('priority', priority)
+    }
 
-      const response = await this.request<NewsResponse['data']>(
-        `${config.api.adminUrl}/news?${params.toString()}`
-      )
+    const response = await this.request<NewsResponse['data']>(
+      `${config.api.adminUrl}/news?${params.toString()}`
+    )
 
-      if (!response.success || !response.data) {
-        throw new Error(response.message || 'お知らせの取得に失敗しました')
-      }
+    if (!response.success || !response.data) {
+      throw new Error(response.message || 'お知らせの取得に失敗しました')
+    }
 
-      return {
-        success: true,
-        data: response.data
-      }
-    } catch (error) {
-      console.error('Admin news fetch error:', error)
-      throw error
+    return {
+      success: true,
+      data: response.data
     }
   }
 
   // フロントエンドで表示されない項目（非公開・未来の日付）を取得
   async getHiddenNews(page: number = 1, limit?: number): Promise<NewsResponse> {
-    try {
-      const config = getConfig()
-      const defaultLimit = config.pagination?.newsList?.itemsPerPage || 10
-      const itemsPerPage = limit || defaultLimit
+    const config = getConfig()
+    const defaultLimit = config.pagination?.newsList?.itemsPerPage || 10
+    const itemsPerPage = limit || defaultLimit
 
-      const params = new URLSearchParams({
-        page: page.toString(),
-        limit: itemsPerPage.toString(),
-        hidden: 'true' // 非公開・未来の日付の項目のみを取得
-      })
+    const params = new URLSearchParams({
+      page: page.toString(),
+      limit: itemsPerPage.toString(),
+      hidden: 'true' // 非公開・未来の日付の項目のみを取得
+    })
 
-      const response = await this.request<NewsResponse['data']>(
-        `${config.api.adminUrl}/news?${params.toString()}`
+    const response = await this.request<NewsResponse['data']>(
+      `${config.api.adminUrl}/news?${params.toString()}`
+    )
+
+    if (!response.success || !response.data) {
+      throw new Error(
+        response.message || 'フロントエンドで表示されないお知らせの取得に失敗しました'
       )
+    }
 
-      if (!response.success || !response.data) {
-        throw new Error(
-          response.message || 'フロントエンドで表示されないお知らせの取得に失敗しました'
-        )
-      }
-
-      return {
-        success: true,
-        data: response.data
-      }
-    } catch (error) {
-      console.error('Admin hidden news fetch error:', error)
-      throw error
+    return {
+      success: true,
+      data: response.data
     }
   }
 
   // 管理者用の個別のお知らせを取得
   async getNewsById(id: number): Promise<News> {
-    try {
-      const response = await this.request<News>(`${config.api.adminUrl}/news/${id}`)
+    const response = await this.request<News>(`${config.api.adminUrl}/news/${id}`)
 
-      if (!response.success || !response.data) {
-        throw new Error(response.message || 'お知らせの取得に失敗しました')
-      }
-
-      return response.data
-    } catch (error) {
-      console.error('Admin news fetch error:', error)
-      throw error
+    if (!response.success || !response.data) {
+      throw new Error(response.message || 'お知らせの取得に失敗しました')
     }
+
+    return response.data
   }
 
   // 管理者用のお知らせを作成（ファイルアップロード対応）
   async createNewsWithFiles(formData: FormData): Promise<News> {
-    try {
-      const config = getConfig()
-      const response = await this.requestWithFormData<News>(
-        `${config.api.adminUrl}/news`,
-        formData,
-        'POST'
-      )
+    const config = getConfig()
+    const response = await this.requestWithFormData<News>(
+      `${config.api.adminUrl}/news`,
+      formData,
+      'POST'
+    )
 
-      if (!response.success || !response.data) {
-        throw new Error(response.message || 'お知らせの作成に失敗しました')
-      }
-
-      return response.data
-    } catch (error) {
-      console.error('Admin news creation error:', error)
-      throw error
+    if (!response.success || !response.data) {
+      throw new Error(response.message || 'お知らせの作成に失敗しました')
     }
+
+    return response.data
   }
 
   // 管理者用のお知らせを作成（従来の方法）
@@ -142,39 +122,34 @@ class AdminNewsFetch extends BaseApiFetch {
     author: string
     attachments?: NewsAttachment[]
   }): Promise<News> {
-    try {
-      const formData = new FormData()
-      formData.append('title', newsData.title)
-      formData.append('content', newsData.content)
-      formData.append('date', newsData.date)
-      formData.append('categories', JSON.stringify(newsData.categories))
-      formData.append('author', newsData.author)
-      if (newsData.priority) {
-        formData.append('priority', newsData.priority)
-      }
-      if (newsData.isMemberOnly !== undefined) {
-        formData.append('isMemberOnly', newsData.isMemberOnly.toString())
-      }
-      if (newsData.attachments) {
-        formData.append('attachments', JSON.stringify(newsData.attachments))
-      }
-
-      const config = getConfig()
-      const response = await this.requestWithFormData<News>(
-        `${config.api.adminUrl}/news`,
-        formData,
-        'POST'
-      )
-
-      if (!response.success || !response.data) {
-        throw new Error(response.message || 'お知らせの作成に失敗しました')
-      }
-
-      return response.data
-    } catch (error) {
-      console.error('Admin news creation error:', error)
-      throw error
+    const formData = new FormData()
+    formData.append('title', newsData.title)
+    formData.append('content', newsData.content)
+    formData.append('date', newsData.date)
+    formData.append('categories', JSON.stringify(newsData.categories))
+    formData.append('author', newsData.author)
+    if (newsData.priority) {
+      formData.append('priority', newsData.priority)
     }
+    if (newsData.isMemberOnly !== undefined) {
+      formData.append('isMemberOnly', newsData.isMemberOnly.toString())
+    }
+    if (newsData.attachments) {
+      formData.append('attachments', JSON.stringify(newsData.attachments))
+    }
+
+    const config = getConfig()
+    const response = await this.requestWithFormData<News>(
+      `${config.api.adminUrl}/news`,
+      formData,
+      'POST'
+    )
+
+    if (!response.success || !response.data) {
+      throw new Error(response.message || 'お知らせの作成に失敗しました')
+    }
+
+    return response.data
   }
 
   // 管理者用のお知らせを更新
@@ -191,39 +166,29 @@ class AdminNewsFetch extends BaseApiFetch {
       attachments?: NewsAttachment[]
     }
   ): Promise<News> {
-    try {
-      const config = getConfig()
-      const response = await this.requestWithJson<News>(
-        `${config.api.adminUrl}/news/${id}`,
-        newsData,
-        'PUT'
-      )
+    const config = getConfig()
+    const response = await this.requestWithJson<News>(
+      `${config.api.adminUrl}/news/${id}`,
+      newsData,
+      'PUT'
+    )
 
-      if (!response.success || !response.data) {
-        throw new Error(response.message || 'お知らせの更新に失敗しました')
-      }
-
-      return response.data
-    } catch (error) {
-      console.error('Admin news update error:', error)
-      throw error
+    if (!response.success || !response.data) {
+      throw new Error(response.message || 'お知らせの更新に失敗しました')
     }
+
+    return response.data
   }
 
   // 管理者用のお知らせを削除
   async deleteNews(id: number): Promise<void> {
-    try {
-      const config = getConfig()
-      const response = await this.request<void>(`${config.api.adminUrl}/news/${id}`, {
-        method: 'DELETE'
-      })
+    const config = getConfig()
+    const response = await this.request<void>(`${config.api.adminUrl}/news/${id}`, {
+      method: 'DELETE'
+    })
 
-      if (!response.success) {
-        throw new Error(response.message || 'お知らせの削除に失敗しました')
-      }
-    } catch (error) {
-      console.error('Admin news deletion error:', error)
-      throw error
+    if (!response.success) {
+      throw new Error(response.message || 'お知らせの削除に失敗しました')
     }
   }
 }
