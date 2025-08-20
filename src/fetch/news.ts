@@ -1,6 +1,7 @@
 import config from '@/config/config.json'
 import { getConfig } from '@/types/config'
 import type { PublicNews } from '@/types/news'
+import { BaseApiFetch } from './base'
 
 interface NewsResponse {
   success: boolean
@@ -16,7 +17,7 @@ interface NewsResponse {
   error?: string
 }
 
-class NewsFetch {
+class NewsFetch extends BaseApiFetch {
   // お知らせ一覧を取得
   async getNews(
     page: number = 1,
@@ -42,14 +43,18 @@ class NewsFetch {
         params.append('priority', priority)
       }
 
-      const response = await fetch(`${config.api.rootUrl}/news?${params.toString()}`)
-      const data = await response.json()
+      const response = await this.request<NewsResponse['data']>(
+        `${config.api.rootUrl}/news?${params.toString()}`
+      )
 
-      if (!response.ok) {
-        throw new Error(data.error || 'お知らせの取得に失敗しました')
+      if (!response.success || !response.data) {
+        throw new Error(response.message || 'お知らせの取得に失敗しました')
       }
 
-      return data
+      return {
+        success: true,
+        data: response.data
+      }
     } catch (error) {
       console.error('News fetch error:', error)
       throw error
@@ -59,14 +64,13 @@ class NewsFetch {
   // 個別のお知らせを取得
   async getNewsById(id: number): Promise<PublicNews> {
     try {
-      const response = await fetch(`${config.api.rootUrl}/news/${id}`)
-      const data = await response.json()
+      const response = await this.request<PublicNews>(`${config.api.rootUrl}/news/${id}`)
 
-      if (!response.ok) {
-        throw new Error(data.error || 'お知らせの取得に失敗しました')
+      if (!response.success || !response.data) {
+        throw new Error(response.message || 'お知らせの取得に失敗しました')
       }
 
-      return data.data
+      return response.data
     } catch (error) {
       console.error('News fetch error:', error)
       throw error
@@ -76,16 +80,15 @@ class NewsFetch {
   // 最新のお知らせを取得
   async getLatestNews(limit: number = 5): Promise<PublicNews[]> {
     try {
-      const response = await fetch(`${config.api.rootUrl}/news?limit=${limit}`)
-      const data = await response.json()
+      const response = await this.request<{ news: PublicNews[] }>(
+        `${config.api.rootUrl}/news?limit=${limit}`
+      )
 
-      if (!response.ok) {
-        const errorMessage =
-          typeof data?.error === 'string' ? data.error : '最新のお知らせの取得に失敗しました'
-        throw new Error(String(errorMessage))
+      if (!response.success || !response.data) {
+        throw new Error(response.message || '最新のお知らせの取得に失敗しました')
       }
 
-      return data.data.news
+      return response.data.news
     } catch (error) {
       console.error('Latest news fetch error:', error)
       return []
