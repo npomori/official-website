@@ -4,14 +4,36 @@ import type { APIRoute } from 'astro'
 
 // Event API
 export const GET: APIRoute = async () => {
-  const events = await EventDB.getEvents()
+  try {
+    const events = await EventDB.getEvents()
 
-  return new Response(JSON.stringify(events), {
-    status: 200,
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  })
+    return new Response(
+      JSON.stringify({
+        success: true,
+        data: events
+      }),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+    )
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : '予期せぬエラーが発生しました'
+    return new Response(
+      JSON.stringify({
+        success: false,
+        message: errorMessage
+      }),
+      {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+    )
+  }
 }
 
 export const POST: APIRoute = async ({ request, locals }) => {
@@ -26,13 +48,19 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
     // リクエストボディの型チェック
     if (!body || typeof body !== 'object') {
-      return new Response(JSON.stringify({ message: '不正なリクエストです' }), {
-        status: 400,
-        statusText: 'Bad Request',
-        headers: {
-          'Content-Type': 'application/json'
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: '不正なリクエストです'
+        }),
+        {
+          status: 400,
+          statusText: 'Bad Request',
+          headers: {
+            'Content-Type': 'application/json'
+          }
         }
-      })
+      )
     }
 
     const { title, start, end, allDay, category, description, url } = body as EventAdminRequest
@@ -47,13 +75,19 @@ export const POST: APIRoute = async ({ request, locals }) => {
       typeof description !== 'string' ||
       typeof url !== 'string'
     ) {
-      return new Response(JSON.stringify({ message: '必須フィールドが不足しています' }), {
-        status: 400,
-        statusText: 'Bad Request',
-        headers: {
-          'Content-Type': 'application/json'
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: '必須フィールドが不足しています'
+        }),
+        {
+          status: 400,
+          statusText: 'Bad Request',
+          headers: {
+            'Content-Type': 'application/json'
+          }
         }
-      })
+      )
     }
 
     let errMessage = ''
@@ -72,13 +106,19 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
     // 日付形式のチェック
     if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-      return new Response(JSON.stringify({ message: '日付の形式が不正です' }), {
-        status: 400,
-        statusText: 'Bad Request',
-        headers: {
-          'Content-Type': 'application/json'
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: '日付の形式が不正です'
+        }),
+        {
+          status: 400,
+          statusText: 'Bad Request',
+          headers: {
+            'Content-Type': 'application/json'
+          }
         }
-      })
+      )
     }
 
     // 開始日時の範囲チェック（1か月前から1年後まで）
@@ -89,6 +129,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     if (startDate < oneMonthAgo || startDate > oneYearLater) {
       return new Response(
         JSON.stringify({
+          success: false,
           message: 'イベントの開始日時は1か月前から1年後までの範囲で設定してください'
         }),
         {
@@ -109,23 +150,35 @@ export const POST: APIRoute = async ({ request, locals }) => {
       } else {
         errMessage = '開始時間は終了時間より前でなければなりません'
       }
-      return new Response(JSON.stringify({ message: errMessage }), {
-        status: 422,
-        statusText: 'Unprocessable Entity',
-        headers: {
-          'Content-Type': 'application/json'
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: errMessage
+        }),
+        {
+          status: 422,
+          statusText: 'Unprocessable Entity',
+          headers: {
+            'Content-Type': 'application/json'
+          }
         }
-      })
+      )
     }
 
     if (title.length === 0) {
-      return new Response(JSON.stringify({ message: 'データ登録に失敗しました' }), {
-        status: 400,
-        statusText: 'Bad Request',
-        headers: {
-          'Content-Type': 'application/json'
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: 'データ登録に失敗しました'
+        }),
+        {
+          status: 400,
+          statusText: 'Bad Request',
+          headers: {
+            'Content-Type': 'application/json'
+          }
         }
-      })
+      )
     }
 
     const event = await EventDB.addEvent({
@@ -139,19 +192,31 @@ export const POST: APIRoute = async ({ request, locals }) => {
       creatorId: locals.user.id
     })
 
-    return new Response(JSON.stringify(event), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json'
+    return new Response(
+      JSON.stringify({
+        success: true,
+        data: event
+      }),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json'
+        }
       }
-    })
+    )
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : '予期せぬエラーが発生しました'
-    return new Response(JSON.stringify({ error: errorMessage }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json'
+    return new Response(
+      JSON.stringify({
+        success: false,
+        message: errorMessage
+      }),
+      {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json'
+        }
       }
-    })
+    )
   }
 }

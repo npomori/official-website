@@ -28,19 +28,14 @@ const UserDeleteModal: FC<UserDeleteModalProps> = ({ open, user, onClose, onUser
 
     setIsSubmitting(true)
     try {
-      const response = await AdminUserFetch.deleteUser(user.id)
+      const result = await AdminUserFetch.deleteUser(user.id)
 
-      if (response.ok) {
+      if (result.success) {
         setSuccess('ユーザを削除しました')
         setCompleted(true)
         onUserDeleted(user.id)
       } else {
-        const resBody = await response.json()
-        if (resBody && resBody.message) {
-          setError(resBody.message)
-        } else {
-          setError('サーバでエラーが発生しました')
-        }
+        setError(result.message || 'ユーザの削除に失敗しました')
       }
     } catch (err: any) {
       setError('通信エラーが発生しました')

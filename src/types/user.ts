@@ -45,15 +45,6 @@ export const convertToUserSessionData = (user: User): UserSessionData => {
   return userSessinData
 }
 
-// 管理画面から登録するユーザ情報
-export interface UserAdminRequest {
-  email: string
-  name: string
-  password: string | null
-  role: UserRole
-  isEnabled: boolean
-}
-
 // 管理機能用ユーザ情報
 export interface IUser {
   id: number

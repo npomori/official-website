@@ -1,9 +1,11 @@
 import config from '@/config/config.json'
+import type { DashboardResponse } from '@/types/dashboard'
+import { BaseApiFetch } from '../base'
 
-class AdminDashboardFetch {
-  async getDashboardData(): Promise<Response> {
-    const response = await fetch(`${config.api.adminUrl}/dashboard`)
-    return response
+class AdminDashboardFetch extends BaseApiFetch {
+  async getDashboardData() {
+    return this.request<DashboardResponse>(`${config.api.adminUrl}/dashboard`)
   }
 }
+
 export default new AdminDashboardFetch()

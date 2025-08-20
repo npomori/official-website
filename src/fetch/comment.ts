@@ -1,9 +1,23 @@
 import config from '@/config/config.json'
+import { BaseApiFetch } from './base'
 
-class CommentFetch {
-  async getComments(eventId: number): Promise<Response> {
-    const response = await fetch(`${config.api.rootUrl}/comment?eventId=${eventId}`)
-    return response
+interface Comment {
+  id: number
+  content: string
+  eventId: number
+  creatorId: number
+  createdAt: string
+  updatedAt: string
+  creator: {
+    id: number
+    name: string
+    avatar: string | null
+  }
+}
+
+class CommentFetch extends BaseApiFetch {
+  async getComments(eventId: number) {
+    return this.request<Comment[]>(`${config.api.rootUrl}/comment?eventId=${eventId}`)
   }
 }
 

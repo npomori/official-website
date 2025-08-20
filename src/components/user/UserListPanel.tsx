@@ -21,12 +21,12 @@ const UserListPanel: FC = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await AdminUserFetch.getUsers()
-        if (!response || !response.ok) {
-          throw new Error(`エラー: ${response ? response.status : 'no response'}`)
+        const result = await AdminUserFetch.getUsers()
+        if (result.success && result.data) {
+          setUsers(result.data)
+        } else {
+          setError(result.message || 'ユーザ情報の取得に失敗しました')
         }
-        const users = await response.json()
-        setUsers(users)
       } catch (err) {
         setError('ユーザ情報の取得に失敗しました')
         console.error('Users fetch error:', err)
@@ -114,13 +114,13 @@ const UserListPanel: FC = () => {
           onClose={() => setShowAddModal(false)}
           onUserAdded={async () => {
             try {
-              const response = await AdminUserFetch.getUsers()
-              if (!response || !response.ok) {
-                throw new Error(`エラー: ${response ? response.status : 'no response'}`)
+              const result = await AdminUserFetch.getUsers()
+              if (result.success && result.data) {
+                setUsers(result.data)
+                //setShowAddModal(false)
+              } else {
+                setError(result.message || 'ユーザ一覧の更新に失敗しました')
               }
-              const updatedUsers = await response.json()
-              setUsers(updatedUsers)
-              //setShowAddModal(false)
             } catch (err) {
               setError('ユーザ一覧の更新に失敗しました')
               console.error('Users fetch error:', err)

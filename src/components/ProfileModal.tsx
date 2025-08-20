@@ -3,7 +3,7 @@ import Button from '@/components/base/Button'
 import config from '@/config/config.json'
 import { MemberProfileFetch } from '@/fetch/member'
 import { showProfileModal } from '@/store/profile'
-import type { MemberProfileResponse } from '@/types/profile'
+import type { UserProfile } from '@/types/profile'
 import { profileSchema } from '@/types/profile'
 import { useStore } from '@nanostores/react'
 import React, { useCallback, useEffect, useState } from 'react'
@@ -35,18 +35,20 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ userid }) => {
     try {
       setSuccess('')
       setError('')
-      const response = await MemberProfileFetch.getProfile(userid)
-      if (!response || !response.ok) {
-        throw new Error('プロフィールの取得に失敗しました')
+      const result = await MemberProfileFetch.getProfile(userid)
+      if (!result.success) {
+        throw new Error(result.message || 'プロフィールの取得に失敗しました')
       }
-      const profileData: MemberProfileResponse = await response.json()
-      setFormData({
-        name: profileData.name,
-        email: profileData.email,
-        biography: profileData.biography || '',
-        avatar: profileData.avatar || '',
-        avatarFile: null
-      })
+      const profileData = result.data
+      if (profileData) {
+        setFormData({
+          name: profileData.name,
+          email: profileData.email,
+          biography: profileData.biography || '',
+          avatar: profileData.avatar || '',
+          avatarFile: null
+        })
+      }
     } catch (err) {
       setError('プロフィールの取得に失敗しました')
     }
@@ -128,12 +130,13 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ userid }) => {
       profileSchema.parse(formDataWithoutFile)
       setValidationErrors({})
       return true
-    } catch (err) {
-      if (err instanceof z.ZodError) {
+    } catch (error) {
+      if (error instanceof z.ZodError) {
         const errors: { [key: string]: string } = {}
-        err.errors.forEach((error) => {
-          if (error.path[0]) {
-            errors[error.path[0].toString()] = error.message
+        const zodError = error as any
+        zodError.errors.forEach((err: any) => {
+          if (err.path[0]) {
+            errors[err.path[0].toString()] = err.message
           }
         })
         setValidationErrors(errors)
@@ -170,10 +173,9 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ userid }) => {
         formDataToSend.append('avatar', trimmedFormData.avatarFile)
       }
 
-      const response = await MemberProfileFetch.updateProfile(userid, formDataToSend)
-      const data = await response.json()
+      const result = await MemberProfileFetch.updateProfile(userid, formDataToSend)
 
-      if (response.ok) {
+      if (result.success) {
         // アップロード完了した画像の一時URLを解放
         if (tempImageUrl) {
           setTempImageUrl(null)
@@ -188,17 +190,11 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ userid }) => {
           window.location.reload()
         }, 2000)
       } else {
-        if (response.status === 422) {
-          // バリデーションエラーの場合、サーバーからのエラーメッセージを表示
-          setError(data.message || '入力内容に問題があります')
+        setError(result.message || 'プロフィールの更新に失敗しました')
 
-          if (data.errors) {
-            setValidationErrors(data.errors)
-          }
-        } else {
-          setError(data.message || 'プロフィールの更新に失敗しました')
+        if (result.errors) {
+          setValidationErrors(result.errors as { [key: string]: string })
         }
-        //throw new Error(data.message || 'プロフィールの更新に失敗しました')
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'プロフィールの更新に失敗しました')

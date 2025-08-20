@@ -59,7 +59,7 @@ const UserAddModal: FC<UserAddModalProps> = ({ open, onClose, onUserAdded }) => 
     }
     setIsSubmitting(true)
     try {
-      const response = await AdminUserFetch.addUser({
+      const result = await AdminUserFetch.addUser({
         name: trimmedForm.name,
         email: trimmedForm.email,
         password: trimmedForm.password,
@@ -67,28 +67,12 @@ const UserAddModal: FC<UserAddModalProps> = ({ open, onClose, onUserAdded }) => 
         isEnabled: true
       })
 
-      if (response.ok) {
-        const newUser = await response.json()
+      if (result.success && result.data) {
         setSuccess('ユーザを追加しました')
         setCompleted(true)
-        onUserAdded(newUser)
-      } else if (response.status === 422) {
-        // バリデーションエラー
-        const resBody = await response.json()
-        if (resBody && resBody.message) {
-          setError(resBody.message)
-        } else {
-          setError('入力データが無効です。再度確認してください。')
-        }
-      } else if (response.status === 401) {
-        setError('アクセス権がありません。再度ログインしてください。')
+        onUserAdded(result.data)
       } else {
-        const resBody = await response.json()
-        if (resBody && resBody.message) {
-          setError(resBody.message)
-        } else {
-          setError('サーバでエラーが発生しました')
-        }
+        setError(result.message || 'ユーザの追加に失敗しました')
       }
     } catch (err: any) {
       setError('通信エラーが発生しました')

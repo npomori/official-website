@@ -156,33 +156,45 @@ const EventInfoModal: React.FC<EventInfoModalProps> = ({ isOpen, event, onClose,
       setSuccess('')
       setError('')
       setCompleted(false)
-      fetchComments()
+      void fetchComments()
     }
   }, [isOpen, event])
 
   const fetchComments = async () => {
     try {
-      let response
+      let result
       if (userAuth) {
-        response = await MemberCommentFetch.getComments(event.id)
+        result = await MemberCommentFetch.getComments(event.id)
+        if (result.success && result.data) {
+          setComments(
+            result.data.map((comment: any) => ({
+              id: comment.id,
+              author: comment.creator.name,
+              content: comment.content,
+              createdAt: comment.createdAt,
+              avatar: comment.creator.avatar
+                ? `${config.upload.avatar.url}/${comment.creator.avatar}`
+                : undefined,
+              userId: comment.creator.id
+            })) as Comment[]
+          )
+        }
       } else {
-        response = await CommentFetch.getComments(event.id)
-      }
-
-      if (response.ok) {
-        const data = await response.json()
-        setComments(
-          data.map((comment: any) => ({
-            id: comment.id,
-            author: comment.creator.name,
-            content: comment.content,
-            createdAt: comment.createdAt,
-            avatar: comment.creator.avatar
-              ? `${config.upload.avatar.url}/${comment.creator.avatar}`
-              : undefined,
-            userId: comment.creator.id
-          }))
-        )
+        const result = await CommentFetch.getComments(event.id)
+        if (result.success && result.data) {
+          setComments(
+            result.data.map((comment: any) => ({
+              id: comment.id,
+              author: comment.creator.name,
+              content: comment.content,
+              createdAt: comment.createdAt,
+              avatar: comment.creator.avatar
+                ? `${config.upload.avatar.url}/${comment.creator.avatar}`
+                : undefined,
+              userId: comment.creator.id
+            })) as Comment[]
+          )
+        }
       }
     } catch (err) {
       console.error('コメントの取得に失敗しました:', err)
@@ -203,14 +215,13 @@ const EventInfoModal: React.FC<EventInfoModalProps> = ({ isOpen, event, onClose,
 
     if (confirm('このイベントを削除しますか？')) {
       try {
-        const response = await AdminEventFetch.removeEvent(event.id)
-        if (response.ok) {
+        const result = await AdminEventFetch.removeEvent(event.id)
+        if (result.success) {
           setSuccess('イベントを削除しました。')
           setCompleted(true)
           notifyEventUpdate()
         } else {
-          const errorData = await response.json()
-          setError(`削除に失敗しました: ${errorData.message}`)
+          setError(`削除に失敗しました: ${result.message}`)
         }
       } catch (error) {
         setError('通信エラーが発生しました')
@@ -227,19 +238,18 @@ const EventInfoModal: React.FC<EventInfoModalProps> = ({ isOpen, event, onClose,
     setSuccess('')
 
     try {
-      const response = await MemberCommentFetch.addComment({
+      const result = await MemberCommentFetch.addComment({
         eventId: event.id,
         content: newComment
       })
 
-      if (response.ok) {
+      if (result.success) {
         setNewComment('')
         setSuccess('コメントを投稿しました')
-        fetchComments()
+        void fetchComments()
         notifyEventUpdate()
       } else {
-        const data = await response.json()
-        setError(data.message || 'コメントの投稿に失敗しました')
+        setError(result.message || 'コメントの投稿に失敗しました')
       }
     } catch (err) {
       setError('コメントの投稿に失敗しました')
@@ -252,14 +262,13 @@ const EventInfoModal: React.FC<EventInfoModalProps> = ({ isOpen, event, onClose,
     if (!confirm('このコメントを削除してもよろしいですか？')) return
 
     try {
-      const response = await MemberCommentFetch.deleteComment(commentId)
-      if (response.ok) {
+      const result = await MemberCommentFetch.deleteComment(commentId)
+      if (result.success) {
         setSuccess('コメントを削除しました')
-        fetchComments()
+        void fetchComments()
         notifyEventUpdate()
       } else {
-        const data = await response.json()
-        setError(data.message || 'コメントの削除に失敗しました')
+        setError(result.message || 'コメントの削除に失敗しました')
       }
     } catch (err) {
       setError('コメントの削除に失敗しました')

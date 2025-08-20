@@ -17,24 +17,36 @@ export const GET: APIRoute = async ({ request }) => {
 
     // 日付形式のチェック
     if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-      return new Response(JSON.stringify({ message: '日付の形式が不正です' }), {
-        status: 400,
-        statusText: 'Bad Request',
-        headers: {
-          'Content-Type': 'application/json'
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: '日付の形式が不正です'
+        }),
+        {
+          status: 400,
+          statusText: 'Bad Request',
+          headers: {
+            'Content-Type': 'application/json'
+          }
         }
-      })
+      )
     }
 
     // 日付期間のチェック
     if (startDate >= endDate) {
-      return new Response(JSON.stringify({ message: '開始日は終了日より前でなければなりません' }), {
-        status: 400,
-        statusText: 'Bad Request',
-        headers: {
-          'Content-Type': 'application/json'
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: '開始日は終了日より前でなければなりません'
+        }),
+        {
+          status: 400,
+          statusText: 'Bad Request',
+          headers: {
+            'Content-Type': 'application/json'
+          }
         }
-      })
+      )
     }
 
     // イベント取得
@@ -57,19 +69,31 @@ export const GET: APIRoute = async ({ request }) => {
       } as EventResponse
     })
 
-    return new Response(JSON.stringify(mappedEvents), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json'
+    return new Response(
+      JSON.stringify({
+        success: true,
+        data: mappedEvents
+      }),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json'
+        }
       }
-    })
+    )
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : '予期せぬエラーが発生しました'
-    return new Response(JSON.stringify({ error: errorMessage }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json'
+    return new Response(
+      JSON.stringify({
+        success: false,
+        message: errorMessage
+      }),
+      {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json'
+        }
       }
-    })
+    )
   }
 }

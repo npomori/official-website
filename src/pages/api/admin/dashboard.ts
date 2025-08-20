@@ -9,8 +9,8 @@ export const GET: APIRoute = async () => {
     if (!stats) {
       return new Response(
         JSON.stringify({
-          error: 'ダッシュボードデータの取得に失敗しました',
-          code: 'DASHBOARD_DATA_NOT_FOUND'
+          success: false,
+          message: 'ダッシュボードデータの取得に失敗しました'
         }),
         {
           status: 404,
@@ -29,19 +29,26 @@ export const GET: APIRoute = async () => {
       timestamp: new Date().toISOString()
     }
 
-    return new Response(JSON.stringify(response), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-  } catch (error) {
-    console.error('Dashboard API Error:', error)
     return new Response(
       JSON.stringify({
-        error: 'ダッシュボードデータの取得に失敗しました',
-        code: 'INTERNAL_SERVER_ERROR',
-        details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        success: true,
+        data: response
+      }),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+    )
+  } catch (error) {
+    console.error('Dashboard API Error:', error)
+    const errorMessage =
+      error instanceof Error ? error.message : 'ダッシュボードデータの取得に失敗しました'
+    return new Response(
+      JSON.stringify({
+        success: false,
+        message: errorMessage
       }),
       {
         status: 500,

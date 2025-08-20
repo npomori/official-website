@@ -7,30 +7,48 @@ export const DELETE: APIRoute = async ({ params }) => {
   try {
     const id = Number(params.id)
     if (isNaN(id)) {
-      return new Response(JSON.stringify({ message: '有効なIDが指定されていません' }), {
-        status: 400,
-        headers: {
-          'Content-Type': 'application/json'
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: '有効なIDが指定されていません'
+        }),
+        {
+          status: 400,
+          headers: {
+            'Content-Type': 'application/json'
+          }
         }
-      })
+      )
     }
 
     const result = await EventDB.deleteEvent(id)
 
-    return new Response(JSON.stringify({ message: 'データを削除しました' }), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json'
+    return new Response(
+      JSON.stringify({
+        success: true,
+        data: { message: 'データを削除しました' }
+      }),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json'
+        }
       }
-    })
+    )
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : '予期せぬエラーが発生しました'
-    return new Response(JSON.stringify({ error: errorMessage }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json'
+    return new Response(
+      JSON.stringify({
+        success: false,
+        message: errorMessage
+      }),
+      {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json'
+        }
       }
-    })
+    )
   }
 }
 
@@ -59,13 +77,19 @@ export const PUT: APIRoute = async ({ params, request }) => {
 
     // リクエストボディの型チェック
     if (!body || typeof body !== 'object') {
-      return new Response(JSON.stringify({ message: '不正なリクエストです' }), {
-        status: 400,
-        statusText: 'Bad Request',
-        headers: {
-          'Content-Type': 'application/json'
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: '不正なリクエストです'
+        }),
+        {
+          status: 400,
+          statusText: 'Bad Request',
+          headers: {
+            'Content-Type': 'application/json'
+          }
         }
-      })
+      )
     }
     const { title, start, end, allDay, category, description, url } = body as EventAdminRequest
 
@@ -79,13 +103,19 @@ export const PUT: APIRoute = async ({ params, request }) => {
       typeof description !== 'string' ||
       typeof url !== 'string'
     ) {
-      return new Response(JSON.stringify({ message: '必須フィールドが不足しています' }), {
-        status: 400,
-        statusText: 'Bad Request',
-        headers: {
-          'Content-Type': 'application/json'
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: '必須フィールドが不足しています'
+        }),
+        {
+          status: 400,
+          statusText: 'Bad Request',
+          headers: {
+            'Content-Type': 'application/json'
+          }
         }
-      })
+      )
     }
 
     // JSTからUTCに変換してDateオブジェクトを生成
@@ -101,13 +131,19 @@ export const PUT: APIRoute = async ({ params, request }) => {
 
     // 日付形式のチェック
     if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-      return new Response(JSON.stringify({ message: '日付の形式が不正です' }), {
-        status: 400,
-        statusText: 'Bad Request',
-        headers: {
-          'Content-Type': 'application/json'
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: '日付の形式が不正です'
+        }),
+        {
+          status: 400,
+          statusText: 'Bad Request',
+          headers: {
+            'Content-Type': 'application/json'
+          }
         }
-      })
+      )
     }
 
     // 開始日時<終了日時のチェック
@@ -118,23 +154,35 @@ export const PUT: APIRoute = async ({ params, request }) => {
       } else {
         errMessage = '開始時間は終了時間より前でなければなりません'
       }
-      return new Response(JSON.stringify({ message: errMessage }), {
-        status: 422,
-        statusText: 'Unprocessable Entity',
-        headers: {
-          'Content-Type': 'application/json'
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: errMessage
+        }),
+        {
+          status: 422,
+          statusText: 'Unprocessable Entity',
+          headers: {
+            'Content-Type': 'application/json'
+          }
         }
-      })
+      )
     }
 
     if (title.length === 0) {
-      return new Response(JSON.stringify({ message: 'データ登録に失敗しました' }), {
-        status: 400,
-        statusText: 'Bad Request',
-        headers: {
-          'Content-Type': 'application/json'
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: 'データ登録に失敗しました'
+        }),
+        {
+          status: 400,
+          statusText: 'Bad Request',
+          headers: {
+            'Content-Type': 'application/json'
+          }
         }
-      })
+      )
     }
 
     const event = await EventDB.updateEvent(Number(id), {
@@ -147,20 +195,32 @@ export const PUT: APIRoute = async ({ params, request }) => {
       url: url
     })
 
-    return new Response(JSON.stringify(event), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json'
+    return new Response(
+      JSON.stringify({
+        success: true,
+        data: event
+      }),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json'
+        }
       }
-    })
+    )
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : '予期せぬエラーが発生しました'
-    return new Response(JSON.stringify({ error: errorMessage }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json'
+    return new Response(
+      JSON.stringify({
+        success: false,
+        message: errorMessage
+      }),
+      {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json'
+        }
       }
-    })
+    )
   }
 }
 
@@ -168,24 +228,36 @@ export const GET: APIRoute = async ({ params }) => {
   try {
     const id = Number(params.id)
     if (isNaN(id)) {
-      return new Response(JSON.stringify({ message: '有効なIDが指定されていません' }), {
-        status: 400,
-        headers: {
-          'Content-Type': 'application/json'
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: '有効なIDが指定されていません'
+        }),
+        {
+          status: 400,
+          headers: {
+            'Content-Type': 'application/json'
+          }
         }
-      })
+      )
     }
 
     const event = await EventDB.getEventById(id)
 
     if (!event) {
-      return new Response(JSON.stringify({ message: 'イベントが見つかりませんでした' }), {
-        status: 404,
-        statusText: 'Not Found',
-        headers: {
-          'Content-Type': 'application/json'
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: 'イベントが見つかりませんでした'
+        }),
+        {
+          status: 404,
+          statusText: 'Not Found',
+          headers: {
+            'Content-Type': 'application/json'
+          }
         }
-      })
+      )
     }
 
     const mappedEvent: EventAdminResponse = {
@@ -199,19 +271,31 @@ export const GET: APIRoute = async ({ params }) => {
       url: event.url ?? ''
     }
 
-    return new Response(JSON.stringify(mappedEvent), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json'
+    return new Response(
+      JSON.stringify({
+        success: true,
+        data: mappedEvent
+      }),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json'
+        }
       }
-    })
+    )
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : '予期せぬエラーが発生しました'
-    return new Response(JSON.stringify({ error: errorMessage }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json'
+    return new Response(
+      JSON.stringify({
+        success: false,
+        message: errorMessage
+      }),
+      {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json'
+        }
       }
-    })
+    )
   }
 }

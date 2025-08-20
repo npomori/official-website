@@ -13,19 +13,27 @@ export const POST: APIRoute = async (context) => {
 
     return new Response(
       JSON.stringify({
-        message: 'Logout succeeded'
+        success: true,
+        message: 'ログアウトしました'
       }),
       {
-        status: 200
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json'
+        }
       }
     )
   } catch (err) {
     return new Response(
       JSON.stringify({
-        message: 'Logout failed'
+        success: false,
+        message: 'ログアウトに失敗しました'
       }),
       {
-        status: 500
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json'
+        }
       }
     )
   }

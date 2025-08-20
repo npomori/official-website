@@ -12,19 +12,19 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const response = await AdminDashboardFetch.getDashboardData()
-        if (!response) {
-          throw new Error('ダッシュボードデータの取得に失敗しました')
+        const result = await AdminDashboardFetch.getDashboardData()
+        if (result.success && result.data) {
+          setUserStats(result.data.userStats)
+          setAdminStats(result.data.adminStats)
+          setRecentAdminActivities(
+            result.data.recentActivities.admin.slice(0, config.dashboard.recentActivities.admin)
+          )
+          setRecentUserActivities(
+            result.data.recentActivities.user.slice(0, config.dashboard.recentActivities.user)
+          )
+        } else {
+          console.error('ダッシュボードデータの取得に失敗しました:', result.message)
         }
-        const data = await response.json()
-        setUserStats(data.userStats)
-        setAdminStats(data.adminStats)
-        setRecentAdminActivities(
-          data.recentActivities.admin.slice(0, config.dashboard.recentActivities.admin)
-        )
-        setRecentUserActivities(
-          data.recentActivities.user.slice(0, config.dashboard.recentActivities.user)
-        )
       } catch (error) {
         console.error('ダッシュボードデータの取得に失敗しました:', error)
       }

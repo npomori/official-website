@@ -72,12 +72,11 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ userId }) => 
     }
 
     try {
-      const response = await MemberPasswordFetch.updatePassword(userId, {
+      const result = await MemberPasswordFetch.updatePassword(userId, {
         currentPassword: formData.currentPassword,
         newPassword: formData.newPassword
       })
-      const result = await response.json()
-      if (!response.ok) {
+      if (!result.success) {
         setError(result.message || 'パスワードの更新に失敗しました')
         return
       }

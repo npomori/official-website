@@ -1,21 +1,15 @@
 import config from '@/config/config.json'
+import type { EventDetailResponse, EventResponse } from '@/types/event'
+import { BaseApiFetch } from './base'
 
-class EventFetch {
-  async getEvent(id: number): Promise<Response> {
-    const response = await fetch(`${config.api.rootUrl}/event/${id}`)
-    return response
+class EventFetch extends BaseApiFetch {
+  async getEvent(id: number) {
+    return this.request<EventDetailResponse>(`${config.api.rootUrl}/event/${id}`)
   }
 
-  async getUpcomingEvents(limit?: number): Promise<Response> {
-    const url = limit
-      ? `${config.api.rootUrl}/event/upcoming?limit=${limit}`
-      : `${config.api.rootUrl}/event/upcoming`
-    const response = await fetch(url)
-    return response
-    // if (!response.ok) {
-    //   throw new Error('イベントの取得に失敗しました')
-    // }
-    // return await response.json()
+  async getEvents(start: string, end: string) {
+    return this.request<EventResponse[]>(`${config.api.rootUrl}/event?start=${start}&end=${end}`)
   }
 }
+
 export default new EventFetch()

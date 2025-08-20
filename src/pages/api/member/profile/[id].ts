@@ -20,12 +20,18 @@ export const PUT: APIRoute = async (context) => {
     // 自分のデータのみ編集可能
     const user = locals.user
     if (!user || user.id !== userId) {
-      return new Response(JSON.stringify({ message: 'アクセス権限がありません' }), {
-        status: 403,
-        headers: {
-          'Content-Type': 'application/json'
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: 'アクセス権限がありません'
+        }),
+        {
+          status: 403,
+          headers: {
+            'Content-Type': 'application/json'
+          }
         }
-      })
+      )
     }
 
     // アップロードディレクトリの確認と作成
@@ -67,7 +73,8 @@ export const PUT: APIRoute = async (context) => {
         if (avatarFile.size > 500 * 1024) {
           return new Response(
             JSON.stringify({
-              message: 'Validation failed',
+              success: false,
+              message: '入力内容に問題があります',
               errors: { avatar: 'ファイルサイズは500KB以下にしてください' }
             }),
             {
@@ -82,7 +89,8 @@ export const PUT: APIRoute = async (context) => {
         if (!allowedTypes.includes(avatarFile.type)) {
           return new Response(
             JSON.stringify({
-              message: 'Validation failed',
+              success: false,
+              message: '入力内容に問題があります',
               errors: { avatar: 'JPG、PNG、GIF、WebP形式のファイルのみアップロード可能です' }
             }),
             {
@@ -125,37 +133,55 @@ export const PUT: APIRoute = async (context) => {
       let existingUser = await UserDB.getUserByName(updateData.name)
       if (existingUser && existingUser.id !== userId) {
         const errMessage = 'この名前は既に使用されています'
-        return new Response(JSON.stringify({ message: errMessage }), {
-          status: 422,
-          statusText: 'Unprocessable Entity',
-          headers: {
-            'Content-Type': 'application/json'
+        return new Response(
+          JSON.stringify({
+            success: false,
+            message: errMessage
+          }),
+          {
+            status: 422,
+            statusText: 'Unprocessable Entity',
+            headers: {
+              'Content-Type': 'application/json'
+            }
           }
-        })
+        )
       }
 
       // メールアドレスの重複チェック
       existingUser = await await UserDB.getUserByEmail(updateData.email)
       if (existingUser && existingUser.id !== userId) {
         const errMessage = 'このメールアドレスは既に使用されています'
-        return new Response(JSON.stringify({ message: errMessage }), {
-          status: 422,
-          statusText: 'Unprocessable Entity',
-          headers: {
-            'Content-Type': 'application/json'
+        return new Response(
+          JSON.stringify({
+            success: false,
+            message: errMessage
+          }),
+          {
+            status: 422,
+            statusText: 'Unprocessable Entity',
+            headers: {
+              'Content-Type': 'application/json'
+            }
           }
-        })
+        )
       }
 
       // データベースの更新
       const updatedUser = await UserDB.updateUserProfile(userId, updateData)
       if (!updatedUser) {
-        return new Response(JSON.stringify({ message: 'Database update failed' }), {
-          status: 500,
-          headers: {
-            'Content-Type': 'application/json'
+        return new Response(
+          JSON.stringify({
+            success: false,
+            message: 'プロフィールの更新に失敗しました'
+          }),
+          {
+            status: 500,
+            headers: {
+              'Content-Type': 'application/json'
+            }
           }
-        })
+        )
       }
       // セッション(ユーザ情報)更新
       const sessionData: UserSessionData = convertToUserSessionData(updatedUser)
@@ -163,8 +189,8 @@ export const PUT: APIRoute = async (context) => {
 
       return new Response(
         JSON.stringify({
-          message: 'Profile updated successfully',
-          user: {
+          success: true,
+          data: {
             id: updatedUser.id,
             name: updatedUser.name,
             email: updatedUser.email,
@@ -182,11 +208,21 @@ export const PUT: APIRoute = async (context) => {
     } catch (err) {
       // バリデーションエラーを返す
       if (err instanceof z.ZodError) {
-        const errors = Object.fromEntries(
-          (err as any).errors.map((error: any) => [error.path[0], error.message])
+        // 各フィールドごとにエラーメッセージを配列でまとめる
+        const errors = err.issues.reduce(
+          (acc, error) => {
+            const key = error.path[0]
+            if (typeof key === 'string') {
+              if (!acc[key]) acc[key] = []
+              acc[key].push(error.message)
+            }
+            return acc
+          },
+          {} as Record<string, string[]>
         )
         return new Response(
           JSON.stringify({
+            success: false,
             message: '入力内容に問題があります',
             errors
           }),
@@ -200,12 +236,18 @@ export const PUT: APIRoute = async (context) => {
     }
   } catch (error) {
     console.error('Error updating profile:', error)
-    return new Response(JSON.stringify({ message: 'Internal server error' }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json'
+    return new Response(
+      JSON.stringify({
+        success: false,
+        message: 'プロフィールの更新中にエラーが発生しました'
+      }),
+      {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json'
+        }
       }
-    })
+    )
   }
 }
 
@@ -217,42 +259,66 @@ export const GET: APIRoute = async ({ params, locals }) => {
     // 自分のデータのみ編集可能
     const user = locals.user
     if (!user || user.id !== userId) {
-      return new Response(JSON.stringify({ message: 'アクセス権限がありません' }), {
-        status: 403,
-        headers: {
-          'Content-Type': 'application/json'
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: 'アクセス権限がありません'
+        }),
+        {
+          status: 403,
+          headers: {
+            'Content-Type': 'application/json'
+          }
         }
-      })
+      )
     }
 
     // ユーザ情報取得
     const userWithPassword = await UserDB.getUserById(userId)
     if (!userWithPassword) {
-      return new Response(JSON.stringify({ message: 'ユーザ情報が見つかりません' }), {
-        status: 404,
-        statusText: 'Not Found',
-        headers: {
-          'Content-Type': 'application/json'
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: 'ユーザ情報が見つかりません'
+        }),
+        {
+          status: 404,
+          statusText: 'Not Found',
+          headers: {
+            'Content-Type': 'application/json'
+          }
         }
-      })
+      )
     }
 
     // セッション(ユーザ情報)作成
     const userProfile: UserProfile = convertToUserProfile(userWithPassword)
 
-    return new Response(JSON.stringify(userProfile), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json'
+    return new Response(
+      JSON.stringify({
+        success: true,
+        data: userProfile
+      }),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json'
+        }
       }
-    })
+    )
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
-    return new Response(JSON.stringify({ message: errorMessage }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json'
+    return new Response(
+      JSON.stringify({
+        success: false,
+        message: errorMessage
+      }),
+      {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json'
+        }
       }
-    })
+    )
   }
 }

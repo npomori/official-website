@@ -84,7 +84,7 @@ const UserEditModal: FC<UserEditModalProps> = ({ open, user, onClose, onUserUpda
 
     setIsSubmitting(true)
     try {
-      const response = await AdminUserFetch.updateUser(user.id, {
+      const result = await AdminUserFetch.updateUser(user.id, {
         name: trimmedForm.name,
         email: trimmedForm.email,
         role: trimmedForm.role,
@@ -92,28 +92,12 @@ const UserEditModal: FC<UserEditModalProps> = ({ open, user, onClose, onUserUpda
         password: trimmedForm.password || null
       })
 
-      if (response.ok) {
-        const updatedUser = await response.json()
+      if (result.success && result.data) {
         setSuccess('ユーザを更新しました')
         setCompleted(true)
-        onUserUpdated(updatedUser)
-      } else if (response.status === 422) {
-        // バリデーションエラー
-        const resBody = await response.json()
-        if (resBody && resBody.message) {
-          setError(resBody.message)
-        } else {
-          setError('入力データが無効です。再度確認してください。')
-        }
-      } else if (response.status === 401) {
-        setError('アクセス権がありません。再度ログインしてください。')
+        onUserUpdated(result.data)
       } else {
-        const resBody = await response.json()
-        if (resBody && resBody.message) {
-          setError(resBody.message)
-        } else {
-          setError('サーバでエラーが発生しました')
-        }
+        setError(result.message || 'ユーザの更新に失敗しました')
       }
     } catch (err: any) {
       setError('通信エラーが発生しました')

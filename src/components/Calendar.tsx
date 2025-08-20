@@ -115,19 +115,18 @@ const Calendar: React.FC = () => {
   const handleEventClick = async (clickInfo: EventClickArg) => {
     // イベント情報を取得
     try {
-      const response = await EventFetch.getEvent(Number(clickInfo.event.id))
-      if (!response.ok) {
-        const errorData = await response.json()
-        //setError(`データの取得に失敗しました: ${errorData.message}`)
+      const result = await EventFetch.getEvent(Number(clickInfo.event.id))
+      if (!result.success) {
+        setError(`データの取得に失敗しました: ${result.message}`)
         return
       }
-      const eventData = await response.json()
 
       setUserAuth($userStore)
-      setSelectedEvent(eventData)
+      setSelectedEvent(result.data)
       setIsModalOpen(true)
     } catch (e) {
       console.error(e)
+      setError('イベント情報の取得中にエラーが発生しました')
     }
   }
   const closeModal = () => {

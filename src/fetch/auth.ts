@@ -1,25 +1,28 @@
 import config from '@/config/config.json'
+import { BaseApiFetch } from './base'
 
-class AuthFetch {
-  async login(email: string, password: string, rememberMe: boolean): Promise<Response> {
-    const response = await fetch(`${config.api.rootUrl}/auth/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        email: email,
-        password: password,
-        rememberMe: rememberMe
-      })
-    })
-    return response
+interface LoginRequest {
+  email: string
+  password: string
+  rememberMe: boolean
+}
+
+interface AuthResponse {
+  message: string
+}
+
+class AuthFetch extends BaseApiFetch {
+  async login(email: string, password: string, rememberMe: boolean) {
+    return this.requestWithJson<AuthResponse>(
+      `${config.api.rootUrl}/auth/login`,
+      { email, password, rememberMe },
+      'POST'
+    )
   }
-  async logout(): Promise<Response> {
-    const response = await fetch(`${config.api.rootUrl}/auth/logout`, {
-      method: 'POST'
-    })
-    return response
+
+  async logout() {
+    return this.request<AuthResponse>(`${config.api.rootUrl}/auth/logout`, { method: 'POST' })
   }
 }
+
 export default new AuthFetch()

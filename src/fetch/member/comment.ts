@@ -1,32 +1,38 @@
 import config from '@/config/config.json'
+import { BaseApiFetch } from '../base'
 
 interface CommentRequest {
   eventId: number
   content: string
 }
 
-class MemberCommentFetch {
-  async getComments(eventId: number): Promise<Response> {
-    const response = await fetch(`${config.api.memberUrl}/comment?eventId=${eventId}`)
-    return response
+interface Comment {
+  id: number
+  content: string
+  eventId: number
+  creatorId: number
+  createdAt: string
+  updatedAt: string
+  creator: {
+    id: number
+    name: string
+    avatar: string | null
+  }
+}
+
+class MemberCommentFetch extends BaseApiFetch {
+  async getComments(eventId: number) {
+    return this.request<Comment[]>(`${config.api.memberUrl}/comment?eventId=${eventId}`)
   }
 
-  async addComment(params: CommentRequest): Promise<Response> {
-    const response = await fetch(`${config.api.memberUrl}/comment`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(params)
-    })
-    return response
+  async addComment(params: CommentRequest) {
+    return this.requestWithJson<Comment>(`${config.api.memberUrl}/comment`, params, 'POST')
   }
 
-  async deleteComment(commentId: string): Promise<Response> {
-    const response = await fetch(`${config.api.memberUrl}/comment/${commentId}`, {
+  async deleteComment(commentId: string) {
+    return this.request<Comment>(`${config.api.memberUrl}/comment/${commentId}`, {
       method: 'DELETE'
     })
-    return response
   }
 }
 

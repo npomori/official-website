@@ -3,11 +3,7 @@ import Button from '@/components/base/Button'
 import AuthFetch from '@/fetch/auth'
 import { type FormEventHandler, useState } from 'react'
 
-interface LoginProps {
-  redirect?: string
-}
-
-const Login: React.FC<LoginProps> = ({ redirect = '/' }) => {
+const Login: React.FC = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [rememberMe, setRememberMe] = useState(false)
@@ -19,17 +15,17 @@ const Login: React.FC<LoginProps> = ({ redirect = '/' }) => {
     event.preventDefault()
 
     // ログイン処理
-    const response = await AuthFetch.login(email, password, rememberMe)
-    if (response) {
-      if (response.status === 200) {
-        // ログイン成功の場合、指定されたページにリダイレクト
-        window.location.href = redirect
+    try {
+      const result = await AuthFetch.login(email, password, rememberMe)
+      if (result.success) {
+        // ログイン成功の場合
+        window.location.href = '/'
       } else {
-        console.log(response)
+        //setError(result.message || 'ログインに失敗しました')
         setError('ログインに失敗しました')
       }
-    } else {
-      alert('エラーが発生しました')
+    } catch (error) {
+      setError('ログインに失敗しました')
     }
   }
 

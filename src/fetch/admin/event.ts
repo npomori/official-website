@@ -1,44 +1,30 @@
 import config from '@/config/config.json'
-import type { EventAdminRequest } from '@/types/event'
+import type { EventAdminRequest, EventAdminResponse } from '@/types/event'
+import { BaseApiFetch } from '../base'
 
-class AdminEventFetch {
-  async addEvent(params: EventAdminRequest): Promise<Response> {
-    const response = await fetch(`${config.api.adminUrl}/event`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(params)
-    })
-    return response
+class AdminEventFetch extends BaseApiFetch {
+  async addEvent(params: EventAdminRequest) {
+    return this.requestWithJson<EventAdminResponse>(`${config.api.adminUrl}/event`, params, 'POST')
   }
 
-  async removeEvent(id: number): Promise<Response> {
-    const response = await fetch(`${config.api.adminUrl}/event/${id}`, {
-      method: 'DELETE'
-    })
-    return response
+  async removeEvent(id: number) {
+    return this.request(`${config.api.adminUrl}/event/${id}`, { method: 'DELETE' })
   }
 
-  async updateEvent(id: number, params: EventAdminRequest): Promise<Response> {
-    const response = await fetch(`${config.api.adminUrl}/event/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(params)
-    })
-    return response
+  async updateEvent(id: number, params: EventAdminRequest) {
+    return this.requestWithJson<EventAdminResponse>(
+      `${config.api.adminUrl}/event/${id}`,
+      params,
+      'PUT'
+    )
   }
 
-  async getEvent(id: number): Promise<Response> {
-    const response = await fetch(`${config.api.adminUrl}/event/${id}`)
-    return response
+  async getEvent(id: number) {
+    return this.request<EventAdminResponse>(`${config.api.adminUrl}/event/${id}`)
   }
 
-  async getEvents(): Promise<Response> {
-    const response = await fetch(`${config.api.adminUrl}/event`)
-    return response
+  async getEvents() {
+    return this.request<EventAdminResponse[]>(`${config.api.adminUrl}/event`)
   }
 }
 
