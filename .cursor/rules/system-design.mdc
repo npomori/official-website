@@ -14,38 +14,10 @@ alwaysApply: true
 
 # フェッチ
 
-- クライアントからサーバにアクセスする場合はフェッチクラスを使用すること
+- クライアントからサーバにアクセスする場合はBaseApiFetchのサブクラスを使用すること
 - フェッチクラスはオブジェクトを生成してexportすること
 - フェッチクラスの格納ディレクトリ: src/fetch
 - データの更新、削除処理はadminフェッチクラスまたはmemberフェッチクラスを使用すること
-
-# APIエンドポイント
-
-## JSONデータを返す場合の型定義例
-```
-// 共通のAPIレスポンス型
-export interface ApiResponse<T> {  
-  message?: string
-  errors?: { [k: string]: string }
-  data?: T
-}
-
-// 具体的なデータ型
-export interface Article {
-  id: number
-  title: string
-  content: string
-}
-
-// 使用例
-const res: ApiResponse<Article> = {
-  data: {
-    id: 1,
-    title: "サンプル記事",
-    content: "本文..."
-  }
-}
-```
 
 # 型定義
 
