@@ -204,7 +204,7 @@ const NewsList: React.FC = () => {
   }
 
   // データがない場合
-  if (!data || !data.success) {
+  if (!data || !data.success || !data.data) {
     return (
       <div className="mx-auto max-w-4xl">
         <div className="py-12 text-center">

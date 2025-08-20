@@ -1,30 +1,22 @@
 import config from '@/config/config.json'
+import type { ApiResponse } from '@/types/api'
 import { getConfig } from '@/types/config'
 import type { News, NewsAttachment } from '@/types/news'
 import { BaseApiFetch } from '../base'
 
 interface NewsResponse {
-  success: boolean
-  data: {
-    news: News[]
-    pagination: {
-      currentPage: number
-      itemsPerPage: number
-      totalCount: number
-      totalPages: number
-    }
+  news: News[]
+  pagination: {
+    currentPage: number
+    itemsPerPage: number
+    totalCount: number
+    totalPages: number
   }
-  error?: string
 }
 
 class AdminNewsFetch extends BaseApiFetch {
   // 管理者用のお知らせ一覧を取得
-  async getNews(
-    page: number = 1,
-    limit?: number,
-    category?: string,
-    priority?: string
-  ): Promise<NewsResponse> {
+  async getNews(page: number = 1, limit?: number, category?: string, priority?: string) {
     const config = getConfig()
     const defaultLimit = config.pagination?.newsList?.itemsPerPage || 10
     const itemsPerPage = limit || defaultLimit
@@ -42,22 +34,14 @@ class AdminNewsFetch extends BaseApiFetch {
       params.append('priority', priority)
     }
 
-    const response = await this.request<NewsResponse['data']>(
+    const response = await this.request<NewsResponse>(
       `${config.api.adminUrl}/news?${params.toString()}`
     )
-
-    if (!response.success || !response.data) {
-      throw new Error(response.message || 'お知らせの取得に失敗しました')
-    }
-
-    return {
-      success: true,
-      data: response.data
-    }
+    return response
   }
 
   // フロントエンドで表示されない項目（非公開・未来の日付）を取得
-  async getHiddenNews(page: number = 1, limit?: number): Promise<NewsResponse> {
+  async getHiddenNews(page: number = 1, limit?: number): Promise<ApiResponse<NewsResponse>> {
     const config = getConfig()
     const defaultLimit = config.pagination?.newsList?.itemsPerPage || 10
     const itemsPerPage = limit || defaultLimit
@@ -68,20 +52,10 @@ class AdminNewsFetch extends BaseApiFetch {
       hidden: 'true' // 非公開・未来の日付の項目のみを取得
     })
 
-    const response = await this.request<NewsResponse['data']>(
+    const response = await this.request<NewsResponse>(
       `${config.api.adminUrl}/news?${params.toString()}`
     )
-
-    if (!response.success || !response.data) {
-      throw new Error(
-        response.message || 'フロントエンドで表示されないお知らせの取得に失敗しました'
-      )
-    }
-
-    return {
-      success: true,
-      data: response.data
-    }
+    return response
   }
 
   // 管理者用の個別のお知らせを取得

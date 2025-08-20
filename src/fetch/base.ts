@@ -27,7 +27,8 @@ export abstract class BaseApiFetch {
 
       return {
         success: true,
-        data: data.data || data
+        //data: data.data || data
+        data: data.data
       }
     } catch (error) {
       console.error('Fetch error:', error)

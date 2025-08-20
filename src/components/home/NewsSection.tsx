@@ -2,7 +2,6 @@ import newsPriority from '@/config/news-priority.json'
 import NewsFetch from '@/fetch/news'
 import useSWR from '@/hooks/swr'
 import { getConfig } from '@/types/config'
-import type { News, NewsAttachment } from '@/types/news'
 import React from 'react'
 
 const NewsSection: React.FC = () => {
@@ -18,8 +17,8 @@ const NewsSection: React.FC = () => {
   } = useSWR(`latest-news-${itemsPerPage}`, () => NewsFetch.getLatestNews(itemsPerPage))
 
   // 日付をフォーマットする関数
-  const formatDate = (dateString: string): string => {
-    const date = new Date(dateString)
+  const formatDate = (dateString: string | Date): string => {
+    const date = typeof dateString === 'string' ? new Date(dateString) : dateString
     const month = date.getMonth() + 1
     const day = date.getDate()
     return `${month}/${day}`
@@ -59,7 +58,15 @@ const NewsSection: React.FC = () => {
     )
   }
 
-  if (error || !latestNews || latestNews.length === 0) {
+  // ApiResponse型に対応したエラーチェック
+  if (
+    error ||
+    !latestNews ||
+    !latestNews.success ||
+    !latestNews.data ||
+    !latestNews.data.news ||
+    latestNews.data.news.length === 0
+  ) {
     return (
       <div className="rounded-lg bg-white p-6 shadow-lg">
         <div className="mb-4 flex items-center justify-between">
@@ -104,7 +111,7 @@ const NewsSection: React.FC = () => {
         </a>
       </div>
       <ul className="space-y-4">
-        {latestNews.map((news) => (
+        {latestNews.data.news.map((news) => (
           <li key={news.id} className="flex items-start justify-between">
             <div className="flex min-w-0 flex-1 items-start">
               <span className="text-primary-600 mr-4 flex-shrink-0 font-bold">
