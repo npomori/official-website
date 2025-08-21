@@ -1,4 +1,5 @@
 import { NewsDB } from '@/server/db'
+import type { News } from '@/types/news'
 import type { APIRoute } from 'astro'
 
 export const GET: APIRoute = async ({ params, locals }) => {
@@ -9,7 +10,7 @@ export const GET: APIRoute = async ({ params, locals }) => {
       return new Response(
         JSON.stringify({
           success: false,
-          error: '無効なお知らせIDです'
+          message: '無効なお知らせIDです'
         }),
         {
           status: 400,
@@ -31,7 +32,7 @@ export const GET: APIRoute = async ({ params, locals }) => {
       return new Response(
         JSON.stringify({
           success: false,
-          error: 'お知らせが見つかりません'
+          message: 'お知らせが見つかりません'
         }),
         {
           status: 404,
@@ -59,7 +60,7 @@ export const GET: APIRoute = async ({ params, locals }) => {
     return new Response(
       JSON.stringify({
         success: false,
-        error: 'お知らせの取得に失敗しました'
+        message: 'お知らせの取得に失敗しました'
       }),
       {
         status: 500,

@@ -3,7 +3,7 @@ import { validateNewsApi } from '@/schemas/news'
 import NewsDB from '@/server/db/news'
 import { newsFileUploader } from '@/server/utils/file-upload'
 import { getConfig } from '@/types/config'
-import type { CreateNewsData } from '@/types/news'
+import type { CreateNewsData, NewsCreateResponse, NewsListResponse } from '@/types/news'
 import type { APIRoute } from 'astro'
 import { z } from 'zod'
 
@@ -69,7 +69,7 @@ export const GET: APIRoute = async ({ url }) => {
     return new Response(
       JSON.stringify({
         success: false,
-        error: 'お知らせデータの取得に失敗しました'
+        message: 'お知らせデータの取得に失敗しました'
       }),
       {
         status: 500,
@@ -113,11 +113,11 @@ export const POST: APIRoute = async ({ request, locals }) => {
         return new Response(
           JSON.stringify({
             success: false,
-            error: 'バリデーションエラー',
-            details: errorMessages
+            message: 'バリデーションエラー',
+            errors: { validation: errorMessages }
           }),
           {
-            status: 400,
+            status: 422,
             headers: {
               'Content-Type': 'application/json'
             }
@@ -143,7 +143,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
         return new Response(
           JSON.stringify({
             success: false,
-            error: `ファイル数が多すぎます (最大${newsConfig.maxFiles}個)`
+            message: `ファイル数が多すぎます (最大${newsConfig.maxFiles}個)`
           }),
           {
             status: 400,
@@ -160,7 +160,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
           return new Response(
             JSON.stringify({
               success: false,
-              error: `ファイルタイプが許可されていません: ${file.name}`
+              message: `ファイルタイプが許可されていません: ${file.name}`
             }),
             {
               status: 400,
@@ -176,7 +176,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
           return new Response(
             JSON.stringify({
               success: false,
-              error: `ファイルサイズが大きすぎます: ${file.name} (最大${maxSizeMB}MB)`
+              message: `ファイルサイズが大きすぎます: ${file.name} (最大${maxSizeMB}MB)`
             }),
             {
               status: 400,
@@ -196,7 +196,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
         return new Response(
           JSON.stringify({
             success: false,
-            error: 'ファイルのアップロードに失敗しました'
+            message: 'ファイルのアップロードに失敗しました'
           }),
           {
             status: 500,
@@ -246,7 +246,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     return new Response(
       JSON.stringify({
         success: false,
-        error: errorMessage
+        message: errorMessage
       }),
       {
         status: 500,

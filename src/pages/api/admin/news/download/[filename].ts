@@ -9,12 +9,18 @@ export const GET: APIRoute = async ({ params }) => {
     const filename = params.filename
 
     if (!filename) {
-      return new Response(JSON.stringify({ error: 'ファイル名が指定されていません' }), {
-        status: 400,
-        headers: {
-          'Content-Type': 'application/json'
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: 'ファイル名が指定されていません'
+        }),
+        {
+          status: 400,
+          headers: {
+            'Content-Type': 'application/json'
+          }
         }
-      })
+      )
     }
 
     // データベースから添付ファイル情報を取得
@@ -31,12 +37,18 @@ export const GET: APIRoute = async ({ params }) => {
 
     // ファイルが存在するかチェック
     if (!existsSync(filePath)) {
-      return new Response(JSON.stringify({ error: 'ファイルが見つかりません' }), {
-        status: 404,
-        headers: {
-          'Content-Type': 'application/json'
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: 'ファイルが見つかりません'
+        }),
+        {
+          status: 404,
+          headers: {
+            'Content-Type': 'application/json'
+          }
         }
-      })
+      )
     }
 
     // ファイルを読み込み
@@ -55,12 +67,18 @@ export const GET: APIRoute = async ({ params }) => {
     })
   } catch (error) {
     console.error('File download error:', error)
-    return new Response(JSON.stringify({ error: 'ファイルのダウンロードに失敗しました' }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json'
+    return new Response(
+      JSON.stringify({
+        success: false,
+        message: 'ファイルのダウンロードに失敗しました'
+      }),
+      {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json'
+        }
       }
-    })
+    )
   }
 }
 

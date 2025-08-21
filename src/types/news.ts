@@ -66,3 +66,30 @@ export interface PublicNews {
   isMemberOnly: boolean
   author: string
 }
+
+// ニュースAPIレスポンス型定義
+export interface NewsListResponse {
+  news: News[]
+  pagination: {
+    currentPage: number
+    itemsPerPage: number
+    totalCount: number
+    totalPages: number
+  }
+}
+
+export interface NewsDetailResponse {
+  news: News
+}
+
+export interface NewsCreateResponse {
+  news: News
+}
+
+export interface NewsUpdateResponse {
+  news: News
+}
+
+export interface NewsDeleteResponse {
+  message: string
+}

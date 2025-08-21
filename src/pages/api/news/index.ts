@@ -1,5 +1,6 @@
 import { NewsDB } from '@/server/db'
 import { getConfig } from '@/types/config'
+import type { NewsListResponse } from '@/types/news'
 import type { APIRoute } from 'astro'
 
 export const GET: APIRoute = async ({ url, locals }) => {
@@ -57,7 +58,7 @@ export const GET: APIRoute = async ({ url, locals }) => {
     return new Response(
       JSON.stringify({
         success: false,
-        error: 'お知らせデータの取得に失敗しました'
+        message: 'お知らせデータの取得に失敗しました'
       }),
       {
         status: 500,

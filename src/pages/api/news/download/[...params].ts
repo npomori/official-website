@@ -8,29 +8,47 @@ export const GET: APIRoute = async ({ params, locals }) => {
     // URLパラメータから情報を取得
     const paramsArray = params.params?.split('/') || []
     if (paramsArray.length < 2) {
-      return new Response(JSON.stringify({ error: 'Invalid parameters' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      })
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: 'パラメータが無効です'
+        }),
+        {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      )
     }
 
     const newsIdStr = paramsArray[0]
     const filename = paramsArray[1]
 
     if (!newsIdStr || !filename) {
-      return new Response(JSON.stringify({ error: 'Missing parameters' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      })
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: 'パラメータが不足しています'
+        }),
+        {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      )
     }
 
     const newsId = parseInt(newsIdStr, 10)
 
     if (isNaN(newsId)) {
-      return new Response(JSON.stringify({ error: 'Invalid news ID' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      })
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: '無効なお知らせIDです'
+        }),
+        {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      )
     }
 
     // ユーザーのログイン状態を取得
@@ -40,36 +58,60 @@ export const GET: APIRoute = async ({ params, locals }) => {
     // お知らせとファイルの存在確認
     const news = await newsDB.getNewsById(newsId)
     if (!news) {
-      return new Response(JSON.stringify({ error: 'News not found' }), {
-        status: 404,
-        headers: { 'Content-Type': 'application/json' }
-      })
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: 'お知らせが見つかりません'
+        }),
+        {
+          status: 404,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      )
     }
 
     // 会員限定コンテンツの場合、ログインチェック
     if (news.isMemberOnly && !isLoggedIn) {
-      return new Response(JSON.stringify({ error: 'ログインが必要です' }), {
-        status: 401,
-        headers: { 'Content-Type': 'application/json' }
-      })
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: 'ログインが必要です'
+        }),
+        {
+          status: 401,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      )
     }
 
     // 添付ファイルが存在するかチェック
     if (!news.attachments || !Array.isArray(news.attachments)) {
-      return new Response(JSON.stringify({ error: 'No attachments found' }), {
-        status: 404,
-        headers: { 'Content-Type': 'application/json' }
-      })
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: '添付ファイルが見つかりません'
+        }),
+        {
+          status: 404,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      )
     }
 
     const attachment = news.attachments.find(
       (att: { filename: string; originalName: string }) => att.filename === filename
     )
     if (!attachment) {
-      return new Response(JSON.stringify({ error: 'File not found' }), {
-        status: 404,
-        headers: { 'Content-Type': 'application/json' }
-      })
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: 'ファイルが見つかりません'
+        }),
+        {
+          status: 404,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      )
     }
 
     // ファイルパスを構築
@@ -103,16 +145,28 @@ export const GET: APIRoute = async ({ params, locals }) => {
       })
     } catch (fileError) {
       console.error('ファイル読み込みエラー:', fileError)
-      return new Response(JSON.stringify({ error: 'File not found on server' }), {
-        status: 404,
-        headers: { 'Content-Type': 'application/json' }
-      })
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: 'サーバー上でファイルが見つかりません'
+        }),
+        {
+          status: 404,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      )
     }
   } catch (error) {
     console.error('ダウンロードエラー:', error)
-    return new Response(JSON.stringify({ error: 'Internal server error' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    })
+    return new Response(
+      JSON.stringify({
+        success: false,
+        message: 'サーバーエラーが発生しました'
+      }),
+      {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
+      }
+    )
   }
 }

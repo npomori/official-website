@@ -117,7 +117,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
 
       if (isEditMode && news?.id) {
         // お知らせの更新の場合
-        await AdminNewsFetch.updateNews(parseInt(news.id), {
+        const result = await AdminNewsFetch.updateNews(parseInt(news.id), {
           title: values.title,
           content: values.content,
           date: dateString as string,
@@ -126,7 +126,26 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
           isMemberOnly: values.isMemberOnly,
           author: values.author
         })
-        setSuccess('お知らせを更新しました')
+
+        if (result.success) {
+          setSuccess('お知らせを更新しました')
+          // 登録完了
+          setCompleted(true)
+        } else {
+          // エラーメッセージの処理
+          let errorMessage = result.message || 'お知らせの更新に失敗しました'
+
+          // バリデーションエラーの場合、詳細なエラーメッセージを表示
+          if (result.errors) {
+            const errorDetails = Object.entries(result.errors)
+              .map(([field, message]) => `${field}: ${message}`)
+              .join('\n')
+            errorMessage = `${errorMessage}\n${errorDetails}`
+          }
+
+          setError(errorMessage)
+          return // エラーの場合は処理を中断
+        }
       } else {
         // 新規お知らせの追加の場合
         const formData = new FormData()
@@ -145,12 +164,28 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
           formData.append('files', file)
         })
 
-        await AdminNewsFetch.createNewsWithFiles(formData)
-        setSuccess('お知らせを追加しました')
-      }
+        const result = await AdminNewsFetch.createNewsWithFiles(formData)
 
-      // 登録完了
-      setCompleted(true)
+        if (result.success) {
+          setSuccess('お知らせを追加しました')
+          // 登録完了
+          setCompleted(true)
+        } else {
+          // エラーメッセージの処理
+          let errorMessage = result.message || 'お知らせの追加に失敗しました'
+
+          // バリデーションエラーの場合、詳細なエラーメッセージを表示
+          if (result.errors) {
+            const errorDetails = Object.entries(result.errors)
+              .map(([field, message]) => `${field}: ${message}`)
+              .join('\n')
+            errorMessage = `${errorMessage}\n${errorDetails}`
+          }
+
+          setError(errorMessage)
+          return // エラーの場合は処理を中断
+        }
+      }
     } catch (e: unknown) {
       console.error('News submission error:', e)
       const errorMessage = e instanceof Error ? e.message : '通信エラーが発生しました'

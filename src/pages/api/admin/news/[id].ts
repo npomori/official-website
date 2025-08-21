@@ -1,6 +1,11 @@
 import { validateNewsApi } from '@/schemas/news'
 import NewsDB from '@/server/db/news'
-import type { UpdateNewsData } from '@/types/news'
+import type {
+  NewsDeleteResponse,
+  NewsDetailResponse,
+  NewsUpdateResponse,
+  UpdateNewsData
+} from '@/types/news'
 import type { APIRoute } from 'astro'
 import { z } from 'zod'
 
@@ -10,7 +15,7 @@ export const GET: APIRoute = async ({ params }) => {
     const id = Number(params.id)
 
     if (isNaN(id)) {
-      return new Response(JSON.stringify({ success: false, error: '無効なIDです' }), {
+      return new Response(JSON.stringify({ success: false, message: '無効なIDです' }), {
         status: 400,
         headers: {
           'Content-Type': 'application/json'
@@ -21,7 +26,7 @@ export const GET: APIRoute = async ({ params }) => {
     const news = await NewsDB.getNewsById(id)
 
     if (!news) {
-      return new Response(JSON.stringify({ success: false, error: 'お知らせが見つかりません' }), {
+      return new Response(JSON.stringify({ success: false, message: 'お知らせが見つかりません' }), {
         status: 404,
         headers: {
           'Content-Type': 'application/json'
@@ -44,7 +49,7 @@ export const GET: APIRoute = async ({ params }) => {
   } catch (error) {
     console.error('Admin news fetch error:', error)
     const errorMessage = error instanceof Error ? error.message : 'お知らせの取得に失敗しました'
-    return new Response(JSON.stringify({ success: false, error: errorMessage }), {
+    return new Response(JSON.stringify({ success: false, message: errorMessage }), {
       status: 500,
       headers: {
         'Content-Type': 'application/json'
@@ -59,7 +64,7 @@ export const PUT: APIRoute = async ({ params, request }) => {
     const id = Number(params.id)
 
     if (isNaN(id)) {
-      return new Response(JSON.stringify({ success: false, error: '無効なIDです' }), {
+      return new Response(JSON.stringify({ success: false, message: '無効なIDです' }), {
         status: 400,
         headers: {
           'Content-Type': 'application/json'
@@ -90,11 +95,11 @@ export const PUT: APIRoute = async ({ params, request }) => {
         return new Response(
           JSON.stringify({
             success: false,
-            error: 'バリデーションエラー',
-            details: errorMessages
+            message: 'バリデーションエラー',
+            errors: { validation: errorMessages }
           }),
           {
-            status: 400,
+            status: 422,
             headers: {
               'Content-Type': 'application/json'
             }
@@ -108,7 +113,7 @@ export const PUT: APIRoute = async ({ params, request }) => {
     const existingNews = await NewsDB.getNewsById(id)
 
     if (!existingNews) {
-      return new Response(JSON.stringify({ success: false, error: 'お知らせが見つかりません' }), {
+      return new Response(JSON.stringify({ success: false, message: 'お知らせが見つかりません' }), {
         status: 404,
         headers: {
           'Content-Type': 'application/json'
@@ -135,7 +140,7 @@ export const PUT: APIRoute = async ({ params, request }) => {
 
     if (!updatedNews) {
       return new Response(
-        JSON.stringify({ success: false, error: 'お知らせの更新に失敗しました' }),
+        JSON.stringify({ success: false, message: 'お知らせの更新に失敗しました' }),
         {
           status: 500,
           headers: {
@@ -161,7 +166,7 @@ export const PUT: APIRoute = async ({ params, request }) => {
   } catch (error) {
     console.error('Admin news update error:', error)
     const errorMessage = error instanceof Error ? error.message : 'お知らせの更新に失敗しました'
-    return new Response(JSON.stringify({ success: false, error: errorMessage }), {
+    return new Response(JSON.stringify({ success: false, message: errorMessage }), {
       status: 500,
       headers: {
         'Content-Type': 'application/json'
@@ -176,7 +181,7 @@ export const DELETE: APIRoute = async ({ params }) => {
     const id = Number(params.id)
 
     if (isNaN(id)) {
-      return new Response(JSON.stringify({ success: false, error: '無効なIDです' }), {
+      return new Response(JSON.stringify({ success: false, message: '無効なIDです' }), {
         status: 400,
         headers: {
           'Content-Type': 'application/json'
@@ -188,7 +193,7 @@ export const DELETE: APIRoute = async ({ params }) => {
     const existingNews = await NewsDB.getNewsById(id)
 
     if (!existingNews) {
-      return new Response(JSON.stringify({ success: false, error: 'お知らせが見つかりません' }), {
+      return new Response(JSON.stringify({ success: false, message: 'お知らせが見つかりません' }), {
         status: 404,
         headers: {
           'Content-Type': 'application/json'
@@ -201,7 +206,7 @@ export const DELETE: APIRoute = async ({ params }) => {
 
     if (!success) {
       return new Response(
-        JSON.stringify({ success: false, error: 'お知らせの削除に失敗しました' }),
+        JSON.stringify({ success: false, message: 'お知らせの削除に失敗しました' }),
         {
           status: 500,
           headers: {
@@ -226,7 +231,7 @@ export const DELETE: APIRoute = async ({ params }) => {
   } catch (error) {
     console.error('Admin news deletion error:', error)
     const errorMessage = error instanceof Error ? error.message : 'お知らせの削除に失敗しました'
-    return new Response(JSON.stringify({ success: false, error: errorMessage }), {
+    return new Response(JSON.stringify({ success: false, message: errorMessage }), {
       status: 500,
       headers: {
         'Content-Type': 'application/json'
