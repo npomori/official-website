@@ -279,10 +279,10 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto bg-black/50">
-      <div className="relative w-full max-w-2xl transform overflow-hidden rounded-2xl bg-gradient-to-br from-white to-gray-50 shadow-2xl">
-        {/* ヘッダー */}
-        <div className="relative px-6 pt-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto bg-black/50 p-4">
+      <div className="relative flex max-h-[90vh] w-full max-w-2xl transform flex-col overflow-hidden rounded-2xl bg-gradient-to-br from-white to-gray-50 shadow-2xl">
+        {/* ヘッダー - 固定 */}
+        <div className="relative flex-shrink-0 px-6 pt-6 pb-4">
           <div className="absolute top-6 right-6">
             <button
               type="button"
@@ -304,8 +304,9 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
             {isEditMode ? 'お知らせを編集' : 'お知らせを作成'}
           </h2>
         </div>
-        {/* コンテンツ */}
-        <div className="px-6 pt-0 pb-6">
+
+        {/* コンテンツ - スクロール可能 */}
+        <div className="flex-1 overflow-y-auto px-6">
           <form onSubmit={handleSubmit(onSubmit, onInvalid)} className="space-y-6">
             {success && <Alert message={success} type="success" />}
             {error && <Alert message={error} type="error" />}
@@ -547,6 +548,53 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
                 <div className="col-span-4">
                   <label className="mb-1 block font-medium text-gray-900">
                     添付ファイル(オプション)
+                    <span className="group relative ml-2 inline-flex items-center text-gray-500">
+                      <svg
+                        className="h-4 w-4 cursor-help"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                      <div className="absolute bottom-full left-0 mb-2 hidden w-[400px] transform rounded-lg bg-gray-900 p-3 text-sm text-white opacity-0 transition-opacity group-hover:block group-hover:opacity-100">
+                        <div className="space-y-2 whitespace-pre-wrap">
+                          <div className="font-medium">対応ファイル形式</div>
+                          <div>
+                            {newsConfig.allowedTypes
+                              .map((type: string) => {
+                                const extensions: Record<string, string> = {
+                                  'application/pdf': 'PDF',
+                                  'application/msword': 'Word (.doc)',
+                                  'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+                                    'Word (.docx)',
+                                  'application/vnd.ms-excel': 'Excel (.xls)',
+                                  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+                                    'Excel (.xlsx)',
+                                  'image/jpeg': 'JPEG',
+                                  'image/png': 'PNG',
+                                  'image/gif': 'GIF'
+                                }
+                                return extensions[type] || type
+                              })
+                              .join(', ')}
+                          </div>
+                          <div className="border-t border-gray-700 pt-2">
+                            最大ファイル数: {newsConfig.maxFiles}個
+                          </div>
+                          <div>
+                            最大ファイルサイズ: {Math.round(newsConfig.maxFileSize / (1024 * 1024))}
+                            MB
+                          </div>
+                        </div>
+                        <div className="absolute -bottom-1 left-4 h-2 w-2 rotate-45 transform bg-gray-900"></div>
+                      </div>
+                    </span>
                   </label>
                   <div className="space-y-4">
                     <div>
@@ -582,29 +630,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
                           />
                         </label>
                       </div>
-                      <p className="mt-3 text-sm text-gray-500">
-                        対応形式:{' '}
-                        {newsConfig.allowedTypes
-                          .map((type: string) => {
-                            const extensions: Record<string, string> = {
-                              'application/pdf': 'PDF',
-                              'application/msword': 'Word (.doc)',
-                              'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
-                                'Word (.docx)',
-                              'application/vnd.ms-excel': 'Excel (.xls)',
-                              'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
-                                'Excel (.xlsx)',
-                              'image/jpeg': 'JPEG',
-                              'image/png': 'PNG',
-                              'image/gif': 'GIF'
-                            }
-                            return extensions[type] || type
-                          })
-                          .join(', ')}
-                        <br />
-                        最大ファイル数: {newsConfig.maxFiles}個, 最大ファイルサイズ:{' '}
-                        {Math.round(newsConfig.maxFileSize / (1024 * 1024))}MB
-                      </p>
+                      <div className="mt-3"></div>
                       {/* 選択されたファイル名の表示 */}
                       <Controller
                         name="attachments"
@@ -612,7 +638,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
                         render={() => (
                           <div>
                             {getCurrentFiles().length > 0 && (
-                              <div className="mt-3">
+                              <div className="mt-3 mb-4">
                                 <p className="mb-2 text-sm font-medium text-gray-700">
                                   選択されたファイル:
                                 </p>
@@ -685,21 +711,28 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
                 </div>
               </div>
             </fieldset>
-
-            {/* モーダルフッタ部 */}
-            <div className="flex justify-end space-x-3 pt-4">
-              {!completed && (
-                <Button type="submit" variant="primary" disabled={isSubmitting}>
-                  {isEditMode ? '更新する' : '追加する'}
-                </Button>
-              )}
-              {completed && (
-                <Button type="button" variant="default" onClick={handleCancel}>
-                  閉じる
-                </Button>
-              )}
-            </div>
           </form>
+        </div>
+
+        {/* フッター - 固定 */}
+        <div className="flex-shrink-0 border-t border-gray-200 px-6 pt-4 pb-6">
+          <div className="flex justify-end space-x-3">
+            {!completed && (
+              <Button
+                type="submit"
+                variant="primary"
+                disabled={isSubmitting}
+                onClick={handleSubmit(onSubmit, onInvalid)}
+              >
+                {isEditMode ? '更新する' : '追加する'}
+              </Button>
+            )}
+            {completed && (
+              <Button type="button" variant="default" onClick={handleCancel}>
+                閉じる
+              </Button>
+            )}
+          </div>
         </div>
       </div>
     </div>
