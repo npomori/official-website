@@ -192,11 +192,11 @@ const RecordList: React.FC = () => {
       {/* カテゴリーフィルター */}
       <div className="mb-6">
         <div className="mb-3 flex items-center gap-2">
-          <span className="text-sm font-medium text-gray-700">カテゴリーで絞り込み：</span>
+          <span className="font-medium text-gray-700">カテゴリーで絞り込み：</span>
           {selectedCategory && (
             <button
               onClick={handleResetFilter}
-              className="text-primary-600 hover:text-primary-800 text-sm underline"
+              className="text-primary-600 hover:text-primary-800 underline"
             >
               フィルタをリセット
             </button>
@@ -226,7 +226,7 @@ const RecordList: React.FC = () => {
       {/* フィルタ結果の表示 */}
       {selectedCategory && (
         <div className="bg-primary-50 mb-4 rounded-lg p-3">
-          <p className="text-primary-800 text-sm">
+          <p className="text-primary-800">
             <span className="font-medium">{getCategoryName(selectedCategory)}</span> で絞り込み中
             <span className="text-primary-600 ml-2">({pagination?.totalCount || 0}件)</span>
           </p>

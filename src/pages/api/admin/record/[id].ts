@@ -11,16 +11,18 @@ import { v4 as uuidv4 } from 'uuid'
 async function deleteImageFiles(imageNames: string[], recordConfig: any) {
   const uploadDir = join(process.cwd(), recordConfig.directory)
 
-  for (const imageName of imageNames) {
-    try {
-      const imagePath = join(uploadDir, imageName)
-      await unlink(imagePath)
-      console.log(`Deleted image file: ${imageName}`)
-    } catch (error) {
-      console.error(`Failed to delete image file: ${imageName}`, error)
-      // ファイルが存在しない場合もエラーになるが、削除目的なので無視
-    }
-  }
+  await Promise.all(
+    imageNames.map(async (imageName) => {
+      try {
+        const imagePath = join(uploadDir, imageName)
+        await unlink(imagePath)
+        console.log(`Deleted image file: ${imageName}`)
+      } catch (error) {
+        console.error(`Failed to delete image file: ${imageName}`, error)
+        // ファイルが存在しない場合もエラーになるが、削除目的なので無視
+      }
+    })
+  )
 }
 
 // 個別の記録を取得
