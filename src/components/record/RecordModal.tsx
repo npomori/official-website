@@ -5,6 +5,7 @@ import recordCategories from '@/config/record-category.json'
 import adminRecordFetch from '@/fetch/admin/record'
 import { RecordDataSchema, safeValidateRecordData } from '@/schemas/record'
 import { getRecordUploadConfig } from '@/types/config'
+import type { Record } from '@/types/record'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
@@ -18,7 +19,7 @@ type FormValues = z.infer<typeof RecordDataSchema>
 interface RecordModalProps {
   onClose: () => void
   onSuccess?: () => void
-  record?: any // 編集時の既存データ
+  record?: Record // 編集時の既存データ
   isEditMode?: boolean
   recordId?: number // 編集モード時の記録ID
 }
@@ -40,7 +41,7 @@ const RecordModal: React.FC<RecordModalProps> = ({
   const [existingImageUrls, setExistingImageUrls] = useState<string[]>([]) // 既存画像のURL
   const [removedExistingImages, setRemovedExistingImages] = useState<string[]>([]) // 削除された既存画像
   const [isLoading, setIsLoading] = useState(false)
-  const [fetchedRecord, setFetchedRecord] = useState<any>(null)
+  const [fetchedRecord, setFetchedRecord] = useState<Record | null>(null)
   const dateRangePickerRef = useRef<HTMLDivElement>(null)
 
   // 設定を取得

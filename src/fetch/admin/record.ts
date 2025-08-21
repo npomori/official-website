@@ -1,4 +1,5 @@
 import config from '@/config/config.json'
+import type { Record } from '@/types/record'
 
 interface RecordAdminRequest {
   location: string
@@ -35,7 +36,7 @@ interface RecordCreateRequest {
 interface RecordCreateResponse {
   success: boolean
   message: string
-  record?: any
+  record?: Record
 }
 
 interface RecordUploadResponse {

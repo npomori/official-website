@@ -7,33 +7,11 @@ import recordFetch from '@/fetch/record'
 import useSWR from '@/hooks/swr'
 import { userStore } from '@/store/user'
 import { getConfig, getRecordUploadConfig } from '@/types/config'
+import type { Record } from '@/types/record'
 import type { UserAuth } from '@/types/user'
 import { useStore } from '@nanostores/react'
 import React, { useState } from 'react'
 import RecordModal from './RecordModal'
-
-interface Record {
-  id: number
-  location: string
-  datetime: string
-  eventDate: Date
-  weather: string
-  participants: string
-  reporter: string
-  content: string
-  nearMiss?: string | null
-  equipment?: string | null
-  remarks?: string | null
-  categories?: string[] | null
-  images?: string[] | null
-  createdAt: Date
-  updatedAt: Date
-  creator: {
-    id: number
-    name: string
-    email: string
-  }
-}
 
 const RecordList: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1)
@@ -55,7 +33,17 @@ const RecordList: React.FC = () => {
   // SWRでデータを取得（カテゴリーフィルター対応）
   const { data, error, isLoading, mutate } = useSWR(
     `records-${currentPage}-${itemsPerPage}-${selectedCategory || 'all'}`,
-    () => recordFetch.getRecords(currentPage, itemsPerPage, selectedCategory || undefined)
+    async () => {
+      const response = await recordFetch.getRecords(
+        currentPage,
+        itemsPerPage,
+        selectedCategory || undefined
+      )
+      if (!response.success) {
+        throw new Error(response.message || 'データの取得に失敗しました')
+      }
+      return response
+    }
   )
 
   // カテゴリーIDから日本語名に変換する関数
