@@ -524,6 +524,11 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
                             <div>- 場所: 会議室A</div>
                             <div>- 参加費: 無料</div>
                           </div>
+                          <div className="mt-4">
+                            <div>リンク</div>
+                            <div>---</div>
+                            <div>[詳細はこちら](https://example.com/detail)</div>
+                          </div>
                         </div>
                         <div className="absolute -bottom-1 left-4 h-2 w-2 rotate-45 transform bg-gray-900"></div>
                       </div>
