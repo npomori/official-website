@@ -346,7 +346,7 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
     }
 
     // 記録を更新
-    const updatedRecord = await recordDB.updateRecord(recordId, {
+    const updatedRecord = await RecordDB.updateRecord(recordId, {
       location: validationResult.data.location,
       datetime: validationResult.data.datetime,
       eventDate: eventDate,
@@ -473,7 +473,7 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
     }
 
     // 記録を削除
-    const deleteResult = await recordDB.deleteRecord(recordId)
+    const deleteResult = await RecordDB.deleteRecord(recordId)
     if (!deleteResult) {
       return new Response(
         JSON.stringify({

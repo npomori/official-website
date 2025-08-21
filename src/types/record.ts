@@ -101,3 +101,76 @@ export interface RecordUpdateResponse {
 export interface RecordDeleteResponse {
   message: string
 }
+
+// Admin用の型定義
+export interface RecordAdminRequest {
+  location: string
+  datetime: string
+  eventDate?: Date
+  weather: string
+  participants: string
+  reporter: string
+  content: string
+  nearMiss?: string | undefined
+  equipment?: string | undefined
+  remarks?: string | undefined
+  categories?: string[] | undefined
+  images?: string[] | undefined
+}
+
+export interface RecordCreateRequest {
+  dateForFilename: string
+  data: {
+    location: string
+    datetime: string
+    weather: string
+    participants: string
+    reporter: string
+    content: string
+    nearMiss?: string | undefined
+    equipment?: string | undefined
+    remarks?: string | undefined
+    categories?: string[] | undefined
+    images?: string[] | undefined
+  }
+}
+
+export interface RecordCreateWithImagesRequest {
+  dateForFilename: string
+  data: {
+    location: string
+    datetime: string
+    weather: string
+    participants: string
+    reporter: string
+    content: string
+    nearMiss?: string | undefined
+    equipment?: string | undefined
+    remarks?: string | undefined
+    categories?: string[] | undefined
+  }
+  images?: File[]
+}
+
+export interface RecordUpdateWithImagesRequest {
+  data: {
+    location: string
+    datetime: string
+    weather: string
+    participants: string
+    reporter: string
+    content: string
+    nearMiss?: string | undefined
+    equipment?: string | undefined
+    remarks?: string | undefined
+    categories?: string[] | undefined
+    images?: string[] | undefined
+  }
+  images?: File[]
+}
+
+export interface RecordUploadResponse {
+  success: boolean
+  files: string[]
+  message?: string
+}
