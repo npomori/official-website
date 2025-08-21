@@ -515,7 +515,11 @@ const NewsList: React.FC = () => {
             totalPages={totalPages}
             totalCount={pagination?.totalCount || 0}
             itemsPerPage={itemsPerPage}
-            onPageChange={setCurrentPage}
+            onPageChange={(page) => {
+              setCurrentPage(page)
+              // ページの先頭にスクロール
+              window.scrollTo({ top: 0, behavior: 'smooth' })
+            }}
           />
         </div>
       )}
