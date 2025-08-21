@@ -21,7 +21,7 @@ alwaysApply: true
 - データの更新、削除処理はadminフェッチクラスまたはmemberフェッチクラスを使用すること
 
 # APIエンドポイント
-- APIエンドポイントが返すResponseのbodyにはApiResponse型(src/types/api.ts)のデータを設定すること
+- APIエンドポイントが返すResponseのbodyにはApiResponse型(src/types/api.ts)になるデータを設定すること
 
 # Reactコンポーネント
 

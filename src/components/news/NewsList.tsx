@@ -11,6 +11,9 @@ import type { News, PublicNews } from '@/types/news'
 import type { UserAuth } from '@/types/user'
 import { useStore } from '@nanostores/react'
 import React, { useState } from 'react'
+import ReactMarkdown from 'react-markdown'
+import rehypeRaw from 'rehype-raw'
+import rehypeSanitize from 'rehype-sanitize'
 
 const NewsList: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1)
@@ -87,6 +90,9 @@ const NewsList: React.FC = () => {
     setSelectedPriority(null) // 優先度をリセット
     setCurrentPage(1) // フィルタ変更時は最初のページに戻る
 
+    // ページの上部にスクロール
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+
     // フィルタ専用のローディング状態を設定
     setIsFilterLoading(true)
 
@@ -105,6 +111,9 @@ const NewsList: React.FC = () => {
     setSelectedCategory(null) // カテゴリーをリセット
     setCurrentPage(1) // フィルタ変更時は最初のページに戻る
 
+    // ページの上部にスクロール
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+
     // フィルタ専用のローディング状態を設定
     setIsFilterLoading(true)
 
@@ -121,6 +130,9 @@ const NewsList: React.FC = () => {
     setSelectedCategory(null)
     setSelectedPriority(null)
     setCurrentPage(1)
+
+    // ページの上部にスクロール
+    window.scrollTo({ top: 0, behavior: 'smooth' })
 
     // フィルタ専用のローディング状態を設定
     setIsFilterLoading(true)
@@ -453,8 +465,10 @@ const NewsList: React.FC = () => {
                     <h2 className="text-2xl font-bold text-gray-800">{newsItem.title}</h2>
 
                     {/* 内容 */}
-                    <div className="text-base leading-relaxed text-gray-600">
-                      {newsItem.content}
+                    <div className="prose prose-gray prose-p:my-2 prose-h1:text-lg prose-h2:text-lg prose-h2:mb-1 prose-h2:mt-1 prose-h3:text-base prose-li:my-0.5 prose-ul:mt-1 prose-ul:mb-2 prose-ol:mt-1 prose-ol:mb-2 max-w-none text-base leading-relaxed text-gray-600">
+                      <ReactMarkdown rehypePlugins={[rehypeRaw, rehypeSanitize]}>
+                        {newsItem.content}
+                      </ReactMarkdown>
                     </div>
 
                     {/* 添付ファイル */}

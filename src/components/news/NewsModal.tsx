@@ -350,14 +350,14 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
                           d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                         />
                       </svg>
-                      <div className="absolute bottom-full left-0 mb-2 hidden w-[300px] transform rounded-lg bg-gray-900 p-3 text-sm text-white opacity-0 transition-opacity group-hover:block group-hover:opacity-100">
+                      <div className="absolute top-full left-0 z-10 mt-2 hidden w-[300px] transform rounded-lg bg-gray-900 p-3 text-sm text-white opacity-0 transition-opacity group-hover:block group-hover:opacity-100">
                         <div className="space-y-2 whitespace-pre-wrap">
                           <div>お知らせの公開日を設定します。</div>
                           <div>• 今日の日付を設定：すぐに公開されます</div>
                           <div>• 未来の日付を設定：その日が来るまで非表示になります</div>
                           <div>• 過去の日付を設定：すぐに公開されます</div>
                         </div>
-                        <div className="absolute -bottom-1 left-4 h-2 w-2 rotate-45 transform bg-gray-900"></div>
+                        <div className="absolute -top-1 left-4 h-2 w-2 rotate-45 transform bg-gray-900"></div>
                       </div>
                     </span>
                   </label>
