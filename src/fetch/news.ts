@@ -42,10 +42,6 @@ class NewsFetch extends BaseApiFetch {
   // 個別のお知らせを取得
   async getNewsById(id: number) {
     return await this.request<PublicNews>(`${config.api.rootUrl}/news/${id}`)
-    // if (!response.success || !response.data) {
-    //   throw new Error(response.message || 'お知らせの取得に失敗しました')
-    // }
-    // return response.data
   }
 
   // 最新のお知らせを取得
