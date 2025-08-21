@@ -1,5 +1,6 @@
 import Button from '@/components/base/Button'
 import Pagination from '@/components/base/Pagination'
+import NewsModal from '@/components/news/NewsModal'
 import newsCategories from '@/config/news-category.json'
 import newsPriority from '@/config/news-priority.json'
 import AdminNewsFetch from '@/fetch/admin/news'
@@ -21,6 +22,8 @@ const NewsList: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [selectedPriority, setSelectedPriority] = useState<string | null>(null)
   const [isFilterLoading, setIsFilterLoading] = useState(false) // フィルタ専用のローディング状態
+  const [editingNews, setEditingNews] = useState<News | PublicNews | null>(null)
+  const [showNewsModal, setShowNewsModal] = useState(false)
 
   // ユーザー情報を取得
   const user = useStore(userStore) as UserAuth | null
@@ -188,9 +191,37 @@ const NewsList: React.FC = () => {
   }
 
   // 編集処理
-  const handleEdit = (news: PublicNews) => {
-    // TODO: 編集機能は別途実装
-    console.log('編集処理:', news)
+  const handleEdit = (news: News | PublicNews) => {
+    setEditingNews(news)
+    setShowNewsModal(true)
+  }
+
+  // お知らせモーダルを閉じる
+  const handleNewsModalClose = () => {
+    setShowNewsModal(false)
+    setEditingNews(null)
+  }
+
+  // お知らせモーダルでの成功処理
+  const handleNewsModalSuccess = () => {
+    setShowNewsModal(false)
+    setEditingNews(null)
+    void mutate() // データを再取得
+  }
+
+  // NewsModal用のデータ変換
+  const convertToNewsModalData = (news: News | PublicNews) => {
+    return {
+      title: news.title,
+      content: news.content,
+      date: typeof news.date === 'string' ? new Date(news.date) : news.date,
+      categories: news.categories || [],
+      priority: news.priority || null,
+      isMemberOnly: news.isMemberOnly || false,
+      author: news.author,
+      attachments: news.attachments || [],
+      id: news.id.toString()
+    }
   }
 
   // ローディング中（初回読み込み時のみ）
@@ -536,6 +567,16 @@ const NewsList: React.FC = () => {
             }}
           />
         </div>
+      )}
+
+      {/* お知らせ編集モーダル */}
+      {showNewsModal && editingNews && (
+        <NewsModal
+          onClose={handleNewsModalClose}
+          onSuccess={handleNewsModalSuccess}
+          news={convertToNewsModalData(editingNews)}
+          isEditMode={true}
+        />
       )}
     </div>
   )
