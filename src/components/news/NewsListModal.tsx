@@ -11,21 +11,6 @@ import { ja } from 'date-fns/locale'
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 
-// AdminNewsFetchのNewsResponse型を定義
-interface NewsResponse {
-  success: boolean
-  data: {
-    news: News[]
-    pagination: {
-      currentPage: number
-      itemsPerPage: number
-      totalCount: number
-      totalPages: number
-    }
-  }
-  error?: string
-}
-
 interface NewsListModalProps {
   isOpen: boolean
   onClose: () => void
@@ -66,11 +51,15 @@ const NewsListModal: React.FC<NewsListModalProps> = ({ isOpen, onClose }) => {
     setLoading(true)
     setError('')
     try {
-      const response: NewsResponse = await AdminNewsFetch.getHiddenNews(page, 100) // フロントエンドで表示されない項目のみを取得
+      const response = await AdminNewsFetch.getHiddenNews(page, 100) // フロントエンドで表示されない項目のみを取得
 
-      setNewsList(response.data.news)
-      setTotalPages(response.data.pagination.totalPages)
-      setCurrentPage(response.data.pagination.currentPage)
+      if (response.success && response.data) {
+        setNewsList(response.data.news)
+        setTotalPages(response.data.pagination.totalPages)
+        setCurrentPage(response.data.pagination.currentPage)
+      } else {
+        setError(response.message || 'お知らせの取得に失敗しました')
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'お知らせの取得に失敗しました')
     } finally {

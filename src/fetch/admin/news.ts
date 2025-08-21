@@ -1,5 +1,4 @@
 import config from '@/config/config.json'
-import type { ApiResponse } from '@/types/api'
 import { getConfig } from '@/types/config'
 import type { News, NewsAttachment } from '@/types/news'
 import { BaseApiFetch } from '../base'
@@ -41,7 +40,7 @@ class AdminNewsFetch extends BaseApiFetch {
   }
 
   // フロントエンドで表示されない項目（非公開・未来の日付）を取得
-  async getHiddenNews(page: number = 1, limit?: number): Promise<ApiResponse<NewsResponse>> {
+  async getHiddenNews(page: number = 1, limit?: number) {
     const config = getConfig()
     const defaultLimit = config.pagination?.newsList?.itemsPerPage || 10
     const itemsPerPage = limit || defaultLimit
@@ -59,30 +58,19 @@ class AdminNewsFetch extends BaseApiFetch {
   }
 
   // 管理者用の個別のお知らせを取得
-  async getNewsById(id: number): Promise<News> {
-    const response = await this.request<News>(`${config.api.adminUrl}/news/${id}`)
-
-    if (!response.success || !response.data) {
-      throw new Error(response.message || 'お知らせの取得に失敗しました')
-    }
-
-    return response.data
+  async getNewsById(id: number) {
+    return await this.request<News>(`${config.api.adminUrl}/news/${id}`)
   }
 
   // 管理者用のお知らせを作成（ファイルアップロード対応）
-  async createNewsWithFiles(formData: FormData): Promise<News> {
+  async createNewsWithFiles(formData: FormData) {
     const config = getConfig()
     const response = await this.requestWithFormData<News>(
       `${config.api.adminUrl}/news`,
       formData,
       'POST'
     )
-
-    if (!response.success || !response.data) {
-      throw new Error(response.message || 'お知らせの作成に失敗しました')
-    }
-
-    return response.data
+    return response
   }
 
   // 管理者用のお知らせを作成（従来の方法）
@@ -95,7 +83,7 @@ class AdminNewsFetch extends BaseApiFetch {
     isMemberOnly?: boolean
     author: string
     attachments?: NewsAttachment[]
-  }): Promise<News> {
+  }) {
     const formData = new FormData()
     formData.append('title', newsData.title)
     formData.append('content', newsData.content)
@@ -118,12 +106,7 @@ class AdminNewsFetch extends BaseApiFetch {
       formData,
       'POST'
     )
-
-    if (!response.success || !response.data) {
-      throw new Error(response.message || 'お知らせの作成に失敗しました')
-    }
-
-    return response.data
+    return response
   }
 
   // 管理者用のお知らせを更新
@@ -139,31 +122,23 @@ class AdminNewsFetch extends BaseApiFetch {
       author: string
       attachments?: NewsAttachment[]
     }
-  ): Promise<News> {
+  ) {
     const config = getConfig()
     const response = await this.requestWithJson<News>(
       `${config.api.adminUrl}/news/${id}`,
       newsData,
       'PUT'
     )
-
-    if (!response.success || !response.data) {
-      throw new Error(response.message || 'お知らせの更新に失敗しました')
-    }
-
-    return response.data
+    return response
   }
 
   // 管理者用のお知らせを削除
-  async deleteNews(id: number): Promise<void> {
+  async deleteNews(id: number) {
     const config = getConfig()
     const response = await this.request<void>(`${config.api.adminUrl}/news/${id}`, {
       method: 'DELETE'
     })
-
-    if (!response.success) {
-      throw new Error(response.message || 'お知らせの削除に失敗しました')
-    }
+    return response
   }
 }
 
