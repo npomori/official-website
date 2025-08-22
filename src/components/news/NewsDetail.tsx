@@ -133,10 +133,7 @@ const NewsDetail: React.FC<NewsDetailProps> = ({ newsId }) => {
           <p className="mb-4 text-red-600">
             {error || '指定されたお知らせは存在しないか、削除された可能性があります。'}
           </p>
-          <Button
-            onClick={() => (window.location.href = '/news')}
-            className="bg-blue-600 text-white hover:bg-blue-700"
-          >
+          <Button variant="primary" onClick={() => (window.location.href = '/news')}>
             お知らせ一覧に戻る
           </Button>
         </div>
@@ -156,7 +153,7 @@ const NewsDetail: React.FC<NewsDetailProps> = ({ newsId }) => {
         <div className="mb-4 flex items-center justify-between">
           <Button
             onClick={() => (window.location.href = '/news')}
-            className="flex items-center text-gray-600 hover:text-gray-800"
+            className="flex cursor-pointer items-center text-gray-600 hover:text-gray-800"
           >
             <svg className="mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -288,7 +285,6 @@ const NewsDetail: React.FC<NewsDetailProps> = ({ newsId }) => {
         <div className="mt-8 rounded-lg bg-gray-50 p-4">
           <h4 className="mb-2 text-sm font-medium text-gray-700">管理情報</h4>
           <div className="space-y-1 text-sm text-gray-600">
-            <div>ステータス: {news.status}</div>
             <div>作成者: {news.creator?.name || '不明'}</div>
             <div>作成日: {formatDateTime(news.createdAt)}</div>
             <div>更新日: {formatDateTime(news.updatedAt)}</div>
