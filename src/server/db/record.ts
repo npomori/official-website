@@ -172,6 +172,31 @@ class RecordDB extends BaseDB {
     }
   }
 
+  // 公開済みの記録を取得（フロントエンド用）
+  async getPublicRecordById(id: number): Promise<Record | null> {
+    try {
+      const record = await BaseDB.prisma.record.findFirst({
+        where: {
+          id,
+          status: 'published'
+        },
+        include: {
+          creator: {
+            select: {
+              id: true,
+              name: true,
+              email: true
+            }
+          }
+        }
+      })
+      return record
+    } catch (err) {
+      console.error(err)
+      return null
+    }
+  }
+
   // 記録を作成
   async createRecord(data: {
     location: string

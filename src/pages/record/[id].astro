@@ -1,0 +1,14 @@
+---
+import Layout from '@/layouts/Layout.astro'
+import RecordDetail from '@/components/record/RecordDetail'
+
+export interface Props {
+  id: string
+}
+
+const { id } = Astro.params
+---
+
+<Layout title="活動記録詳細" currentPage="/record">
+  <RecordDetail recordId={id || undefined} client:load />
+</Layout>

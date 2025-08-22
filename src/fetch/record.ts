@@ -1,5 +1,5 @@
 import { getConfig } from '@/types/config'
-import type { RecordResponse } from '@/types/record'
+import type { Record, RecordResponse } from '@/types/record'
 import { BaseApiFetch } from './base'
 
 class RecordFetch extends BaseApiFetch {
@@ -21,6 +21,12 @@ class RecordFetch extends BaseApiFetch {
       `${config.api.rootUrl}/record?${params.toString()}`
     )
     return response
+  }
+
+  // 個別の記録を取得
+  async getRecordById(id: number) {
+    const config = getConfig()
+    return await this.request<Record>(`${config.api.rootUrl}/record/${id}`)
   }
 }
 

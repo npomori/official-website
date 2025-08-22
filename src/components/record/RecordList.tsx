@@ -288,7 +288,14 @@ const RecordList: React.FC = () => {
               <article key={record.id} className="overflow-hidden rounded-lg bg-white shadow-lg">
                 <div className="p-6">
                   <div className="mb-4 flex items-center justify-between">
-                    <h2 className="text-2xl font-bold">{record.location}</h2>
+                    <h2 className="text-2xl font-bold">
+                      <a
+                        href={`/record/${record.id}`}
+                        className="hover:text-primary-600 text-gray-800 transition-colors"
+                      >
+                        {record.location}
+                      </a>
+                    </h2>
                     <div className="flex items-center gap-2">
                       {record.categories && record.categories.length > 0 ? (
                         record.categories.map((category, index) => (

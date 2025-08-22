@@ -92,6 +92,13 @@ class AdminRecordFetch extends BaseApiFetch {
     const response = await this.request<RecordDetailResponse>(`${config.api.adminUrl}/record/${id}`)
     return response
   }
+
+  // 個別の記録を取得（getRecordByIdとして統一）
+  async getRecordById(id: number) {
+    const config = getConfig()
+    const response = await this.request<RecordDetailResponse>(`${config.api.adminUrl}/record/${id}`)
+    return response
+  }
 }
 
 export default new AdminRecordFetch()
