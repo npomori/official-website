@@ -62,11 +62,13 @@ const RecordList: React.FC = () => {
     setSelectedCategory(newCategory)
     setCurrentPage(1) // フィルタ変更時は最初のページに戻る
 
-    // ページの上部にスクロール
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-
     // フィルタ専用のローディング状態を設定
     setIsFilterLoading(true)
+
+    // ページの上部にスクロール（確実に実行されるように遅延）
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }, 0)
 
     // データを再取得
     try {
@@ -81,11 +83,13 @@ const RecordList: React.FC = () => {
     setSelectedCategory(null)
     setCurrentPage(1)
 
-    // ページの上部にスクロール
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-
     // フィルタ専用のローディング状態を設定
     setIsFilterLoading(true)
+
+    // ページの上部にスクロール（確実に実行されるように遅延）
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }, 0)
 
     // データを再取得
     try {
