@@ -21,6 +21,7 @@ const RecordList: React.FC = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [editingRecord, setEditingRecord] = useState<Record | null>(null)
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+  const [isFilterLoading, setIsFilterLoading] = useState(false) // フィルタ専用のローディング状態
 
   // ユーザー情報を取得
   const user = useStore(userStore) as UserAuth | null
@@ -33,16 +34,13 @@ const RecordList: React.FC = () => {
   // SWRでデータを取得（カテゴリーフィルター対応）
   const { data, error, isLoading, mutate } = useSWR(
     `records-${currentPage}-${itemsPerPage}-${selectedCategory || 'all'}`,
-    async () => {
-      const response = await recordFetch.getRecords(
-        currentPage,
-        itemsPerPage,
-        selectedCategory || undefined
-      )
-      if (!response.success) {
-        throw new Error(response.message || 'データの取得に失敗しました')
-      }
-      return response
+    () => recordFetch.getRecords(currentPage, itemsPerPage, selectedCategory || undefined),
+    {
+      // フィルタ変更時のちらつきを防ぐ設定
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+      keepPreviousData: true, // 前のデータを保持
+      dedupingInterval: 1000 // 重複リクエストを防ぐ
     }
   )
 
@@ -59,16 +57,42 @@ const RecordList: React.FC = () => {
   }
 
   // カテゴリーをクリックした時の処理
-  const handleCategoryClick = (categoryId: string) => {
+  const handleCategoryClick = async (categoryId: string) => {
     const newCategory = selectedCategory === categoryId ? null : categoryId
     setSelectedCategory(newCategory)
     setCurrentPage(1) // フィルタ変更時は最初のページに戻る
+
+    // ページの上部にスクロール
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+
+    // フィルタ専用のローディング状態を設定
+    setIsFilterLoading(true)
+
+    // データを再取得
+    try {
+      await mutate()
+    } finally {
+      setIsFilterLoading(false)
+    }
   }
 
   // フィルタをリセット
-  const handleResetFilter = () => {
+  const handleResetFilter = async () => {
     setSelectedCategory(null)
     setCurrentPage(1)
+
+    // ページの上部にスクロール
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+
+    // フィルタ専用のローディング状態を設定
+    setIsFilterLoading(true)
+
+    // データを再取得
+    try {
+      await mutate()
+    } finally {
+      setIsFilterLoading(false)
+    }
   }
 
   // 編集・削除ボタンの表示条件をチェック
@@ -155,8 +179,8 @@ const RecordList: React.FC = () => {
 
   // ESCキーでモーダルを閉じる処理はImageModalコンポーネント内で処理
 
-  // ローディング状態
-  if (isLoading) {
+  // ローディング中（初回読み込み時のみ）
+  if (isLoading && !data) {
     return (
       <div className="mx-auto max-w-4xl">
         <h1 className="mb-8 text-3xl font-bold">活動記録</h1>
@@ -191,12 +215,23 @@ const RecordList: React.FC = () => {
 
       {/* カテゴリーフィルター */}
       <div className="mb-6">
+        {/* フィルタローディングインジケーター */}
+        {isFilterLoading && (
+          <div className="mb-4 flex items-center justify-center">
+            <div className="flex items-center space-x-2 text-sm text-gray-500">
+              <div className="border-t-primary-600 h-4 w-4 animate-spin rounded-full border-2 border-gray-300"></div>
+              <span>フィルタ適用中...</span>
+            </div>
+          </div>
+        )}
+
         <div className="mb-3 flex items-center gap-2">
           <span className="font-medium text-gray-700">カテゴリーで絞り込み：</span>
           {selectedCategory && (
             <button
               onClick={handleResetFilter}
-              className="text-primary-600 hover:text-primary-800 underline"
+              disabled={isFilterLoading}
+              className="text-primary-600 hover:text-primary-800 underline disabled:opacity-50"
             >
               フィルタをリセット
             </button>
@@ -207,7 +242,8 @@ const RecordList: React.FC = () => {
             <button
               key={category.value}
               onClick={() => handleCategoryClick(category.value)}
-              className={`rounded-full px-3 py-1 text-sm font-medium transition-colors ${
+              disabled={isFilterLoading}
+              className={`rounded-full px-3 py-1 text-sm font-medium transition-colors disabled:opacity-50 ${
                 selectedCategory === category.value ? 'text-white' : 'hover:opacity-80'
               }`}
               style={{
@@ -255,7 +291,8 @@ const RecordList: React.FC = () => {
                           <button
                             key={index}
                             onClick={() => handleCategoryClick(category)}
-                            className="cursor-pointer rounded-full px-3 py-1 text-sm font-medium transition-colors hover:opacity-80"
+                            disabled={isFilterLoading}
+                            className="cursor-pointer rounded-full px-3 py-1 text-sm font-medium transition-colors hover:opacity-80 disabled:opacity-50"
                             style={{
                               backgroundColor: `${getCategoryColor(category)}20`,
                               color: getCategoryColor(category),
@@ -393,15 +430,23 @@ const RecordList: React.FC = () => {
       )}
 
       {/* ページネーション */}
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        totalCount={pagination?.totalCount || 0}
-        itemsPerPage={itemsPerPage}
-        onPageChange={setCurrentPage}
-        maxVisiblePages={7}
-        showPageInfo={true}
-      />
+      {totalPages > 1 && (
+        <div className="flex justify-center">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalCount={pagination?.totalCount || 0}
+            itemsPerPage={itemsPerPage}
+            onPageChange={(page) => {
+              setCurrentPage(page)
+              // ページの先頭にスクロール
+              window.scrollTo({ top: 0, behavior: 'smooth' })
+            }}
+            maxVisiblePages={7}
+            showPageInfo={true}
+          />
+        </div>
+      )}
 
       {/* 画像モーダル */}
       <ImageModal
