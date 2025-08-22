@@ -1,0 +1,14 @@
+---
+import Layout from '@/layouts/Layout.astro'
+import NewsDetail from '@/components/news/NewsDetail'
+
+export interface Props {
+  id: string
+}
+
+const { id } = Astro.params
+---
+
+<Layout title="お知らせ詳細" currentPage="/news">
+  <NewsDetail newsId={id || undefined} client:load />
+</Layout>

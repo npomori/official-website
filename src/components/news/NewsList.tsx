@@ -493,7 +493,12 @@ const NewsList: React.FC = () => {
 
                   <div className="space-y-3">
                     {/* タイトル */}
-                    <h2 className="text-2xl font-bold text-gray-800">{newsItem.title}</h2>
+                    <h2
+                      className="cursor-pointer text-2xl font-bold text-gray-800 transition-colors hover:text-blue-600"
+                      onClick={() => (window.location.href = `/news/${newsItem.id}`)}
+                    >
+                      {newsItem.title}
+                    </h2>
 
                     {/* 内容 */}
                     <div className="prose prose-gray prose-p:my-2 prose-h1:text-lg prose-h2:text-lg prose-h2:mb-1 prose-h2:mt-1 prose-h3:text-base prose-li:my-0.5 prose-ul:mt-1 prose-ul:mb-2 prose-ol:mt-1 prose-ol:mb-2 max-w-none text-base leading-relaxed text-gray-600">
