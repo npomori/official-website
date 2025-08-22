@@ -18,7 +18,6 @@ interface NewsDetailProps {
 }
 
 const NewsDetail: React.FC<NewsDetailProps> = ({ newsId }) => {
-  const [isDeleting, setIsDeleting] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [news, setNews] = useState<News | PublicNews | null>(null)
@@ -103,34 +102,17 @@ const NewsDetail: React.FC<NewsDetailProps> = ({ newsId }) => {
     })
   }
 
-  // 削除処理
-  const handleDelete = async () => {
-    if (!news || !hasAdminRole) return
-
-    if (!confirm('このお知らせを削除しますか？この操作は取り消せません。')) {
-      return
-    }
-
-    setIsDeleting(true)
-    try {
-      const response = await AdminNewsFetch.deleteNews(news.id)
-      if (response.success) {
-        window.location.href = '/news'
-      } else {
-        alert(response.message || '削除に失敗しました')
-      }
-    } catch (error) {
-      console.error('削除エラー:', error)
-      alert('削除に失敗しました')
-    } finally {
-      setIsDeleting(false)
-    }
-  }
-
-  // 編集ページに遷移
-  const handleEdit = () => {
-    if (!news) return
-    window.location.href = `/admin/news/edit/${news.id}`
+  // 日付と時刻をフォーマットする関数
+  const formatDateTime = (date: Date | string): string => {
+    const d = new Date(date)
+    return d.toLocaleString('ja-JP', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      weekday: 'long',
+      hour: '2-digit',
+      minute: '2-digit'
+    })
   }
 
   // ローディング状態
@@ -162,6 +144,11 @@ const NewsDetail: React.FC<NewsDetailProps> = ({ newsId }) => {
     )
   }
 
+  // newsがnullの場合は何も表示しない（エラー状態で既に処理済み）
+  if (!news) {
+    return null
+  }
+
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
       {/* ヘッダー */}
@@ -181,21 +168,6 @@ const NewsDetail: React.FC<NewsDetailProps> = ({ newsId }) => {
             </svg>
             お知らせ一覧に戻る
           </Button>
-
-          {hasAdminRole && (
-            <div className="flex space-x-2">
-              <Button onClick={handleEdit} className="bg-blue-600 text-white hover:bg-blue-700">
-                編集
-              </Button>
-              <Button
-                onClick={handleDelete}
-                disabled={isDeleting}
-                className="bg-red-600 text-white hover:bg-red-700 disabled:opacity-50"
-              >
-                {isDeleting ? '削除中...' : '削除'}
-              </Button>
-            </div>
-          )}
         </div>
       </div>
 
@@ -318,8 +290,8 @@ const NewsDetail: React.FC<NewsDetailProps> = ({ newsId }) => {
           <div className="space-y-1 text-sm text-gray-600">
             <div>ステータス: {news.status}</div>
             <div>作成者: {news.creator?.name || '不明'}</div>
-            <div>作成日: {formatDate(news.createdAt)}</div>
-            <div>更新日: {formatDate(news.updatedAt)}</div>
+            <div>作成日: {formatDateTime(news.createdAt)}</div>
+            <div>更新日: {formatDateTime(news.updatedAt)}</div>
           </div>
         </div>
       )}
