@@ -1,0 +1,140 @@
+---
+import Layout from '../layouts/Layout.astro'
+---
+
+<Layout title="協会の概要">
+  <div class="mx-auto max-w-4xl">
+    <h1 class="mb-8 text-3xl font-bold">協会の概要</h1>
+
+    <section class="mb-12">
+      <h2 class="mb-4 text-2xl font-bold">協会の目的</h2>
+      <div class="rounded-lg bg-white p-6 shadow-lg">
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div>
+            <img
+              src="https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=800&auto=format&fit=crop&q=60"
+              alt="協会の活動"
+              class="mb-4 h-64 w-full rounded-lg object-cover"
+            />
+            <p class="text-gray-700">
+              日本森林ボランティア協会は、森林の保全と整備を通じて、自然環境の保護と地域社会の発展に貢献することを目的としています。
+              私たちは、以下の理念のもと活動を行っています：
+            </p>
+          </div>
+          <div>
+            <ul class="space-y-4">
+              <li class="flex items-start">
+                <span class="text-primary-600 mr-2">•</span>
+                <span>自然環境の保護と持続可能な森林管理</span>
+              </li>
+              <li class="flex items-start">
+                <span class="text-primary-600 mr-2">•</span>
+                <span>地域コミュニティの活性化と交流促進</span>
+              </li>
+              <li class="flex items-start">
+                <span class="text-primary-600 mr-2">•</span>
+                <span>環境教育と人材育成</span>
+              </li>
+              <li class="flex items-start">
+                <span class="text-primary-600 mr-2">•</span>
+                <span>災害防止と安全な森林環境の維持</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="mb-12">
+      <h2 class="mb-4 text-2xl font-bold">組織体制</h2>
+      <div class="rounded-lg bg-white p-6 shadow-lg">
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div>
+            <h3 class="mb-3 text-xl font-bold">役員構成</h3>
+            <ul class="space-y-2 text-gray-700">
+              <li>会長：山田 太郎</li>
+              <li>副会長：鈴木 花子</li>
+              <li>理事：佐藤 一郎</li>
+              <li>理事：田中 美咲</li>
+              <li>監事：中村 健一</li>
+            </ul>
+          </div>
+          <div>
+            <img
+              src="https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=800&auto=format&fit=crop&q=60"
+              alt="組織体制"
+              class="h-64 w-full rounded-lg object-cover"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="mb-12">
+      <h2 class="mb-4 text-2xl font-bold">沿革</h2>
+      <div class="rounded-lg bg-white p-6 shadow-lg">
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div>
+            <img
+              src="https://images.unsplash.com/photo-1470137237906-d8a4f71e1966?w=800&auto=format&fit=crop&q=60"
+              alt="協会の歴史"
+              class="mb-4 h-64 w-full rounded-lg object-cover"
+            />
+            <ul class="space-y-4 text-gray-700">
+              <li>1990年：任意団体として発足</li>
+              <li>1995年：NPO法人として認証</li>
+              <li>2000年：森林大学を開設</li>
+              <li>2005年：ボランティア保険制度を導入</li>
+              <li>2010年：環境教育プログラムを開始</li>
+              <li>2015年：活動地を10箇所に拡大</li>
+              <li>2020年：オンライン学習システムを導入</li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="mb-3 text-xl font-bold">主な実績</h3>
+            <ul class="space-y-4">
+              <li class="flex items-start">
+                <span class="text-primary-600 mr-2">•</span>
+                <span>年間100ha以上の森林整備を実施</span>
+              </li>
+              <li class="flex items-start">
+                <span class="text-primary-600 mr-2">•</span>
+                <span>会員数1,000名を突破</span>
+              </li>
+              <li class="flex items-start">
+                <span class="text-primary-600 mr-2">•</span>
+                <span>環境教育プログラムを年間20回以上実施</span>
+              </li>
+              <li class="flex items-start">
+                <span class="text-primary-600 mr-2">•</span>
+                <span>地域貢献活動で表彰を受賞</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-primary-50 rounded-lg p-8">
+      <h2 class="mb-4 text-2xl font-bold">協会への入会を募集中</h2>
+      <p class="mb-6 text-gray-700">
+        私たちと一緒に、森林の保全と地域社会の発展に貢献しませんか？
+        経験や知識は問いません。自然を守りたいという気持ちがあれば大丈夫です。
+      </p>
+      <div class="flex space-x-4">
+        <a
+          href="/join"
+          class="bg-primary-600 hover:bg-primary-700 rounded-lg px-6 py-3 text-white transition-colors"
+        >
+          入会案内へ
+        </a>
+        <a
+          href="/contact"
+          class="border-primary-600 text-primary-600 hover:bg-primary-50 rounded-lg border bg-white px-6 py-3 transition-colors"
+        >
+          お問い合わせ
+        </a>
+      </div>
+    </section>
+  </div>
+</Layout>
