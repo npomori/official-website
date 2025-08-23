@@ -1,0 +1,120 @@
+---
+import Layout from '../layouts/Layout.astro'
+---
+
+<Layout title="アクセス">
+  <div class="mx-auto max-w-4xl">
+    <h1 class="mb-8 text-3xl font-bold">アクセス</h1>
+
+    <section class="mb-12">
+      <h2 class="mb-4 text-2xl font-bold">協会事務所</h2>
+      <div class="rounded-lg bg-white p-6 shadow-lg">
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div>
+            <h3 class="mb-3 text-xl font-bold">住所</h3>
+            <p class="text-gray-700">
+              〒xxx-xxxx<br />
+              東京都○○区○○町1-2-3
+            </p>
+          </div>
+          <div>
+            <h3 class="mb-3 text-xl font-bold">連絡先</h3>
+            <p class="text-gray-700">
+              TEL: 03-xxxx-xxxx<br />
+              FAX: 03-xxxx-xxxx<br />
+              Email: info@example.com
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="mb-12">
+      <h2 class="mb-4 text-2xl font-bold">地図</h2>
+      <div class="rounded-lg bg-white p-6 shadow-lg">
+        <div class="aspect-w-16 aspect-h-9">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3240.828030555028!2d139.76454677612345!3d35.68123597999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x60188c0d02d8064d%3A0xd11a5f0b548b9e63!2z5p2x5Lqs6aeF!5e0!3m2!1sja!2sjp!4v1234567890"
+            width="100%"
+            height="450"
+            style="border:0;"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+      </div>
+    </section>
+
+    <section class="mb-12">
+      <h2 class="mb-4 text-2xl font-bold">アクセス方法</h2>
+      <div class="rounded-lg bg-white p-6 shadow-lg">
+        <div class="space-y-6">
+          <div>
+            <h3 class="mb-3 text-xl font-bold">電車でお越しの場合</h3>
+            <p class="text-gray-700">
+              ○○線 ○○駅 徒歩5分<br />
+              ○○線 ○○駅 徒歩8分
+            </p>
+          </div>
+          <div>
+            <h3 class="mb-3 text-xl font-bold">バスでお越しの場合</h3>
+            <p class="text-gray-700">
+              ○○バス ○○停留所 徒歩3分<br />
+              ○○バス ○○停留所 徒歩5分
+            </p>
+          </div>
+          <div>
+            <h3 class="mb-3 text-xl font-bold">お車でお越しの場合</h3>
+            <p class="text-gray-700">
+              近隣のコインパーキングをご利用ください。<br />
+              協会事務所から徒歩3分の場所にあります。
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="mb-12">
+      <h2 class="mb-4 text-2xl font-bold">開館時間</h2>
+      <div class="rounded-lg bg-white p-6 shadow-lg">
+        <table class="w-full">
+          <tbody>
+            <tr class="border-b">
+              <th class="w-1/3 py-3 text-left">平日</th>
+              <td class="py-3">9:00 〜 17:00</td>
+            </tr>
+            <tr class="border-b">
+              <th class="py-3 text-left">土曜日</th>
+              <td class="py-3">9:00 〜 15:00</td>
+            </tr>
+            <tr>
+              <th class="py-3 text-left">日曜・祝日</th>
+              <td class="py-3">休館</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="bg-primary-50 rounded-lg p-8">
+      <h2 class="mb-4 text-2xl font-bold">お問い合わせ</h2>
+      <p class="mb-6 text-gray-700">
+        アクセスに関するご質問やご相談がございましたら、お気軽にお問い合わせください。
+      </p>
+      <div class="flex space-x-4">
+        <a
+          href="/contact"
+          class="bg-primary-600 hover:bg-primary-700 rounded-lg px-6 py-3 text-white transition-colors"
+        >
+          お問い合わせフォームへ
+        </a>
+        <a
+          href="tel:03-xxxx-xxxx"
+          class="border-primary-600 text-primary-600 hover:bg-primary-50 rounded-lg border bg-white px-6 py-3 transition-colors"
+        >
+          電話で問い合わせ
+        </a>
+      </div>
+    </section>
+  </div>
+</Layout>

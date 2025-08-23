@@ -1,0 +1,212 @@
+---
+import Layout from '../layouts/Layout.astro'
+
+// 仮の講習会データ
+const lectures = [
+  {
+    title: '安全な森林作業の基礎',
+    description: '森林作業における安全確保の基本を学びます。',
+    period: '随時開催',
+    capacity: 15,
+    price: '5,000円',
+    level: '初級',
+    duration: '1日'
+  },
+  {
+    title: 'チェーンソー講習',
+    description: 'チェーンソーの安全な使用方法とメンテナンスを習得します。',
+    period: '月1回開催',
+    capacity: 10,
+    price: '15,000円',
+    level: '中級',
+    duration: '2日間'
+  },
+  {
+    title: 'ロープワーク技術',
+    description: '森林作業に必要なロープワークの技術を学びます。',
+    period: '隔月開催',
+    capacity: 12,
+    price: '8,000円',
+    level: '初級',
+    duration: '1日'
+  },
+  {
+    title: '森林調査技術',
+    description: '森林の健康状態を調査する技術を習得します。',
+    period: '季節ごと開催',
+    capacity: 15,
+    price: '12,000円',
+    level: '中級',
+    duration: '2日間'
+  },
+  {
+    title: '環境教育プログラム作成',
+    description: '効果的な環境教育プログラムの作成方法を学びます。',
+    period: '年2回開催',
+    capacity: 20,
+    price: '10,000円',
+    level: '中級',
+    duration: '1日'
+  },
+  {
+    title: '救急法・応急処置',
+    description: '森林作業中の事故に対する応急処置を学びます。',
+    period: '年3回開催',
+    capacity: 15,
+    price: '6,000円',
+    level: '初級',
+    duration: '1日'
+  }
+]
+---
+
+<Layout title="各種講習会">
+  <div class="mx-auto max-w-4xl">
+    <h1 class="mb-8 text-3xl font-bold">各種講習会</h1>
+
+    <section class="mb-12">
+      <h2 class="mb-4 text-2xl font-bold">開催講習会</h2>
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+        {
+          lectures.map((lecture) => (
+            <div class="rounded-lg bg-white p-6 shadow-lg">
+              <h3 class="mb-2 text-xl font-bold">{lecture.title}</h3>
+              <p class="mb-4 text-gray-700">{lecture.description}</p>
+              <div class="space-y-2 text-base text-gray-600">
+                <div class="flex justify-between">
+                  <span>開催期間：</span>
+                  <span>{lecture.period}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span>定員：</span>
+                  <span>{lecture.capacity}名</span>
+                </div>
+                <div class="flex justify-between">
+                  <span>受講料：</span>
+                  <span>{lecture.price}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span>レベル：</span>
+                  <span>{lecture.level}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span>講習時間：</span>
+                  <span>{lecture.duration}</span>
+                </div>
+              </div>
+              <a
+                href="#application"
+                class="bg-primary-600 hover:bg-primary-700 mt-4 inline-block rounded-lg px-4 py-2 text-white transition-colors"
+              >
+                申し込む
+              </a>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="mb-12">
+      <h2 class="mb-4 text-2xl font-bold">受講の流れ</h2>
+      <div class="rounded-lg bg-white p-6 shadow-lg">
+        <div class="space-y-6">
+          <div class="flex items-start">
+            <div
+              class="bg-primary-600 mr-4 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-white"
+            >
+              1
+            </div>
+            <div>
+              <h3 class="mb-2 font-bold">講習会の選択</h3>
+              <p class="text-gray-700">
+                参加したい講習会を選択し、申し込みフォームに必要事項を記入します。
+              </p>
+            </div>
+          </div>
+          <div class="flex items-start">
+            <div
+              class="bg-primary-600 mr-4 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-white"
+            >
+              2
+            </div>
+            <div>
+              <h3 class="mb-2 font-bold">受講料の支払い</h3>
+              <p class="text-gray-700">
+                指定の口座に受講料をお振り込みください。会員の方は割引が適用されます。
+              </p>
+            </div>
+          </div>
+          <div class="flex items-start">
+            <div
+              class="bg-primary-600 mr-4 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-white"
+            >
+              3
+            </div>
+            <div>
+              <h3 class="mb-2 font-bold">講習会参加</h3>
+              <p class="text-gray-700">
+                開催日時と場所をお知らせします。必要な持ち物や準備事項もご案内いたします。
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="application" class="bg-primary-50 rounded-lg p-8">
+      <h2 class="mb-4 text-2xl font-bold">講習会申し込み</h2>
+      <form class="space-y-6">
+        <div>
+          <label class="mb-2 block text-gray-700">希望講習会</label>
+          <select class="w-full rounded-lg border p-2" required>
+            <option value="">講習会を選択してください</option>
+            {lectures.map((lecture) => <option value={lecture.title}>{lecture.title}</option>)}
+          </select>
+        </div>
+        <div>
+          <label class="mb-2 block text-gray-700">お名前</label>
+          <input type="text" class="w-full rounded-lg border p-2" required />
+        </div>
+        <div>
+          <label class="mb-2 block text-gray-700">フリガナ</label>
+          <input type="text" class="w-full rounded-lg border p-2" required />
+        </div>
+        <div>
+          <label class="mb-2 block text-gray-700">メールアドレス</label>
+          <input type="email" class="w-full rounded-lg border p-2" required />
+        </div>
+        <div>
+          <label class="mb-2 block text-gray-700">電話番号</label>
+          <input type="tel" class="w-full rounded-lg border p-2" required />
+        </div>
+        <div>
+          <label class="mb-2 block text-gray-700">会員種別</label>
+          <select class="w-full rounded-lg border p-2" required>
+            <option value="regular">正会員</option>
+            <option value="support">賛助会員</option>
+            <option value="non-member">非会員</option>
+          </select>
+        </div>
+        <div>
+          <label class="mb-2 block text-gray-700">参加動機</label>
+          <textarea class="w-full rounded-lg border p-2" rows="3" required></textarea>
+        </div>
+        <div class="flex items-center">
+          <input type="checkbox" class="mr-2" required />
+          <label class="text-gray-700">
+            <a href="/privacy" class="text-primary-600 hover:text-primary-700"
+              >プライバシーポリシー</a
+            >
+            に同意する
+          </label>
+        </div>
+        <button
+          type="submit"
+          class="bg-primary-600 hover:bg-primary-700 w-full rounded-lg px-6 py-3 text-white transition-colors"
+        >
+          申し込む
+        </button>
+      </form>
+    </section>
+  </div>
+</Layout>

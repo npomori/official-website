@@ -1,0 +1,267 @@
+---
+import Layout from '../layouts/Layout.astro'
+
+// 受付状態（true: 受付中、false: 受付終了）
+const isAcceptingApplications = true
+
+// 2024年度森林大学コースデータ（年1回実施）
+const forestUniversity = {
+  title: '2024年度 森林大学',
+  subtitle: '森林ボランティア活動の基礎から実践まで',
+  description:
+    '森林ボランティア活動に必要な知識と技術を総合的に学ぶ1年間のコースです。専門家による講義と実践的な演習を通じて、森林の保全と整備に関する深い理解を身につけることができます。',
+  period: '2024年4月〜2025年3月（全12回）',
+  schedule: '毎月第2土曜日 9:00〜16:00',
+  capacity: 30,
+  price: '120,000円（会員割引：100,000円）',
+  location: '関東森林管理局 研修センター',
+  applicationDeadline: '2024年3月31日',
+  startDate: '2024年4月13日',
+  curriculum: [
+    '森林の生態系と役割',
+    '安全な森林整備技術',
+    '環境教育プログラムの作成',
+    '森林調査の基礎',
+    'ボランティア活動の運営',
+    '自然保護と生物多様性',
+    '災害防止と森林管理',
+    '地域連携とコミュニティ形成',
+    '森林政策と法規制',
+    '実践演習とフィールドワーク',
+    '修了研究の作成',
+    '修了発表会'
+  ]
+}
+---
+
+<Layout title="森林大学">
+  <div class="mx-auto max-w-4xl">
+    <h1 class="mb-8 text-3xl font-bold">森林大学</h1>
+
+    <!-- 受付状態表示 -->
+    <div class="mb-8">
+      {
+        isAcceptingApplications ? (
+          <div class="bg-primary-50 border-primary-200 rounded-lg border p-6">
+            <div class="flex items-center">
+              <div class="flex-shrink-0">
+                <svg class="text-primary-400 h-8 w-8" viewBox="0 0 20 20" fill="currentColor">
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </div>
+              <div class="ml-4">
+                <h3 class="text-lg font-bold text-gray-800">受付中</h3>
+                <div class="mt-2 text-base text-gray-700">
+                  <p>申し込み締切：{forestUniversity.applicationDeadline}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div class="rounded-lg border border-red-200 bg-red-50 p-6">
+            <div class="flex items-center">
+              <div class="flex-shrink-0">
+                <svg class="h-8 w-8 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </div>
+              <div class="ml-4">
+                <h3 class="text-lg font-bold text-gray-800">受付終了</h3>
+                <div class="mt-2 text-base text-gray-700">
+                  <p>申し込みは締め切りました。次回の募集をお待ちください。</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )
+      }
+    </div>
+
+    <section class="mb-12">
+      <h2 class="mb-4 text-2xl font-bold">森林大学とは</h2>
+      <div class="rounded-lg bg-white p-6 shadow-lg">
+        <p class="mb-4 text-gray-700">
+          森林大学は、森林ボランティア活動に必要な知識と技術を学ぶための教育機関です。
+          専門家による講義と実践的な演習を通じて、森林の保全と整備に関する
+          総合的な理解を深めることができます。
+        </p>
+        <ul class="list-inside list-disc space-y-2 text-gray-700">
+          <li>専門家による質の高い講義</li>
+          <li>実践的な演習とフィールドワーク</li>
+          <li>少人数制のきめ細かな指導</li>
+          <li>修了後のフォローアップサポート</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="mb-12">
+      <h2 class="mb-4 text-2xl font-bold">2024年度コース詳細</h2>
+      <div class="rounded-lg bg-white p-6 shadow-lg">
+        <h3 class="text-primary-800 mb-4 text-xl font-bold">{forestUniversity.title}</h3>
+        <p class="mb-6 text-gray-700">{forestUniversity.description}</p>
+
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div class="space-y-3">
+            <div class="flex justify-between">
+              <span class="font-medium text-gray-700">開講期間：</span>
+              <span class="text-gray-600">{forestUniversity.period}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="font-medium text-gray-700">開講日時：</span>
+              <span class="text-gray-600">{forestUniversity.schedule}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="font-medium text-gray-700">定員：</span>
+              <span class="text-gray-600">{forestUniversity.capacity}名</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="font-medium text-gray-700">受講料：</span>
+              <span class="text-gray-600">{forestUniversity.price}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="font-medium text-gray-700">開催場所：</span>
+              <span class="text-gray-600">{forestUniversity.location}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="font-medium text-gray-700">開講日：</span>
+              <span class="text-gray-600">{forestUniversity.startDate}</span>
+            </div>
+          </div>
+
+          <div>
+            <h4 class="mb-3 font-medium text-gray-700">カリキュラム</h4>
+            <ul class="space-y-1 text-base text-gray-600">
+              {
+                forestUniversity.curriculum.map((item, index) => (
+                  <li class="flex items-start">
+                    <span class="text-primary-600 mr-2 font-medium">{index + 1}.</span>
+                    <span>{item}</span>
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+        </div>
+
+        {
+          isAcceptingApplications && (
+            <div class="mt-6 text-center">
+              <a
+                href="#application"
+                class="bg-primary-600 hover:bg-primary-700 inline-block rounded-lg px-6 py-3 text-white transition-colors"
+              >
+                申し込む
+              </a>
+            </div>
+          )
+        }
+      </div>
+    </section>
+
+    <section class="mb-12">
+      <h2 class="mb-4 text-2xl font-bold">受講の流れ</h2>
+      <div class="rounded-lg bg-white p-6 shadow-lg">
+        <div class="space-y-6">
+          <div class="flex items-start">
+            <div
+              class="bg-primary-600 mr-4 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-white"
+            >
+              1
+            </div>
+            <div>
+              <h3 class="mb-2 font-bold">申し込み</h3>
+              <p class="text-gray-700">申し込みフォームに必要事項を記入し、申し込みを行います。</p>
+            </div>
+          </div>
+          <div class="flex items-start">
+            <div
+              class="bg-primary-600 mr-4 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-white"
+            >
+              2
+            </div>
+            <div>
+              <h3 class="mb-2 font-bold">受講料の支払い</h3>
+              <p class="text-gray-700">
+                指定の口座に受講料をお振り込みください。会員の方は割引が適用されます。
+              </p>
+            </div>
+          </div>
+          <div class="flex items-start">
+            <div
+              class="bg-primary-600 mr-4 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-white"
+            >
+              3
+            </div>
+            <div>
+              <h3 class="mb-2 font-bold">受講開始</h3>
+              <p class="text-gray-700">
+                開講日時と場所をお知らせします。必要な持ち物や準備事項もご案内いたします。
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {
+      isAcceptingApplications && (
+        <section id="application" class="bg-primary-50 rounded-lg p-8">
+          <h2 class="mb-4 text-2xl font-bold">受講申し込み</h2>
+          <form class="space-y-6">
+            <div>
+              <label class="mb-2 block text-gray-700">お名前</label>
+              <input type="text" class="w-full rounded-lg border p-2" required />
+            </div>
+            <div>
+              <label class="mb-2 block text-gray-700">フリガナ</label>
+              <input type="text" class="w-full rounded-lg border p-2" required />
+            </div>
+            <div>
+              <label class="mb-2 block text-gray-700">メールアドレス</label>
+              <input type="email" class="w-full rounded-lg border p-2" required />
+            </div>
+            <div>
+              <label class="mb-2 block text-gray-700">電話番号</label>
+              <input type="tel" class="w-full rounded-lg border p-2" required />
+            </div>
+            <div>
+              <label class="mb-2 block text-gray-700">会員種別</label>
+              <select class="w-full rounded-lg border p-2" required>
+                <option value="regular">正会員</option>
+                <option value="support">賛助会員</option>
+                <option value="non-member">非会員</option>
+              </select>
+            </div>
+            <div>
+              <label class="mb-2 block text-gray-700">受講動機</label>
+              <textarea class="w-full rounded-lg border p-2" rows="3" required />
+            </div>
+            <div class="flex items-center">
+              <input type="checkbox" class="mr-2" required />
+              <label class="text-gray-700">
+                <a href="/privacy" class="text-primary-600 hover:text-primary-700">
+                  プライバシーポリシー
+                </a>
+                に同意する
+              </label>
+            </div>
+            <button
+              type="submit"
+              class="bg-primary-600 hover:bg-primary-700 w-full rounded-lg px-6 py-3 text-white transition-colors"
+            >
+              申し込む
+            </button>
+          </form>
+        </section>
+      )
+    }
+  </div>
+</Layout>

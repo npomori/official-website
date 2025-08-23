@@ -1,0 +1,182 @@
+---
+import Layout from '../layouts/Layout.astro'
+---
+
+<Layout title="協会へ入会">
+  <div class="mx-auto max-w-4xl">
+    <h1 class="mb-8 text-3xl font-bold">協会へ入会</h1>
+
+    <section class="mb-12">
+      <h2 class="mb-4 text-2xl font-bold">会員の種類</h2>
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <div class="rounded-lg bg-white p-6 shadow-lg">
+          <h3 class="mb-3 text-xl font-bold">正会員</h3>
+          <p class="mb-4 text-gray-700">
+            活動に積極的に参加し、協会の運営に参画できる方。 総会での議決権があります。
+          </p>
+          <ul class="mb-4 list-inside list-disc space-y-2 text-gray-700">
+            <li>年会費：5,000円</li>
+            <li>保険料：年間2,000円</li>
+            <li>活動参加：月1回以上推奨</li>
+          </ul>
+          <a href="#form" class="text-primary-600 hover:text-primary-700 font-bold">
+            入会申し込みへ →
+          </a>
+        </div>
+        <div class="rounded-lg bg-white p-6 shadow-lg">
+          <h3 class="mb-3 text-xl font-bold">賛助会員</h3>
+          <p class="mb-4 text-gray-700">
+            活動を支援したい方。活動への参加は任意です。 総会での議決権はありません。
+          </p>
+          <ul class="mb-4 list-inside list-disc space-y-2 text-gray-700">
+            <li>年会費：3,000円</li>
+            <li>保険料：不要</li>
+            <li>活動参加：任意</li>
+          </ul>
+          <a href="#form" class="text-primary-600 hover:text-primary-700 font-bold">
+            入会申し込みへ →
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="mb-12">
+      <h2 class="mb-4 text-2xl font-bold">会員特典</h2>
+      <div class="rounded-lg bg-white p-6 shadow-lg">
+        <ul class="space-y-4">
+          <li class="flex items-start">
+            <span class="text-primary-600 mr-4 font-bold">•</span>
+            <span>森林ボランティア保険への加入（正会員のみ）</span>
+          </li>
+          <li class="flex items-start">
+            <span class="text-primary-600 mr-4 font-bold">•</span>
+            <span>活動への優先参加権</span>
+          </li>
+          <li class="flex items-start">
+            <span class="text-primary-600 mr-4 font-bold">•</span>
+            <span>森林大学の受講料割引</span>
+          </li>
+          <li class="flex items-start">
+            <span class="text-primary-600 mr-4 font-bold">•</span>
+            <span>活動報告書の定期配布</span>
+          </li>
+          <li class="flex items-start">
+            <span class="text-primary-600 mr-4 font-bold">•</span>
+            <span>会員限定イベントへの参加</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="mb-12">
+      <h2 class="mb-4 text-2xl font-bold">入会の流れ</h2>
+      <div class="rounded-lg bg-white p-6 shadow-lg">
+        <div class="space-y-6">
+          <div class="flex items-start">
+            <div
+              class="bg-primary-600 mr-4 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-white"
+            >
+              1
+            </div>
+            <div>
+              <h3 class="mb-2 font-bold">入会申し込み</h3>
+              <p class="text-gray-700">
+                下記の入会申し込みフォームに必要事項を記入し、送信してください。
+              </p>
+            </div>
+          </div>
+          <div class="flex items-start">
+            <div
+              class="bg-primary-600 mr-4 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-white"
+            >
+              2
+            </div>
+            <div>
+              <h3 class="mb-2 font-bold">書類の送付</h3>
+              <p class="text-gray-700">
+                入会申し込み後、必要書類を郵送いたします。 書類に記入の上、返送してください。
+              </p>
+            </div>
+          </div>
+          <div class="flex items-start">
+            <div
+              class="bg-primary-600 mr-4 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-white"
+            >
+              3
+            </div>
+            <div>
+              <h3 class="mb-2 font-bold">会費の支払い</h3>
+              <p class="text-gray-700">
+                指定の口座に会費をお振り込みください。 振り込み確認後、会員証を発行いたします。
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="form" class="bg-primary-50 rounded-lg p-8">
+      <h2 class="mb-4 text-2xl font-bold">入会申し込みフォーム</h2>
+      <form class="space-y-6">
+        <div>
+          <label class="mb-2 block text-gray-700">会員種別</label>
+          <select class="w-full rounded-lg border p-2">
+            <option value="regular">正会員</option>
+            <option value="support">賛助会員</option>
+          </select>
+        </div>
+        <div>
+          <label class="mb-2 block text-gray-700">お名前</label>
+          <input type="text" class="w-full rounded-lg border p-2" required />
+        </div>
+        <div>
+          <label class="mb-2 block text-gray-700">フリガナ</label>
+          <input type="text" class="w-full rounded-lg border p-2" required />
+        </div>
+        <div>
+          <label class="mb-2 block text-gray-700">メールアドレス</label>
+          <input type="email" class="w-full rounded-lg border p-2" required />
+        </div>
+        <div>
+          <label class="mb-2 block text-gray-700">電話番号</label>
+          <input type="tel" class="w-full rounded-lg border p-2" required />
+        </div>
+        <div>
+          <label class="mb-2 block text-gray-700">住所</label>
+          <textarea class="w-full rounded-lg border p-2" rows="3" required></textarea>
+        </div>
+        <div>
+          <label class="mb-2 block text-gray-700">生年月日</label>
+          <input type="date" class="w-full rounded-lg border p-2" required />
+        </div>
+        <div>
+          <label class="mb-2 block text-gray-700">職業</label>
+          <input type="text" class="w-full rounded-lg border p-2" />
+        </div>
+        <div>
+          <label class="mb-2 block text-gray-700">森林ボランティア経験</label>
+          <textarea class="w-full rounded-lg border p-2" rows="3"></textarea>
+        </div>
+        <div>
+          <label class="mb-2 block text-gray-700">入会の動機</label>
+          <textarea class="w-full rounded-lg border p-2" rows="3" required></textarea>
+        </div>
+        <div class="flex items-center">
+          <input type="checkbox" class="mr-2" required />
+          <label class="text-gray-700">
+            <a href="/privacy" class="text-primary-600 hover:text-primary-700"
+              >プライバシーポリシー</a
+            >
+            に同意する
+          </label>
+        </div>
+        <button
+          type="submit"
+          class="bg-primary-600 hover:bg-primary-700 w-full rounded-lg px-6 py-3 text-white transition-colors"
+        >
+          申し込む
+        </button>
+      </form>
+    </section>
+  </div>
+</Layout>
