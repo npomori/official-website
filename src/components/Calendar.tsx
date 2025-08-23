@@ -2,7 +2,7 @@ import Alert from '@/components/base/Alert'
 import EventInfoModal from '@/components/event/EventInfoModal'
 import config from '@/config/config.json'
 import EventFetch from '@/fetch/event'
-import { fetcher } from '@/hooks/swr'
+import useSWR, { fetcher } from '@/hooks/swr'
 import { isEventUpdated } from '@/store/event'
 import { userStore } from '@/store/user'
 import type { EventResponse } from '@/types/event'
@@ -12,7 +12,6 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import FullCalendar from '@fullcalendar/react'
 import { useStore } from '@nanostores/react'
 import React, { useEffect, useRef, useState } from 'react'
-import useSWR from 'swr'
 
 interface DateRange {
   startStr: string
