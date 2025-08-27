@@ -1,0 +1,230 @@
+---
+title: "カスタム画像コンポーネントデモ"
+description: "MDXコンテンツで使用できるカスタム画像コンポーネントの使用例とサンプル"
+date: 2024-01-25
+author: "森林ボランティア協会"
+tags: ["デモ", "コンポーネント", "画像"]
+---
+
+# カスタム画像コンポーネントデモ
+
+このページでは、MDXコンテンツで使用できるカスタム画像コンポーネントの様々な使用例をご紹介します。
+
+## MDXImageコンポーネント
+
+### 基本的な使用方法
+
+<MDXImage 
+  src="/images/forest-maintenance.jpg" 
+  alt="森林保全活動の様子"
+  caption="森林保全活動の様子 - 定期的な整備により健康な森林を維持しています"
+/>
+
+### サイズバリエーション
+
+#### 小サイズ
+<MDXImage 
+  src="/images/spring-planting.jpg" 
+  alt="春の植樹活動"
+  size="small"
+  caption="春の植樹活動"
+/>
+
+#### 中サイズ（デフォルト）
+<MDXImage 
+  src="/images/forest-survey.jpg" 
+  alt="森林調査の様子"
+  size="medium"
+  caption="森林調査の様子"
+/>
+
+#### 大サイズ
+<MDXImage 
+  src="/images/activity-planting-1.jpg" 
+  alt="植樹活動1"
+  size="large"
+  caption="植樹活動の様子1"
+/>
+
+#### フルサイズ
+<MDXImage 
+  src="/images/activity-planting-2.jpg" 
+  alt="植樹活動2"
+  size="full"
+  caption="植樹活動の様子2"
+/>
+
+### 配置バリエーション
+
+#### 左寄せ
+<MDXImage 
+  src="/images/participant1.jpg" 
+  alt="参加者1"
+  size="small"
+  align="left"
+  caption="活動参加者の様子"
+/>
+
+森林ボランティア活動には、様々な年齢層の方々が参加されています。子どもたちから大人まで、森林の大切さを学びながら、実際の活動を通じて環境保全に貢献しています。このような活動を通じて、参加者の皆さんは森林の重要性を深く理解し、自然との共生の大切さを実感されています。
+
+#### 右寄せ
+<MDXImage 
+  src="/images/participant2.jpg" 
+  alt="参加者2"
+  size="small"
+  align="right"
+  caption="活動参加者の様子2"
+/>
+
+森林ボランティア活動では、安全第一を心がけています。適切な装備を身につけ、専門的な指導のもとで活動を行います。参加者の皆さんは、森林の生態系について学びながら、実際の保全作業に取り組んでいます。このような体験を通じて、環境への意識が高まり、日常生活でも環境に配慮した行動を心がけるようになります。
+
+### スタイルバリエーション
+
+#### 角丸なし、影なし
+<MDXImage 
+  src="/images/participant3.jpg" 
+  alt="参加者3"
+  size="medium"
+  rounded={false}
+  shadow={false}
+  caption="シンプルなスタイル"
+/>
+
+#### カスタムクラス
+<MDXImage 
+  src="/images/album1.jpg" 
+  alt="アルバム1"
+  size="medium"
+  className="border-4 border-blue-200"
+  caption="カスタムボーダー付き"
+/>
+
+## ImageGalleryコンポーネント
+
+### 2列ギャラリー
+
+<ImageGallery 
+  images={[
+    {
+      src: "/images/album1.jpg",
+      alt: "アルバム1",
+      caption: "活動写真1"
+    },
+    {
+      src: "/images/album2.jpg",
+      alt: "アルバム2",
+      caption: "活動写真2"
+    }
+  ]}
+  columns={2}
+/>
+
+### 3列ギャラリー
+
+<ImageGallery 
+  images={[
+    {
+      src: "/images/album1.jpg",
+      alt: "アルバム1",
+      caption: "活動写真1"
+    },
+    {
+      src: "/images/album2.jpg",
+      alt: "アルバム2",
+      caption: "活動写真2"
+    },
+    {
+      src: "/images/album3.jpg",
+      alt: "アルバム3",
+      caption: "活動写真3"
+    }
+  ]}
+  columns={3}
+/>
+
+### 4列ギャラリー
+
+<ImageGallery 
+  images={[
+    {
+      src: "/images/album1.jpg",
+      alt: "アルバム1",
+      caption: "活動写真1"
+    },
+    {
+      src: "/images/album2.jpg",
+      alt: "アルバム2",
+      caption: "活動写真2"
+    },
+    {
+      src: "/images/album3.jpg",
+      alt: "アルバム3",
+      caption: "活動写真3"
+    },
+    {
+      src: "/images/album4.jpg",
+      alt: "アルバム4",
+      caption: "活動写真4"
+    }
+  ]}
+  columns={4}
+  gap="sm"
+/>
+
+### 1列ギャラリー（大きな画像）
+
+<ImageGallery 
+  images={[
+    {
+      src: "/images/winter-nature.jpg",
+      alt: "冬の自然",
+      caption: "冬の森林の美しい景色"
+    }
+  ]}
+  columns={1}
+/>
+
+## 既存コンポーネントとの組み合わせ
+
+### ImageTextLayoutとの組み合わせ
+
+<ImageTextLayout 
+  imageSrc="/images/forest-maintenance.jpg"
+  imageAlt="森林保全活動の様子"
+  title="森林保全活動"
+  imagePosition="left"
+>
+  森林ボランティア協会では、定期的に森林保全活動を行っています。植樹、下草刈り、間伐など、森林の健康を保つための様々な活動に取り組んでいます。
+</ImageTextLayout>
+
+### InfoCardとの組み合わせ
+
+<div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
+  <InfoCard
+    title="植樹活動"
+    description="春と秋に植樹活動を行っています。"
+    icon="🌱"
+    color="green"
+  />
+  <InfoCard
+    title="下草刈り"
+    description="夏場は下草刈りが重要な作業です。"
+    icon="🌿"
+    color="blue"
+  />
+</div>
+
+## まとめ
+
+これらのカスタム画像コンポーネントを使用することで、MDXコンテンツ内で画像を柔軟に配置し、美しいレイアウトを作成できます。
+
+### 主な特徴
+
+- **サイズ調整**: small, medium, large, fullの4つのサイズ
+- **配置制御**: left, center, rightの3つの配置
+- **キャプション**: 画像の説明文を追加可能
+- **スタイルカスタマイズ**: 角丸、影、カスタムクラスの設定
+- **ギャラリー機能**: 複数画像のグリッド表示
+- **レスポンシブ対応**: モバイルからデスクトップまで対応
+
+これらのコンポーネントを活用して、魅力的なコンテンツを作成してください。

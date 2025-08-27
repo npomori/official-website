@@ -1,0 +1,317 @@
+---
+title: "サンプルページ"
+description: "これはcontent collectionsを使用した汎用ページのサンプルです"
+date: 2024-01-15
+author: "森林ボランティア協会"
+tags: ["サンプル", "MDX", "コンテンツ"]
+---
+
+# サンプルページ
+
+このページは、Astroのcontent collectionsを使用して作成された汎用ページのサンプルです。
+
+## 特徴
+
+- **MDX形式**: MarkdownとJSXを組み合わせたコンテンツ
+- **型安全**: TypeScriptによるスキーマ検証
+- **動的生成**: フロントマターからメタデータを自動取得
+
+<ImageTextLayout 
+  imageSrc="/images/forest-maintenance.jpg"
+  imageAlt="森林保全活動の様子"
+  title="森林保全活動"
+  imagePosition="left"
+>
+  森林ボランティア協会では、定期的に森林保全活動を行っています。植樹、下草刈り、間伐など、森林の健康を保つための様々な活動に取り組んでいます。参加者の皆さんと一緒に、美しい森林を未来に残すための活動を続けています。
+</ImageTextLayout>
+
+<ImageTextLayout 
+  imageSrc="/images/spring-planting.jpg"
+  imageAlt="春の植樹活動"
+  title="春の植樹活動"
+  imagePosition="right"
+>
+  春になると、新しい苗木を植える植樹活動を行います。子どもたちから大人まで、多くの方々が参加してくださり、新しい命を植えています。植えた苗木は、将来大きな木に成長し、豊かな森林を作り出します。
+</ImageTextLayout>
+
+## 活動の種類
+
+<div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
+  <InfoCard
+    title="植樹活動"
+    description="春と秋に植樹活動を行っています。苗木の植え付け方法を学び、森林の再生に貢献しましょう。"
+    icon="🌱"
+    color="green"
+  />
+  <InfoCard
+    title="下草刈り"
+    description="夏場は下草刈りが重要な作業です。適切な道具の使い方を習得してください。"
+    icon="🌿"
+    color="blue"
+  />
+  <InfoCard
+    title="間伐作業"
+    description="森林の健康を保つための間伐作業も行います。専門的な技術が必要なため、講習会に参加してください。"
+    icon="🪓"
+    color="orange"
+  />
+  <InfoCard
+    title="環境教育"
+    description="森林の重要性を学ぶ環境教育プログラムも実施しています。"
+    icon="📚"
+    color="purple"
+  />
+</div>
+
+## カスタム画像コンポーネントの使用例
+
+### 単一画像の表示
+
+<MDXImage 
+  src="/images/forest-maintenance.jpg" 
+  alt="森林保全活動"
+  size="large"
+  caption="森林保全活動の様子 - 定期的な整備により健康な森林を維持しています"
+/>
+
+### 画像ギャラリー
+
+<ImageGallery 
+  images={[
+    {
+      src: "/images/album1.jpg",
+      alt: "活動写真1",
+      caption: "植樹活動の様子"
+    },
+    {
+      src: "/images/album2.jpg",
+      alt: "活動写真2",
+      caption: "下草刈りの様子"
+    },
+    {
+      src: "/images/album3.jpg",
+      alt: "活動写真3",
+      caption: "間伐作業の様子"
+    }
+  ]}
+  columns={3}
+/>
+
+## コンテンツ例
+
+### リスト
+
+- 森林保全活動
+- 植樹イベント
+- 環境教育
+
+### コードブロック
+
+#### JavaScriptの例
+
+```javascript
+// 森林ボランティア活動の参加者管理
+class VolunteerManager {
+  constructor() {
+    this.volunteers = new Map();
+    this.activities = [];
+  }
+
+  addVolunteer(name, email, skills = []) {
+    const volunteer = {
+      id: Date.now(),
+      name,
+      email,
+      skills,
+      joinDate: new Date(),
+      activities: []
+    };
+    
+    this.volunteers.set(volunteer.id, volunteer);
+    return volunteer.id;
+  }
+
+  assignToActivity(volunteerId, activityName) {
+    const volunteer = this.volunteers.get(volunteerId);
+    if (volunteer) {
+      volunteer.activities.push({
+        name: activityName,
+        date: new Date(),
+        status: 'assigned'
+      });
+    }
+  }
+
+  getVolunteersBySkill(skill) {
+    return Array.from(this.volunteers.values())
+      .filter(v => v.skills.includes(skill));
+  }
+}
+
+// 使用例
+const manager = new VolunteerManager();
+manager.addVolunteer('田中太郎', 'tanaka@example.com', ['植樹', '下草刈り']);
+```
+
+#### TypeScriptの例
+
+```typescript
+interface ForestActivity {
+  id: string;
+  name: string;
+  date: Date;
+  location: string;
+  maxParticipants: number;
+  currentParticipants: number;
+  skills: string[];
+  description: string;
+}
+
+interface Volunteer {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  skills: string[];
+  joinDate: Date;
+  activities: string[];
+}
+
+class ForestActivityManager {
+  private activities: Map<string, ForestActivity> = new Map();
+  private volunteers: Map<string, Volunteer> = new Map();
+
+  createActivity(activity: Omit<ForestActivity, 'id' | 'currentParticipants'>): string {
+    const id = crypto.randomUUID();
+    const newActivity: ForestActivity = {
+      ...activity,
+      id,
+      currentParticipants: 0
+    };
+    
+    this.activities.set(id, newActivity);
+    return id;
+  }
+
+  registerVolunteer(volunteerId: string, activityId: string): boolean {
+    const activity = this.activities.get(activityId);
+    const volunteer = this.volunteers.get(volunteerId);
+    
+    if (!activity || !volunteer) return false;
+    
+    if (activity.currentParticipants >= activity.maxParticipants) {
+      throw new Error('活動の定員に達しています');
+    }
+    
+    activity.currentParticipants++;
+    volunteer.activities.push(activityId);
+    return true;
+  }
+}
+```
+
+#### CSSの例
+
+```css
+/* 森林テーマのカラーパレット */
+:root {
+  --forest-primary: #22c55e;
+  --forest-secondary: #16a34a;
+  --forest-accent: #fbbf24;
+  --forest-dark: #14532d;
+  --forest-light: #dcfce7;
+}
+
+/* 活動カードのスタイル */
+.activity-card {
+  background: linear-gradient(135deg, var(--forest-light) 0%, #f0fdf4 100%);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 1rem 0;
+  border: 1px solid var(--forest-primary);
+  box-shadow: 0 4px 6px -1px rgba(34, 197, 94, 0.1);
+  transition: transform 0.2s ease-in-out;
+}
+
+.activity-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 15px -3px rgba(34, 197, 94, 0.2);
+}
+
+.activity-title {
+  color: var(--forest-dark);
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.activity-description {
+  color: #374151;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.skill-tag {
+  display: inline-block;
+  background: var(--forest-primary);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  margin: 0.25rem;
+}
+```
+
+#### JSONの例
+
+```json
+{
+  "forestActivities": [
+    {
+      "id": "act-001",
+      "name": "春の植樹活動",
+      "date": "2024-03-15",
+      "location": "京都府京都市左京区",
+      "maxParticipants": 30,
+      "currentParticipants": 25,
+      "skills": ["植樹", "道具の使い方"],
+      "description": "春の新芽の季節に合わせて、新しい苗木を植える活動です。",
+      "equipment": ["スコップ", "苗木", "水やり道具"],
+      "difficulty": "初級"
+    },
+    {
+      "id": "act-002", 
+      "name": "夏の下草刈り",
+      "date": "2024-07-20",
+      "location": "滋賀県大津市",
+      "maxParticipants": 20,
+      "currentParticipants": 15,
+      "skills": ["下草刈り", "安全作業"],
+      "description": "夏場の下草刈りで、森林の健康を保ちます。",
+      "equipment": ["鎌", "手袋", "帽子"],
+      "difficulty": "中級"
+    }
+  ],
+  "volunteers": [
+    {
+      "id": "vol-001",
+      "name": "田中太郎",
+      "email": "tanaka@example.com",
+      "skills": ["植樹", "下草刈り"],
+      "joinDate": "2024-01-15",
+      "activities": ["act-001"]
+    }
+  ]
+}
+```
+
+## まとめ
+
+content collectionsを使用することで、以下のメリットがあります：
+
+1. **型安全性**: フロントマターのスキーマ検証
+2. **開発体験**: 自動補完とエラー検出
+3. **パフォーマンス**: ビルド時の最適化
+4. **保守性**: 構造化されたコンテンツ管理
+
+このサンプルページを参考に、様々なコンテンツを作成してください。
