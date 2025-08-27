@@ -115,3 +115,328 @@
   white-space: nowrap !important;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) !important;
 }
+
+/* 見出しスタイル - シンプルで見やすい */
+.prose h1 {
+  font-size: 1.875rem; /* 30px */
+  font-weight: 700;
+  color: #111827;
+  margin-top: 2rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.2;
+}
+
+.prose h2 {
+  font-size: 1.875rem; /* 30px */
+  font-weight: 600;
+  color: #1f2937;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  line-height: 1.3;
+}
+
+.prose h3 {
+  font-size: 1.5rem; /* 24px */
+  font-weight: 600;
+  color: #374151;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.4;
+}
+
+.prose h4 {
+  font-size: 1.25rem; /* 20px */
+  font-weight: 600;
+  color: #4b5563;
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+.prose h5 {
+  font-size: 1.125rem; /* 18px */
+  font-weight: 600;
+  color: #6b7280;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+.prose h6 {
+  font-size: 1rem; /* 16px */
+  font-weight: 600;
+  color: #9ca3af;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+/* 段落スタイル */
+.prose p {
+  margin-bottom: 1.5rem;
+  line-height: 1.625;
+  font-size: 1rem;
+}
+
+/* 見出しの後の段落の余白調整 */
+.prose h1 + p,
+.prose h2 + p,
+.prose h3 + p,
+.prose h4 + p,
+.prose h5 + p,
+.prose h6 + p {
+  margin-top: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+/* カスタムリストスタイル */
+.prose ul {
+  list-style: none;
+  padding-left: 1.5rem;
+  margin-bottom: 1.5rem;
+  margin-top: 1rem;
+}
+
+.prose ul li {
+  position: relative;
+  margin-bottom: 0.75rem;
+  padding-left: 1.5rem;
+  line-height: 1.625;
+  font-size: 1rem; /* 16px */
+}
+
+.prose ul li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: #16a34a;
+  font-weight: 700;
+  font-size: 1rem; /* 16px */
+  line-height: 1.625;
+}
+
+.prose ol {
+  list-style: none;
+  padding-left: 1.5rem;
+  margin-bottom: 1.5rem;
+  margin-top: 1rem;
+  counter-reset: list-counter;
+}
+
+.prose ol li {
+  position: relative;
+  margin-bottom: 0.75rem;
+  padding-left: 1.5rem;
+  line-height: 1.625;
+  font-size: 1rem; /* 16px */
+  counter-increment: list-counter;
+}
+
+.prose ol li::before {
+  content: counter(list-counter) ".";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: #16a34a;
+  font-weight: 700;
+  font-size: 1rem; /* 16px */
+  line-height: 1.625;
+}
+
+/* ネストしたリスト */
+.prose ul ul,
+.prose ol ol,
+.prose ul ol,
+.prose ol ul {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  padding-left: 1rem;
+}
+
+.prose ul ul li {
+  font-size: 1rem; /* 16px */
+}
+
+.prose ul ul li::before {
+  content: "◦";
+  color: #6b7280;
+  font-size: 1rem; /* 16px */
+  top: 0;
+  line-height: 1.625;
+}
+
+.prose ol ol {
+  counter-reset: sub-counter;
+}
+
+.prose ol ol li {
+  counter-increment: sub-counter;
+  font-size: 1rem; /* 16px */
+}
+
+.prose ol ol li::before {
+  content: counter(sub-counter, lower-alpha) ".";
+  color: #6b7280;
+  font-size: 1rem; /* 16px */
+  top: 0;
+  line-height: 1.625;
+}
+
+/* コードブロックスタイル - モダンで美しいデザイン */
+.prose pre {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 2rem 0;
+  overflow-x: auto;
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.prose pre code {
+  background: transparent;
+  color: #e2e8f0;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  padding: 0;
+  border-radius: 0;
+  font-weight: 400;
+}
+
+/* インラインコードスタイル */
+.prose code:not(pre code) {
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  color: #1e293b;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* コードブロック内のシンタックスハイライト */
+.prose pre .token.comment,
+.prose pre .token.prolog,
+.prose pre .token.doctype,
+.prose pre .token.cdata {
+  color: #64748b;
+  font-style: italic;
+}
+
+.prose pre .token.punctuation {
+  color: #94a3b8;
+}
+
+.prose pre .token.namespace {
+  opacity: 0.7;
+}
+
+.prose pre .token.property,
+.prose pre .token.tag,
+.prose pre .token.boolean,
+.prose pre .token.number,
+.prose pre .token.constant,
+.prose pre .token.symbol,
+.prose pre .token.deleted {
+  color: #fbbf24;
+}
+
+.prose pre .token.selector,
+.prose pre .token.attr-name,
+.prose pre .token.string,
+.prose pre .token.char,
+.prose pre .token.builtin,
+.prose pre .token.inserted {
+  color: #34d399;
+}
+
+.prose pre .token.operator,
+.prose pre .token.entity,
+.prose pre .token.url,
+.prose pre .language-css .token.string,
+.prose pre .style .token.string {
+  color: #60a5fa;
+}
+
+.prose pre .token.atrule,
+.prose pre .token.attr-value,
+.prose pre .token.keyword {
+  color: #a78bfa;
+}
+
+.prose pre .token.function,
+.prose pre .token.class-name {
+  color: #f472b6;
+}
+
+.prose pre .token.regex,
+.prose pre .token.important,
+.prose pre .token.variable {
+  color: #fbbf24;
+}
+
+.prose pre .token.important,
+.prose pre .token.bold {
+  font-weight: bold;
+}
+
+.prose pre .token.italic {
+  font-style: italic;
+}
+
+.prose pre .token.entity {
+  cursor: help;
+}
+
+/* コードブロックのスクロールバー */
+.prose pre::-webkit-scrollbar {
+  height: 8px;
+}
+
+.prose pre::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+.prose pre::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+}
+
+.prose pre::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* コードブロックの言語表示 */
+.prose pre[data-language]::after {
+  content: attr(data-language);
+  position: absolute;
+  top: 0.75rem;
+  right: 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  backdrop-filter: blur(4px);
+}
+
+/* ダークモード対応 */
+@media (prefers-color-scheme: dark) {
+  .prose code:not(pre code) {
+    background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
+    color: #f3f4f6;
+    border-color: #6b7280;
+  }
+}
