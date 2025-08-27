@@ -432,6 +432,12 @@
   backdrop-filter: blur(4px);
 }
 
+/* MDX内の画像の上下マージンを削除（左右中央配置は維持） */
+.prose img {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
 /* ダークモード対応 */
 @media (prefers-color-scheme: dark) {
   .prose code:not(pre code) {

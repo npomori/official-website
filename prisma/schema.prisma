@@ -30,6 +30,7 @@ model User {
   Activities            Activity[]
   Records               Record[]
   News                  News[]
+  Articles              Article[]
 }
 
 model Event {
@@ -104,6 +105,29 @@ model News {
   author      String   // 作成者
   status      String   @default("published") // 状態（draft: 下書き、published: 公開、scheduled: 予約投稿、archived: アーカイブ）
   creatorId   Int      // お知らせ作成者
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  creator     User     @relation(fields: [creatorId], references: [id])
+}
+
+model Article {
+  id          Int      @id @default(autoincrement())
+  title       String   // 記事のタイトル
+  slug        String   @unique // URLスラッグ（一意）
+  content     String   @db.Text // 記事の内容（MDX形式）
+  featuredImage String? // アイキャッチ画像のパス
+  images      Json?    // 記事内で使用する画像ファイル名（JSON配列として保存）
+  attachments Json?    // 添付ファイル（PDF、ドキュメントなど、JSON配列として保存）
+  tags        Json?    // タグ（JSON配列として保存）
+  category    String?  // カテゴリ
+  status      String   @default("draft") // 状態（draft: 下書き、published: 公開、archived: アーカイブ）
+  publishedAt DateTime? // 公開日時
+  seoDescription String? // SEO用説明
+  seoKeywords  String? // SEO用キーワード
+  isMemberOnly Boolean @default(false) // 会員限定コンテンツかどうか
+  viewCount   Int      @default(0) // 閲覧回数
+  downloadStats Json?  // 添付ファイルごとのダウンロード統計（JSON形式で保存）
+  creatorId   Int      // 記事作成者
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   creator     User     @relation(fields: [creatorId], references: [id])
