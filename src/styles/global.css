@@ -1,6 +1,6 @@
 @import "tailwindcss";
 @plugin "flowbite/plugin";
-@plugin "@tailwindcss/typography";
+/*@plugin "@tailwindcss/typography";*/
 
 @theme {
   --font-sans: 'ヒラギノ角ゴ Pro W3', 'Hiragino Kaku Gothic Pro', 'メイリオ', 'Meiryo', '游ゴシック', 'Yu Gothic', 'ＭＳ Ｐゴシック', 'MS PGothic', 'sans-serif';
@@ -433,10 +433,10 @@
 }
 
 /* MDX内の画像の上下マージンを削除（左右中央配置は維持） */
-.prose img {
+/*.prose img {
   margin-top: 0 !important;
   margin-bottom: 0 !important;
-}
+}*/
 
 /* ダークモード対応 */
 @media (prefers-color-scheme: dark) {
