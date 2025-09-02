@@ -1,4 +1,3 @@
-import mdx from '@astrojs/mdx'
 import node from '@astrojs/node'
 import react from '@astrojs/react'
 import tailwindcss from '@tailwindcss/vite'
@@ -9,7 +8,6 @@ import holidayIntegration from './src/integrations/holiday'
 export default defineConfig({
   integrations: [
     react(),
-    mdx(),
     icon({
       include: {
         mdi: ['*']
