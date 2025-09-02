@@ -307,9 +307,9 @@ const EventInfoModal: React.FC<EventInfoModalProps> = ({ isOpen, event, onClose,
 
           <div className="mb-6">
             <div className="flex items-center gap-3">
-              <div className="rounded-full bg-blue-100 p-2">
+              <div className="bg-primary-100 rounded-full p-2">
                 <svg
-                  className="h-5 w-5 text-blue-600"
+                  className="text-primary-600 h-5 w-5"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -335,9 +335,9 @@ const EventInfoModal: React.FC<EventInfoModalProps> = ({ isOpen, event, onClose,
           {(event.description || event.url) && (
             <div className="space-y-4">
               <div className="flex items-center gap-3">
-                <div className="rounded-full bg-blue-100 p-2">
+                <div className="bg-primary-100 rounded-full p-2">
                   <svg
-                    className="h-5 w-5 text-blue-600"
+                    className="text-primary-600 h-5 w-5"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
