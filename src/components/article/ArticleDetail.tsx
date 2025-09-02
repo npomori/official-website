@@ -12,7 +12,7 @@ const ArticleDetail: React.FC = () => {
   useEffect(() => {
     // URLからスラッグを取得
     const pathname = window.location.pathname
-    const slugMatch = pathname.match(/\/articles\/(.+)$/)
+    const slugMatch = pathname.match(/\/article\/(.+)$/)
     if (slugMatch) {
       setSlug(slugMatch[1])
     }
@@ -44,7 +44,7 @@ const ArticleDetail: React.FC = () => {
         <div className="mb-4 text-lg text-red-600">
           {error ? '記事の読み込みに失敗しました' : data?.message || '記事が見つかりません'}
         </div>
-        <a href="/articles" className="text-green-600 transition-colors hover:text-green-800">
+        <a href="/article" className="text-green-600 transition-colors hover:text-green-800">
           ← 記事一覧に戻る
         </a>
       </div>
@@ -180,7 +180,7 @@ const ArticleDetail: React.FC = () => {
                   <p className="text-sm text-gray-600">{attachment.filename}</p>
                 </div>
                 <a
-                  href={`/uploads/articles/${attachment.filename}`}
+                  href={`/uploads/article/${attachment.filename}`}
                   download={attachment.originalName}
                   className="rounded bg-green-600 px-4 py-2 text-white transition-colors hover:bg-green-700"
                 >
@@ -196,7 +196,7 @@ const ArticleDetail: React.FC = () => {
       <div className="border-t pt-8">
         <div className="flex flex-wrap items-center justify-between text-sm text-gray-600">
           <span>最終更新: {formatDate(article.updatedAt)}</span>
-          <a href="/articles" className="text-green-600 transition-colors hover:text-green-800">
+          <a href="/article" className="text-green-600 transition-colors hover:text-green-800">
             ← 記事一覧に戻る
           </a>
         </div>

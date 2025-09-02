@@ -27,34 +27,32 @@ export default class ArticleFetch extends BaseApiFetch {
     }
 
     return await this.prototype.request<ArticleListResponse>(
-      `${config.api.rootUrl}/articles?${params}`
+      `${config.api.rootUrl}/article?${params}`
     )
   }
 
   // 記事詳細を取得（ID）
   static async getArticle(id: number): Promise<ApiResponse<{ article: Article }>> {
-    return await this.prototype.request<{ article: Article }>(
-      `${config.api.rootUrl}/articles/${id}`
-    )
+    return await this.prototype.request<{ article: Article }>(`${config.api.rootUrl}/article/${id}`)
   }
 
   // 記事詳細を取得（スラッグ）
   static async getArticleBySlug(slug: string): Promise<ApiResponse<{ article: Article }>> {
     return await this.prototype.request<{ article: Article }>(
-      `${config.api.rootUrl}/articles/slug/${slug}`
+      `${config.api.rootUrl}/article/slug/${slug}`
     )
   }
 
   // カテゴリー一覧を取得
   static async getCategories(): Promise<ApiResponse<{ categories: string[] }>> {
     return await this.prototype.request<{ categories: string[] }>(
-      `${config.api.rootUrl}/articles/categories`
+      `${config.api.rootUrl}/article/categories`
     )
   }
 
   // タグ一覧を取得
   static async getTags(): Promise<ApiResponse<{ tags: string[] }>> {
-    return await this.prototype.request<{ tags: string[] }>(`${config.api.rootUrl}/articles/tags`)
+    return await this.prototype.request<{ tags: string[] }>(`${config.api.rootUrl}/article/tags`)
   }
 
   // 人気記事を取得
@@ -62,14 +60,14 @@ export default class ArticleFetch extends BaseApiFetch {
     limit: number = 5
   ): Promise<ApiResponse<{ articles: Article[] }>> {
     return await this.prototype.request<{ articles: Article[] }>(
-      `${config.api.rootUrl}/articles/popular?limit=${limit}`
+      `${config.api.rootUrl}/article/popular?limit=${limit}`
     )
   }
 
   // 最新記事を取得
   static async getLatestArticles(limit: number = 5): Promise<ApiResponse<{ articles: Article[] }>> {
     return await this.prototype.request<{ articles: Article[] }>(
-      `${config.api.rootUrl}/articles/latest?limit=${limit}`
+      `${config.api.rootUrl}/article/latest?limit=${limit}`
     )
   }
 }
