@@ -177,3 +177,108 @@ pnpm db:migrate
 ## ライセンス
 
 MITライセンス
+
+# Articleモデルのサンプルデータ
+
+## 概要
+Articleモデル用のサンプルデータを作成しました。MDXコンテンツとReactコンポーネントを組み合わせた実用的な記事データが含まれています。
+
+## ファイル構成
+- `prisma/seeds/articles.mjs`: メインの記事サンプルデータ（2件）
+- `prisma/seeds/articles-additional.mjs`: 追加の記事サンプルデータ（3件）
+
+## 実行コマンド
+```bash
+# 基本の記事データを挿入
+pnpm run db:seed:articles
+
+# 追加の記事データを挿入  
+pnpm run db:seed:articles:additional
+```
+
+## 作成したサンプル記事
+
+### 1. 森林ボランティア活動の始め方ガイド
+- **スラッグ**: `forest-volunteer-guide`
+- **カテゴリ**: ガイド
+- **ステータス**: 公開
+- **特徴**: 初心者向けの包括的なガイド
+- **使用コンポーネント**: 
+  - `ImageTextLayout`
+  - `InfoCard` 
+  - `MDXImage`
+- **添付ファイル**: PDFガイド2件
+
+### 2. 春の植樹活動レポート
+- **スラッグ**: `spring-planting-report-2024`
+- **カテゴリ**: 活動報告
+- **ステータス**: 公開
+- **特徴**: 詳細な活動レポート
+- **使用コンポーネント**:
+  - `MDXImage`
+  - `ImageGallery`
+  - `ImageTextLayout`
+  - `InfoCard`
+- **添付ファイル**: 報告書とExcelファイル
+
+### 3. 森林保全の科学的アプローチ
+- **スラッグ**: `scientific-approach-forest-conservation`
+- **カテゴリ**: 技術・研究
+- **ステータス**: 公開（会員限定）
+- **特徴**: 最新技術を使った森林保全手法
+- **使用コンポーネント**:
+  - `ImageTextLayout`
+  - `InfoCard`
+  - `MDXImage`
+  - `ImageGallery`
+- **添付ファイル**: マニュアル、ツール、報告書
+
+### 4. 森林ボランティア安全ガイドライン
+- **スラッグ**: `safety-guidelines-forest-volunteer`
+- **カテゴリ**: 安全管理
+- **ステータス**: 公開
+- **特徴**: 安全対策の包括的なガイド
+- **使用コンポーネント**:
+  - `ImageTextLayout`
+  - `InfoCard`
+  - `MDXImage`
+  - `ImageGallery`
+- **添付ファイル**: 安全マニュアル3件
+
+### 5. 夏の森林整備計画（下書き）
+- **スラッグ**: `summer-forest-maintenance-plan-draft`
+- **カテゴリ**: 活動計画
+- **ステータス**: 下書き
+- **特徴**: 下書き状態のサンプル記事
+- **使用コンポーネント**: なし（基本テキストのみ）
+- **添付ファイル**: なし
+
+## 特徴
+
+### MDXコンテンツの活用
+- フロントマター（YAML形式）でメタデータを定義
+- 本文でReactコンポーネントを直接使用
+- 画像、ギャラリー、レイアウトコンポーネントの組み合わせ
+
+### データベースフィールドの活用
+- **tags**: JSON配列でタグを管理
+- **images**: 記事内で使用する画像ファイル名を配列で保存
+- **attachments**: 添付ファイル名を配列で保存
+- **downloadStats**: ファイルごとのダウンロード回数をJSONで記録
+- **seoDescription/seoKeywords**: SEO対策用のメタデータ
+- **isMemberOnly**: 会員限定コンテンツの判定
+- **viewCount**: 閲覧回数のトラッキング
+
+### ステータス管理
+- **published**: 公開済み記事
+- **draft**: 下書き記事
+- **archived**: アーカイブ記事（将来的に使用予定）
+
+### Reactコンポーネントの使用例
+記事内で以下のカスタムコンポーネントを使用：
+- `ImageTextLayout`: 画像とテキストのレイアウト
+- `InfoCard`: 情報カードの表示
+- `MDXImage`: カスタマイズ可能な画像表示
+- `ImageGallery`: 複数画像のギャラリー表示
+
+このサンプルデータにより、実際のWebサイトで使用する記事コンテンツの形式とReactコンポーネントの統合を確認できます。

@@ -17,7 +17,9 @@
     "db:seed": "node prisma/seeds/users.mjs",
     "db:seed:records": "node prisma/seeds/records.mjs",
     "db:seed:news": "node prisma/seeds/news.mjs",
-    "db:seed:events": "node prisma/seeds/events.mjs"
+    "db:seed:events": "node prisma/seeds/events.mjs",
+    "db:seed:articles": "node prisma/seeds/articles.mjs",
+    "db:seed:articles:additional": "node prisma/seeds/articles-additional.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.4",
@@ -29,7 +31,7 @@
     "@hookform/resolvers": "^5.2.1",
     "@nanostores/react": "^1.0.0",
     "@prisma/client": "^6.15.0",
-    "astro": "^5.13.4",
+    "astro": "^5.13.5",
     "astro-icon": "^1.1.5",
     "bcryptjs": "^3.0.2",
     "cookie-signature": "^1.2.2",
@@ -49,18 +51,18 @@
     "swr": "^2.3.6",
     "tailwind-merge": "^3.3.1",
     "uuid": "^11.1.0",
-    "zod": "^4.1.4"
+    "zod": "^4.1.5"
   },
   "devDependencies": {
     "@eslint/js": "^9.34.0",
     "@iconify-json/mdi": "^1.2.3",
-    "@iconify/react": "^6.0.0",
+    "@iconify/react": "^6.0.1",
     "@tailwindcss/typography": "^0.5.16",
     "@tailwindcss/vite": "^4.1.12",
     "@types/leaflet": "^1.9.20",
     "@types/node": "^24.3.0",
     "@types/react": "^19.1.12",
-    "@types/react-dom": "^19.1.8",
+    "@types/react-dom": "^19.1.9",
     "@types/uuid": "^10.0.0",
     "@typescript-eslint/parser": "^8.41.0",
     "astro-eslint-parser": "^1.2.2",
