@@ -1,0 +1,8 @@
+---
+import Layout from '@/layouts/Layout.astro'
+import ArticleDetail from '@/components/article/ArticleDetail'
+---
+
+<Layout title="記事詳細" currentPage="/articles">
+  <ArticleDetail client:load />
+</Layout>

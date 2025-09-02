@@ -1,4 +1,5 @@
 export { default as ActivityDB } from './activity'
+export { default as ArticleDB } from './article'
 export { default as CommentDB } from './comment'
 export { default as DashboardDB } from './dashboard'
 export { default as EventDB } from './event'
