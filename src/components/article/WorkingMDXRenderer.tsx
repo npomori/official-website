@@ -33,16 +33,10 @@ export default function WorkingMDXRenderer({ content }: WorkingMDXRendererProps)
   useEffect(() => {
     let cancelled = false
 
-    const stripFrontmatter = (src: string) => {
-      const re = /^---[\s\S]*?\n---\s*\n?/
-      return src.replace(re, '').trimStart()
-    }
-
     async function compileAndRun() {
       setError(null)
       try {
-        const source = stripFrontmatter(content)
-        const mod = (await evaluate(source, {
+        const mod = (await evaluate(content, {
           ...jsxRuntime,
           baseUrl: import.meta.url,
           development: false,
