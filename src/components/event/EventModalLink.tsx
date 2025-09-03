@@ -42,9 +42,20 @@ const EventModalLink: React.FC = () => {
 
   return (
     <>
-      <a href="#" className="block px-4 py-2 hover:bg-gray-100" onClick={handleClick}>
-        新規に作成
-      </a>
+      <button
+        onClick={handleClick}
+        className="hover:bg-primary-600 flex w-full items-center px-4 py-2 text-white"
+      >
+        <svg className="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+          />
+        </svg>
+        イベントを追加
+      </button>
       {isModalVisible && createPortal(<EventModal onClose={handleClose} />, document.body)}
     </>
   )

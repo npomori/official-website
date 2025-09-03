@@ -27,6 +27,8 @@ const isCalendarPage = currentPage === '/calendar'
 const isRecordPage = currentPage === '/record'
 // お知らせページの場合のみNewsModalLinkを表示
 const isNewsPage = currentPage === '/news'
+// トップページの場合のみ一覧リンク群を表示
+const isTopPage = currentPage === '/'
 // ADMINまたはMODERATORロールの場合のみダッシュボードを表示
 const showDashboard = user && (user.role === 'ADMIN' || user.role === 'MODERATOR')
 ---
@@ -47,6 +49,49 @@ const showDashboard = user && (user.role === 'ADMIN' || user.role === 'MODERATOR
           </svg>
         </button>
         <ul class="bg-primary-700 border-primary-600 absolute top-full left-0 hidden min-w-[200px] rounded border py-2 shadow-lg group-hover:block">
+          {isTopPage && (
+            <li>
+              <a
+                href="/article"
+                class="hover:bg-primary-600 flex items-center px-4 py-2 text-white"
+              >
+                <Icon class="mr-2 h-4 w-4" name="mdi:file-document-multiple-outline" />
+                記事一覧
+              </a>
+            </li>
+          )}
+          {isTopPage && (
+            <li>
+              <a href="/news" class="hover:bg-primary-600 flex items-center px-4 py-2 text-white">
+                <Icon class="mr-2 h-4 w-4" name="mdi:bell-outline" />
+                お知らせ一覧
+              </a>
+            </li>
+          )}
+          {isTopPage && (
+            <li>
+              <a
+                href="/calendar"
+                class="hover:bg-primary-600 flex items-center px-4 py-2 text-white"
+              >
+                <Icon class="mr-2 h-4 w-4" name="mdi:calendar-month" />
+                イベント一覧
+              </a>
+            </li>
+          )}
+          {isTopPage && (
+            <li>
+              <a href="/record" class="hover:bg-primary-600 flex items-center px-4 py-2 text-white">
+                <Icon class="mr-2 h-4 w-4" name="mdi:notebook-outline" />
+                活動記録一覧
+              </a>
+            </li>
+          )}
+          {isTopPage && (
+            <li>
+              <hr class="border-primary-600 my-1" />
+            </li>
+          )}
           {isCalendarPage && (
             <li>
               <EventModalLink client:load />
@@ -80,6 +125,43 @@ const showDashboard = user && (user.role === 'ADMIN' || user.role === 'MODERATOR
     ) : (
       <li class="border-primary-700 border-t pt-4">
         <ul class="space-y-2">
+          {isTopPage && (
+            <li>
+              <a href="/article" class="hover:text-primary-200 flex items-center text-white">
+                <Icon class="mr-3 h-5 w-5" name="mdi:file-document-multiple-outline" />
+                記事一覧
+              </a>
+            </li>
+          )}
+          {isTopPage && (
+            <li>
+              <a href="/news" class="hover:text-primary-200 flex items-center text-white">
+                <Icon class="mr-3 h-5 w-5" name="mdi:bell-outline" />
+                お知らせ一覧
+              </a>
+            </li>
+          )}
+          {isTopPage && (
+            <li>
+              <a href="/calendar" class="hover:text-primary-200 flex items-center text-white">
+                <Icon class="mr-3 h-5 w-5" name="mdi:calendar-month" />
+                イベント一覧
+              </a>
+            </li>
+          )}
+          {isTopPage && (
+            <li>
+              <a href="/record" class="hover:text-primary-200 flex items-center text-white">
+                <Icon class="mr-3 h-5 w-5" name="mdi:notebook-outline" />
+                活動記録一覧
+              </a>
+            </li>
+          )}
+          {isTopPage && (
+            <li>
+              <hr class="border-primary-700" />
+            </li>
+          )}
           {isCalendarPage && (
             <li>
               <EventModalLink client:load />
