@@ -1,5 +1,6 @@
 import WorkingMDXRenderer from '@/components/article/WorkingMDXRenderer'
-import useSWR, { fetcher } from '@/hooks/swr'
+import ArticleFetch from '@/fetch/article'
+import useSWR from '@/hooks/swr'
 import type { Article, ArticleAttachment } from '@/types/article'
 import React, { useEffect, useState } from 'react'
 
@@ -64,7 +65,7 @@ const ArticleDetail: React.FC<ArticleDetailProps> = ({ id }) => {
     isLoading
   } = useSWR<{ article: Article }>(
     initialized && articleId ? `/api/article/${articleId}` : null,
-    fetcher,
+    () => ArticleFetch.getArticle(articleId!).then((response) => response.data!),
     {
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
