@@ -213,7 +213,7 @@ const ArticleList: React.FC = () => {
               <div className="flex items-center justify-between">
                 {/* タイトル */}
                 <h2 className="text-lg font-semibold text-gray-900 transition-colors hover:text-green-600">
-                  <a href={`/article/${article.slug}`} className="block">
+                  <a href={`/article/${article.id}`} className="block">
                     {article.title}
                   </a>
                 </h2>
