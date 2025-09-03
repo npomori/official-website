@@ -1,4 +1,4 @@
-import WorkingMDXRenderer from '@/components/article/WorkingMDXRenderer'
+import ArticleMDXRenderer from '@/components/article/ArticleMDXRenderer'
 import ArticleFetch from '@/fetch/article'
 import useSWR from '@/hooks/swr'
 import type { Article, ArticleAttachment } from '@/types/article'
@@ -207,7 +207,7 @@ const ArticleDetail: React.FC<ArticleDetailProps> = ({ id }) => {
 
       {/* 記事本文 */}
       <div className="prose prose-lg max-w-none">
-        {article.content && <WorkingMDXRenderer content={article.content} />}
+        {article.content && <ArticleMDXRenderer content={article.content} />}
       </div>
 
       {/* 添付ファイル */}

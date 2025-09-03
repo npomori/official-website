@@ -11,11 +11,11 @@ import ImageTextLayout from './mdx/ImageTextLayout'
 import InfoCard from './mdx/InfoCard'
 import MDXImage from './mdx/MDXImage'
 
-export type WorkingMDXRendererProps = {
+export type ArticleMDXRendererProps = {
   content: string
 }
 
-export default function WorkingMDXRenderer({ content }: WorkingMDXRendererProps) {
+export default function ArticleMDXRenderer({ content }: ArticleMDXRendererProps) {
   const [MDXContent, setMDXContent] = useState<React.ComponentType | null>(null)
   const [error, setError] = useState<string | null>(null)
 
