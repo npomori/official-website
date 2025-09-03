@@ -92,35 +92,6 @@ class ArticleDB {
     return article
   }
 
-  // スラッグで記事を取得
-  async getArticleBySlug(slug: string, isLoggedIn: boolean = false) {
-    const article = await this.prisma.article.findFirst({
-      where: {
-        slug,
-        status: 'published',
-        ...(isLoggedIn ? {} : { isMemberOnly: false })
-      },
-      include: {
-        creator: {
-          select: {
-            id: true,
-            name: true
-          }
-        }
-      }
-    })
-
-    if (article) {
-      // 閲覧回数を増加
-      await this.prisma.article.update({
-        where: { slug },
-        data: { viewCount: { increment: 1 } }
-      })
-    }
-
-    return article
-  }
-
   // 記事を作成
   async createArticle(data: CreateArticleData) {
     return await this.prisma.article.create({

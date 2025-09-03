@@ -36,13 +36,6 @@ export default class ArticleFetch extends BaseApiFetch {
     return await this.prototype.request<{ article: Article }>(`${config.api.rootUrl}/article/${id}`)
   }
 
-  // 記事詳細を取得（スラッグ）
-  static async getArticleBySlug(slug: string): Promise<ApiResponse<{ article: Article }>> {
-    return await this.prototype.request<{ article: Article }>(
-      `${config.api.rootUrl}/article/slug/${slug}`
-    )
-  }
-
   // カテゴリー一覧を取得
   static async getCategories(): Promise<ApiResponse<{ categories: string[] }>> {
     return await this.prototype.request<{ categories: string[] }>(
