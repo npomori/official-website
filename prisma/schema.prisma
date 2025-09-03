@@ -113,7 +113,6 @@ model News {
 model Article {
   id          Int      @id @default(autoincrement())
   title       String   // 記事のタイトル
-  slug        String   @unique // URLスラッグ（一意）
   content     String   @db.Text // 記事の内容（MDX形式）
   featuredImage String? // アイキャッチ画像のパス
   images      Json?    // 記事内で使用する画像ファイル名（JSON配列として保存）

@@ -6,7 +6,6 @@ export interface ArticleAttachment {
 export interface Article {
   id: number
   title: string
-  slug: string
   content: string
   featuredImage?: string | null
   images?: string[] | null
@@ -37,7 +36,6 @@ export interface Article {
 
 export interface CreateArticleData {
   title: string
-  slug: string
   content: string
   featuredImage?: string
   images?: string[]
@@ -54,7 +52,6 @@ export interface CreateArticleData {
 
 export interface UpdateArticleData {
   title?: string
-  slug?: string
   content?: string
   featuredImage?: string
   images?: string[]
@@ -71,7 +68,6 @@ export interface UpdateArticleData {
 export interface PublicArticle {
   id: number
   title: string
-  slug: string
   content: string
   featuredImage?: string | null
   images?: string[] | null
