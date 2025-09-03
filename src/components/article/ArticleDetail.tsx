@@ -1,13 +1,7 @@
 import WorkingMDXRenderer from '@/components/article/WorkingMDXRenderer'
-import ArticleFetch from '@/fetch/article'
+import useSWR, { fetcher } from '@/hooks/swr'
 import type { Article, ArticleAttachment } from '@/types/article'
 import React, { useEffect, useState } from 'react'
-
-type ApiResponse<T> = {
-  success: boolean
-  data?: T
-  message?: string
-}
 
 type ArticleDetailProps = {
   id?: number
@@ -16,9 +10,6 @@ type ArticleDetailProps = {
 const ArticleDetail: React.FC<ArticleDetailProps> = ({ id }) => {
   const [articleId, setArticleId] = useState<number | null>(null)
   const [initialized, setInitialized] = useState<boolean>(false)
-  const [articleData, setArticleData] = useState<ApiResponse<{ article: Article }> | null>(null)
-  const [fetchError, setFetchError] = useState<Error | null>(null)
-  const [isLoadingData, setIsLoadingData] = useState<boolean>(false)
 
   // 初期化用useEffect
   useEffect(() => {
@@ -66,31 +57,23 @@ const ArticleDetail: React.FC<ArticleDetailProps> = ({ id }) => {
     }
   }, [initialized])
 
-  // データ取得用useEffect
-  useEffect(() => {
-    if (!initialized || !articleId) {
-      return
+  // SWRを使用してデータ取得
+  const {
+    data: articleResponse,
+    error: fetchError,
+    isLoading
+  } = useSWR<{ article: Article }>(
+    initialized && articleId ? `/api/article/${articleId}` : null,
+    fetcher,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+      dedupingInterval: 60000 // 1分間は重複リクエストを防ぐ
     }
-
-    setIsLoadingData(true)
-    setFetchError(null)
-
-    const fetchData = async () => {
-      try {
-        const result = await ArticleFetch.getArticle(articleId)
-        setArticleData(result)
-      } catch (err) {
-        setFetchError(err instanceof Error ? err : new Error('記事の取得に失敗しました'))
-      } finally {
-        setIsLoadingData(false)
-      }
-    }
-
-    void fetchData()
-  }, [initialized, articleId])
+  )
 
   // 記事データの取得
-  const article = articleData?.data?.article || null
+  const article = articleResponse?.article || null
 
   // ページタイトルを更新
   useEffect(() => {
@@ -129,7 +112,7 @@ const ArticleDetail: React.FC<ArticleDetailProps> = ({ id }) => {
   }
 
   // ローディング状態
-  if (isLoadingData) {
+  if (isLoading) {
     return (
       <div className="py-20 text-center">
         <div className="text-lg text-gray-600">記事を読み込んでいます...</div>
@@ -138,11 +121,11 @@ const ArticleDetail: React.FC<ArticleDetailProps> = ({ id }) => {
   }
 
   // エラー状態
-  if (fetchError || !articleData || !articleData.success) {
+  if (fetchError) {
     return (
       <div className="py-20 text-center">
         <div className="mb-4 text-lg text-red-600">
-          {fetchError ? fetchError.message : articleData?.message || '記事が見つかりません'}
+          {fetchError instanceof Error ? fetchError.message : '記事が見つかりません'}
         </div>
         <a href="/article" className="text-green-800">
           ← 記事一覧に戻る
