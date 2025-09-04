@@ -2,19 +2,9 @@
 import Layout from '@/layouts/Layout.astro'
 import ArticleDetail from '@/components/article/ArticleDetail'
 
-export interface Props {
-  id: string
-}
-
 const { id } = Astro.params
-const parsedId = (() => {
-  if (!id) return undefined
-  const n = Number(id)
-  return Number.isNaN(n) ? undefined : n
-})()
-const detailProps = parsedId !== undefined ? { id: parsedId } : {}
 ---
 
 <Layout title="記事詳細" currentPage="/article">
-  <ArticleDetail {...detailProps} client:load />
+  <ArticleDetail id={Number(id)} client:load />
 </Layout>
