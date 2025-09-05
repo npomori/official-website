@@ -98,7 +98,7 @@ const Pagination: React.FC<PaginationProps> = ({
     <div className="mt-12">
       {/* ページ情報表示 */}
       {showPageInfo && (
-        <div className="mb-4 text-center text-sm text-gray-600">
+        <div className="mb-4 text-center text-gray-600">
           {totalCount}件中 {startItem} - {endItem}件を表示
         </div>
       )}
