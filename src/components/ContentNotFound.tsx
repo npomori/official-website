@@ -7,6 +7,11 @@ export type ContentNotFoundProps = {
   primaryLabel?: string
   secondaryHref?: string
   secondaryLabel?: string
+  /**
+   * true: 右側（primary）を強調（緑）/ 左側（secondary）はグレー
+   * false: 左側（secondary）を強調（緑）/ 右側（primary）はグレー
+   */
+  primaryEmphasis?: boolean
   className?: string
 }
 
@@ -22,6 +27,7 @@ const ContentNotFound: React.FC<ContentNotFoundProps> = ({
   // デフォルトはホーム（左側・緑）
   secondaryHref = '/',
   secondaryLabel = 'ホームに戻る',
+  primaryEmphasis = false,
   className
 }) => {
   return (
@@ -56,18 +62,28 @@ const ContentNotFound: React.FC<ContentNotFoundProps> = ({
         </div>
       </div>
 
-      {/* アクションボタン（左: ホーム/緑, 右: 追加/グレー） */}
+      {/* アクションボタン（強調側を緑に切替可能） */}
       <div className="flex flex-col justify-center gap-4 sm:flex-row">
         <a
           href={secondaryHref}
-          className="rounded-lg bg-green-600 px-8 py-3 text-center font-medium text-white transition-colors hover:bg-green-700"
+          className={[
+            'rounded-lg px-8 py-3 text-center font-medium transition-colors',
+            primaryEmphasis
+              ? 'border border-gray-300 text-gray-700 hover:border-gray-400 hover:bg-gray-50'
+              : 'bg-green-600 text-white hover:bg-green-700'
+          ].join(' ')}
         >
           {secondaryLabel}
         </a>
         {primaryHref && (
           <a
             href={primaryHref}
-            className="rounded-lg border border-gray-300 px-8 py-3 text-center font-medium text-gray-700 transition-colors hover:border-gray-400 hover:bg-gray-50"
+            className={[
+              'rounded-lg px-8 py-3 text-center font-medium transition-colors',
+              primaryEmphasis
+                ? 'bg-green-600 text-white hover:bg-green-700'
+                : 'border border-gray-300 text-gray-700 hover:border-gray-400 hover:bg-gray-50'
+            ].join(' ')}
           >
             {primaryLabel}
           </a>

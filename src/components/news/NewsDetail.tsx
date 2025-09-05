@@ -1,5 +1,5 @@
 import Button from '@/components/base/Button'
-import NewsAttachments from '@/components/news/NewsAttachments'
+import ContentNotFound from '@/components/ContentNotFound'
 import newsCategories from '@/config/news-category.json'
 import newsPriority from '@/config/news-priority.json'
 import AdminNewsFetch from '@/fetch/admin/news'
@@ -21,7 +21,7 @@ const NewsDetail: React.FC<NewsDetailProps> = ({ newsId }) => {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [news, setNews] = useState<News | PublicNews | null>(null)
-  const [id, setId] = useState<string | undefined>(newsId)
+  // URL から取得した ID はローカル変数で扱う（state 不要）
 
   const user = useStore(userStore) as UserAuth | null
 
@@ -57,12 +57,10 @@ const NewsDetail: React.FC<NewsDetailProps> = ({ newsId }) => {
     if (!newsId) {
       const pathSegments = window.location.pathname.split('/')
       const newsIdFromUrl = pathSegments[pathSegments.length - 1]
-      setId(newsIdFromUrl)
       if (newsIdFromUrl) {
         void fetchNews(newsIdFromUrl)
       }
     } else {
-      setId(newsId)
       void fetchNews(newsId)
     }
   }, [newsId, hasAdminRole])
@@ -92,15 +90,15 @@ const NewsDetail: React.FC<NewsDetailProps> = ({ newsId }) => {
   }
 
   // 日付をフォーマットする関数
-  const formatDate = (date: Date | string): string => {
-    const d = new Date(date)
-    return d.toLocaleDateString('ja-JP', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      weekday: 'long'
-    })
-  }
+  // const formatDate = (date: Date | string): string => {
+  //   const d = new Date(date)
+  //   return d.toLocaleDateString('ja-JP', {
+  //     year: 'numeric',
+  //     month: 'long',
+  //     day: 'numeric',
+  //     weekday: 'long'
+  //   })
+  // }
 
   // 日付と時刻をフォーマットする関数
   const formatDateTime = (date: Date | string): string => {
@@ -127,17 +125,15 @@ const NewsDetail: React.FC<NewsDetailProps> = ({ newsId }) => {
   // エラー状態
   if (error || (!isLoading && !news)) {
     return (
-      <div className="mx-auto max-w-4xl px-4 py-8">
-        <div className="rounded-lg border border-red-200 bg-red-50 p-6 text-center">
-          <h2 className="mb-2 text-xl font-semibold text-red-800">お知らせが見つかりません</h2>
-          <p className="mb-4 text-red-600">
-            {error || '指定されたお知らせは存在しないか、削除された可能性があります。'}
-          </p>
-          <Button variant="primary" onClick={() => (window.location.href = '/news')}>
-            お知らせ一覧に戻る
-          </Button>
-        </div>
-      </div>
+      <ContentNotFound
+        title="お知らせが見つかりません"
+        className="py-20"
+        secondaryHref="/"
+        secondaryLabel="ホームに戻る"
+        primaryHref="/news"
+        primaryLabel="お知らせ一覧に戻る"
+        primaryEmphasis
+      />
     )
   }
 
