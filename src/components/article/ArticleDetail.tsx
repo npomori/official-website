@@ -1,4 +1,5 @@
 import ArticleMDXRenderer from '@/components/article/ArticleMDXRenderer'
+import ContentNotFound from '@/components/ContentNotFound'
 import config from '@/config/config.json'
 import ArticleFetch from '@/fetch/article'
 import useSWR from '@/hooks/swr'
@@ -36,14 +37,7 @@ const ArticleDetail: React.FC<ArticleDetailProps> = ({ id }) => {
 
   // IDが取得できない（props.id未指定）
   if (articleId === null) {
-    return (
-      <div className="py-20 text-center">
-        <div className="mb-4 text-lg text-red-600">記事が見つかりません</div>
-        <a href="/article" className="text-green-600 transition-colors hover:text-green-800">
-          ← 記事一覧に戻る
-        </a>
-      </div>
-    )
+    return <ContentNotFound title="記事が見つかりません" className="py-20" />
   }
 
   // ローディング状態
@@ -57,25 +51,11 @@ const ArticleDetail: React.FC<ArticleDetailProps> = ({ id }) => {
 
   // エラー状態
   if (fetchError) {
-    return (
-      <div className="py-20 text-center">
-        <div className="mb-4 text-lg text-red-600">記事が見つかりません</div>
-        <a href="/article" className="text-green-600 transition-colors hover:text-green-800">
-          ← 記事一覧に戻る
-        </a>
-      </div>
-    )
+    return <ContentNotFound title="記事が見つかりません" className="py-20" />
   }
 
   if (!article) {
-    return (
-      <div className="py-20 text-center">
-        <div className="mb-4 text-lg text-red-600">記事が見つかりません</div>
-        <a href="/article" className="text-green-600 transition-colors hover:text-green-800">
-          ← 記事一覧に戻る
-        </a>
-      </div>
-    )
+    return <ContentNotFound title="記事が見つかりません" className="py-20" />
   }
 
   // 日付をフォーマット
