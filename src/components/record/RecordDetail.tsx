@@ -1,11 +1,12 @@
 import Button from '@/components/base/Button'
 import ImageModal from '@/components/base/ImageModal'
+import ContentNotFound from '@/components/ContentNotFound'
 import recordCategories from '@/config/record-category.json'
 import adminRecordFetch from '@/fetch/admin/record'
 import recordFetch from '@/fetch/record'
 import { userStore } from '@/store/user'
-import { getConfig, getRecordUploadConfig } from '@/types/config'
-import type { Record } from '@/types/record'
+import { getRecordUploadConfig } from '@/types/config'
+import type { Record, RecordDetailResponse } from '@/types/record'
 import type { UserAuth } from '@/types/user'
 import { useStore } from '@nanostores/react'
 import React, { useEffect, useState } from 'react'
@@ -18,14 +19,13 @@ const RecordDetail: React.FC<RecordDetailProps> = ({ recordId }) => {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [record, setRecord] = useState<Record | null>(null)
-  const [id, setId] = useState<string | undefined>(recordId)
+  // URL から取得した ID はローカル変数で扱う（state 不要）
   const [isImageModalOpen, setIsImageModalOpen] = useState(false)
   const [selectedImage, setSelectedImage] = useState<{ src: string; alt: string } | null>(null)
 
   const user = useStore(userStore) as UserAuth | null
 
   // 設定を取得
-  const config = getConfig()
   const recordConfig = getRecordUploadConfig()
 
   // 管理権限をチェック
@@ -43,7 +43,11 @@ const RecordDetail: React.FC<RecordDetailProps> = ({ recordId }) => {
         : await recordFetch.getRecordById(parseInt(recordId))
 
       if (response.success && response.data) {
-        setRecord(response.data)
+        const data = response.data as Record | RecordDetailResponse
+        const isDetail = (d: Record | RecordDetailResponse): d is RecordDetailResponse =>
+          (d as RecordDetailResponse).record !== undefined
+        const rec: Record = isDetail(data) ? data.record : data
+        setRecord(rec)
       } else {
         setError(response.message || '活動記録の取得に失敗しました')
       }
@@ -60,12 +64,10 @@ const RecordDetail: React.FC<RecordDetailProps> = ({ recordId }) => {
     if (!recordId) {
       const pathSegments = window.location.pathname.split('/')
       const recordIdFromUrl = pathSegments[pathSegments.length - 1]
-      setId(recordIdFromUrl)
       if (recordIdFromUrl) {
         void fetchRecord(recordIdFromUrl)
       }
     } else {
-      setId(recordId)
       void fetchRecord(recordId)
     }
   }, [recordId, hasAdminRole])
@@ -83,15 +85,15 @@ const RecordDetail: React.FC<RecordDetailProps> = ({ recordId }) => {
   }
 
   // 日付をフォーマットする関数
-  const formatDate = (date: Date | string): string => {
-    const d = new Date(date)
-    return d.toLocaleDateString('ja-JP', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      weekday: 'long'
-    })
-  }
+  // const formatDate = (date: Date | string): string => {
+  //   const d = new Date(date)
+  //   return d.toLocaleDateString('ja-JP', {
+  //     year: 'numeric',
+  //     month: 'long',
+  //     day: 'numeric',
+  //     weekday: 'long'
+  //   })
+  // }
 
   // 日付と時刻をフォーマットする関数
   const formatDateTime = (date: Date | string): string => {
@@ -129,17 +131,15 @@ const RecordDetail: React.FC<RecordDetailProps> = ({ recordId }) => {
   // エラー状態
   if (error || (!isLoading && !record)) {
     return (
-      <div className="mx-auto max-w-4xl px-4 py-8">
-        <div className="rounded-lg border border-red-200 bg-red-50 p-6 text-center">
-          <h2 className="mb-2 text-xl font-semibold text-red-800">活動記録が見つかりません</h2>
-          <p className="mb-4 text-red-600">
-            {error || '指定された活動記録は存在しないか、削除された可能性があります。'}
-          </p>
-          <Button variant="primary" onClick={() => (window.location.href = '/record')}>
-            活動記録一覧に戻る
-          </Button>
-        </div>
-      </div>
+      <ContentNotFound
+        title="活動記録が見つかりません"
+        className="py-20"
+        secondaryHref="/"
+        secondaryLabel="ホームに戻る"
+        primaryHref="/record"
+        primaryLabel="活動記録一覧に戻る"
+        primaryEmphasis
+      />
     )
   }
 
