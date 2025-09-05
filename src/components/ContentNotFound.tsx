@@ -50,7 +50,7 @@ const ContentNotFound: React.FC<ContentNotFoundProps> = ({
               />
             </svg>
           </div>
-          <h1 className="mb-4 text-4xl font-bold text-gray-800">{title}</h1>
+          <h1 className="mb-4 text-3xl font-bold text-gray-800">{title}</h1>
           <p className="mx-auto max-w-md text-lg text-gray-600">
             {descriptionLines.map((line, i) => (
               <React.Fragment key={i}>
