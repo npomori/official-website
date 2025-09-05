@@ -1,7 +1,13 @@
+import Button from '@/components/base/Button'
 import Pagination from '@/components/base/Pagination'
+import AdminArticleFetch from '@/fetch/admin/article'
 import ArticleFetch from '@/fetch/article'
 import useSWR from '@/hooks/swr'
+import { userStore } from '@/store/user'
+import type { Article } from '@/types/article'
 import { getConfig } from '@/types/config'
+import type { UserAuth } from '@/types/user'
+import { useStore } from '@nanostores/react'
 import React, { useState } from 'react'
 
 const ArticleList: React.FC = () => {
@@ -9,10 +15,57 @@ const ArticleList: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [selectedTags, setSelectedTags] = useState<string[]>([])
   const [isFilterLoading, setIsFilterLoading] = useState(false)
+  const [isDeleting, setIsDeleting] = useState<number | null>(null)
+
+  // ユーザー情報を取得
+  const user = useStore(userStore) as UserAuth | null
 
   // 設定を取得
   const config = getConfig()
   const itemsPerPage = config.pagination?.newsList?.itemsPerPage || 10
+
+  // 編集・削除ボタンの表示条件をチェック
+  const canEditArticle = (article: Article): boolean => {
+    if (!user) return false
+
+    // ADMIN、MODERATORは常に編集可能
+    if (user.role === 'ADMIN' || user.role === 'MODERATOR') {
+      return true
+    }
+
+    // EDITORは自分の記事のみ編集可能
+    if (user.role === 'EDITOR') {
+      if (article.creator.id === user.id) {
+        return true
+      }
+    }
+
+    return false
+  }
+
+  // 削除処理
+  const handleDelete = async (articleId: number) => {
+    if (!confirm('この記事を削除しますか？')) {
+      return
+    }
+
+    setIsDeleting(articleId)
+    try {
+      await AdminArticleFetch.deleteArticle(articleId)
+      await mutate() // データを再取得
+    } catch (error) {
+      console.error('削除エラー:', error)
+      alert('削除に失敗しました')
+    } finally {
+      setIsDeleting(null)
+    }
+  }
+
+  // 編集処理
+  const handleEdit = (article: Article) => {
+    // 今のところアラートで代用（後でモーダルを実装）
+    alert(`記事「${article.title}」の編集機能は実装中です`)
+  }
 
   // SWRでデータを取得
   const { data, error, isLoading, mutate } = useSWR(
@@ -301,6 +354,29 @@ const ArticleList: React.FC = () => {
                         </span>
                       </div>
                     </div>
+
+                    {/* 編集・削除ボタン */}
+                    {canEditArticle(article) && (
+                      <div className="flex gap-2">
+                        <Button
+                          variant="info"
+                          size="md"
+                          onClick={() => handleEdit(article)}
+                          icon="mdi:pencil"
+                          text="編集"
+                          title="編集"
+                        />
+                        <Button
+                          variant="error"
+                          size="md"
+                          onClick={() => handleDelete(article.id)}
+                          disabled={isDeleting === article.id}
+                          icon={isDeleting === article.id ? 'mdi:loading' : 'mdi:delete'}
+                          text="削除"
+                          title="削除"
+                        />
+                      </div>
+                    )}
                   </div>
 
                   <div className="space-y-3">
