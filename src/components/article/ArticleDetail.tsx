@@ -1,62 +1,19 @@
 import ArticleMDXRenderer from '@/components/article/ArticleMDXRenderer'
+import config from '@/config/config.json'
 import ArticleFetch from '@/fetch/article'
 import useSWR from '@/hooks/swr'
 import type { Article, ArticleAttachment } from '@/types/article'
-import React, { useEffect, useState } from 'react'
+import React, { useMemo } from 'react'
 
 type ArticleDetailProps = {
   id?: number
 }
 
 const ArticleDetail: React.FC<ArticleDetailProps> = ({ id }) => {
-  const [articleId, setArticleId] = useState<number | null>(null)
-  const [initialized, setInitialized] = useState<boolean>(false)
-
-  // 初期化用useEffect
-  useEffect(() => {
-    if (typeof id === 'number' && !Number.isNaN(id)) {
-      setArticleId(id)
-      setInitialized(true)
-      return
-    }
-
-    if (typeof window === 'undefined') {
-      return
-    }
-
-    const pathname = window.location.pathname
-    const idMatch = pathname.match(/\/article\/(\d+)(?:\/?|$)/)
-    if (idMatch && idMatch[1]) {
-      const extractedId = Number(idMatch[1])
-      setArticleId(extractedId)
-      setInitialized(true)
-      return
-    }
-
-    const segments = pathname.split('/').filter(Boolean)
-    const last = segments[segments.length - 1]
-    const num = Number(last)
-    if (!Number.isNaN(num)) {
-      setArticleId(num)
-      setInitialized(true)
-      return
-    }
-
-    setInitialized(true)
+  // props.id のみ使用（URL 解析は行わない）
+  const articleId = useMemo(() => {
+    return typeof id === 'number' && !Number.isNaN(id) ? id : null
   }, [id])
-
-  // クライアントサイドでの追加初期化
-  useEffect(() => {
-    if (!initialized && typeof window !== 'undefined') {
-      const pathname = window.location.pathname
-      const idMatch = pathname.match(/\/article\/(\d+)(?:\/?|$)/)
-      if (idMatch && idMatch[1]) {
-        const extractedId = Number(idMatch[1])
-        setArticleId(extractedId)
-        setInitialized(true)
-      }
-    }
-  }, [initialized])
 
   // SWRを使用してデータ取得
   const {
@@ -64,47 +21,24 @@ const ArticleDetail: React.FC<ArticleDetailProps> = ({ id }) => {
     error: fetchError,
     isLoading
   } = useSWR<{ article: Article }>(
-    initialized && articleId ? `/api/article/${articleId}` : null,
+    articleId ? `${config.api.rootUrl}/article/${articleId}` : null,
     () => ArticleFetch.getArticle(articleId!).then((response) => response.data!),
-    {
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-      dedupingInterval: 60000 // 1分間は重複リクエストを防ぐ
-    }
+    { revalidateOnFocus: false }
   )
 
   // 記事データの取得
   const article = articleResponse?.article || null
 
-  // ページタイトルを更新
-  useEffect(() => {
-    if (article?.title) {
-      document.title = `${article.title} - 記事詳細`
-    }
-  }, [article])
+  // ページタイトル（任意）
+  React.useEffect(() => {
+    if (article?.title) document.title = `${article.title} - 記事詳細`
+  }, [article?.title])
 
-  // 初期化中
-  if (!initialized) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-green-600"></div>
-      </div>
-    )
-  }
-
-  // IDが取得できない
+  // IDが取得できない（props.id未指定）
   if (articleId === null) {
     return (
       <div className="py-20 text-center">
-        <div className="mb-4 text-lg text-red-600">
-          記事IDが取得できませんでした
-          <br />
-          <span className="text-sm">
-            URL: {typeof window !== 'undefined' ? window.location.pathname : 'N/A'}
-          </span>
-          <br />
-          <span className="text-sm">Props ID: {id}</span>
-        </div>
+        <div className="mb-4 text-lg text-red-600">記事が見つかりません</div>
         <a href="/article" className="text-green-600 transition-colors hover:text-green-800">
           ← 記事一覧に戻る
         </a>
@@ -125,10 +59,8 @@ const ArticleDetail: React.FC<ArticleDetailProps> = ({ id }) => {
   if (fetchError) {
     return (
       <div className="py-20 text-center">
-        <div className="mb-4 text-lg text-red-600">
-          {fetchError instanceof Error ? fetchError.message : '記事が見つかりません'}
-        </div>
-        <a href="/article" className="text-green-800">
+        <div className="mb-4 text-lg text-red-600">記事が見つかりません</div>
+        <a href="/article" className="text-green-600 transition-colors hover:text-green-800">
           ← 記事一覧に戻る
         </a>
       </div>
@@ -138,7 +70,7 @@ const ArticleDetail: React.FC<ArticleDetailProps> = ({ id }) => {
   if (!article) {
     return (
       <div className="py-20 text-center">
-        <div className="mb-4 text-lg text-red-600">記事データの形式が正しくありません</div>
+        <div className="mb-4 text-lg text-red-600">記事が見つかりません</div>
         <a href="/article" className="text-green-600 transition-colors hover:text-green-800">
           ← 記事一覧に戻る
         </a>

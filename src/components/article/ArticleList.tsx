@@ -1,13 +1,8 @@
 import Pagination from '@/components/base/Pagination'
 import ArticleFetch from '@/fetch/article'
 import useSWR from '@/hooks/swr'
-import { userStore } from '@/store/user'
-import type { Article } from '@/types/article'
 import { getConfig } from '@/types/config'
-import type { UserAuth } from '@/types/user'
-import { useStore } from '@nanostores/react'
 import React, { useState } from 'react'
-import Button from '../base/Button'
 
 const ArticleList: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1)
@@ -15,12 +10,9 @@ const ArticleList: React.FC = () => {
   const [selectedTags, setSelectedTags] = useState<string[]>([])
   const [isFilterLoading, setIsFilterLoading] = useState(false)
 
-  // ユーザー情報を取得
-  const user = useStore(userStore) as UserAuth | null
-
   // 設定を取得
   const config = getConfig()
-  const itemsPerPage = config.pagination?.articleList?.itemsPerPage || 10
+  const itemsPerPage = config.pagination?.newsList?.itemsPerPage || 10
 
   // SWRでデータを取得
   const { data, error, isLoading, mutate } = useSWR(
@@ -33,10 +25,11 @@ const ArticleList: React.FC = () => {
         selectedTags.length > 0 ? selectedTags : undefined
       ),
     {
+      // フィルタ変更時のちらつきを防ぐ設定
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
-      keepPreviousData: true,
-      dedupingInterval: 1000
+      keepPreviousData: true, // 前のデータを保持
+      dedupingInterval: 1000 // 重複リクエストを防ぐ
     }
   )
 
@@ -52,6 +45,13 @@ const ArticleList: React.FC = () => {
 
     // フィルタ専用のローディング状態を設定
     setIsFilterLoading(true)
+
+    // データを再取得
+    try {
+      await mutate()
+    } finally {
+      setIsFilterLoading(false)
+    }
   }
 
   // タグをクリックした時の処理
@@ -69,15 +69,31 @@ const ArticleList: React.FC = () => {
 
     // フィルタ専用のローディング状態を設定
     setIsFilterLoading(true)
+
+    // データを再取得
+    try {
+      await mutate()
+    } finally {
+      setIsFilterLoading(false)
+    }
   }
 
   // フィルタをリセット
-  const handleResetFilters = () => {
+  const handleResetFilters = async () => {
     setSelectedCategory(null)
     setSelectedTags([])
     setCurrentPage(1)
     window.scrollTo({ top: 0, behavior: 'smooth' })
+
+    // フィルタ専用のローディング状態を設定
     setIsFilterLoading(true)
+
+    // データを再取得
+    try {
+      await mutate()
+    } finally {
+      setIsFilterLoading(false)
+    }
   }
 
   // 日付をフォーマット
@@ -90,37 +106,35 @@ const ArticleList: React.FC = () => {
     })
   }
 
-  // ローディング状態
+  // ローディング中（初回読み込み時のみ）
   if (isLoading && !data) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-green-600"></div>
+      <div className="mx-auto max-w-4xl">
+        <div className="py-12 text-center">
+          <p className="text-lg text-gray-500">読み込み中...</p>
+        </div>
       </div>
     )
   }
 
-  // エラー状態
+  // エラーの場合
   if (error) {
     return (
-      <div className="py-20 text-center">
-        <div className="mb-4 text-lg text-red-600">記事の読み込みに失敗しました</div>
-        <Button onClick={() => mutate()} className="bg-green-600 text-white hover:bg-green-700">
-          再試行
-        </Button>
+      <div className="mx-auto max-w-4xl">
+        <div className="py-12 text-center">
+          <p className="text-lg text-red-500">記事の読み込みに失敗しました</p>
+        </div>
       </div>
     )
   }
 
-  // データが存在しない場合の処理
-  if (!data || !data.success) {
+  // データがない場合
+  if (!data || !data.success || !data.data) {
     return (
-      <div className="py-20 text-center">
-        <div className="mb-4 text-lg text-red-600">
-          {data?.message || '記事の読み込みに失敗しました'}
+      <div className="mx-auto max-w-4xl">
+        <div className="py-12 text-center">
+          <p className="text-lg text-gray-500">記事データを取得できませんでした</p>
         </div>
-        <Button onClick={() => mutate()} className="bg-green-600 text-white hover:bg-green-700">
-          再試行
-        </Button>
       </div>
     )
   }
@@ -129,114 +143,194 @@ const ArticleList: React.FC = () => {
   const pagination = data.data?.pagination
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8">
+    <div className="mx-auto max-w-4xl">
       {/* ヘッダー */}
-      <div className="mb-12 text-center">
-        <h1 className="mb-4 text-4xl font-bold text-gray-900">記事一覧</h1>
-      </div>
+      <h1 className="mb-8 text-3xl font-bold">記事一覧</h1>
 
       {/* フィルター */}
       <div className="mb-8">
-        <div className="flex flex-wrap items-center justify-center gap-4">
+        {/* フィルタローディングインジケーター */}
+        {isFilterLoading && (
+          <div className="mb-4 flex items-center justify-center">
+            <div className="flex items-center space-x-2 text-sm text-gray-500">
+              <div className="border-t-primary-600 h-4 w-4 animate-spin rounded-full border-2 border-gray-300"></div>
+              <span>フィルタ適用中...</span>
+            </div>
+          </div>
+        )}
+
+        {/* デスクトップ表示: カテゴリーとタグを縦並び */}
+        <div className="hidden lg:block">
           {/* カテゴリーフィルター */}
+          <div className="mb-4">
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={handleResetFilters}
+                disabled={isFilterLoading}
+                className={`cursor-pointer rounded-full px-3 py-1 text-sm font-medium transition-colors disabled:opacity-50 ${
+                  selectedCategory === null && selectedTags.length === 0
+                    ? 'bg-primary-600 text-white'
+                    : 'border border-gray-300 bg-transparent text-gray-700 hover:bg-gray-50'
+                }`}
+              >
+                すべて
+              </button>
+              {['自然保護', '環境活動', 'イベント', 'レポート', 'その他'].map((category) => (
+                <button
+                  key={category}
+                  onClick={() => handleCategoryClick(category)}
+                  disabled={isFilterLoading}
+                  className={`cursor-pointer rounded-full px-3 py-1 text-sm font-medium transition-colors disabled:opacity-50 ${
+                    selectedCategory === category
+                      ? 'bg-green-600 text-white'
+                      : 'border border-green-600 bg-green-50 text-green-700 hover:bg-green-100'
+                  }`}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* タグフィルター */}
+          <div>
+            <div className="flex flex-wrap gap-2">
+              {['植林', '調査', '保全', '教育', '研究'].map((tag) => (
+                <button
+                  key={tag}
+                  onClick={() => handleTagClick(tag)}
+                  disabled={isFilterLoading}
+                  className={`cursor-pointer rounded px-3 py-1 text-sm font-medium transition-colors disabled:opacity-50 ${
+                    selectedTags.includes(tag)
+                      ? 'bg-blue-600 text-white'
+                      : 'border border-blue-600 bg-blue-50 text-blue-700 hover:bg-blue-100'
+                  }`}
+                >
+                  {tag}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* モバイル・タブレット表示: カテゴリーとタグを1行に横並び */}
+        <div className="lg:hidden">
           <div className="flex flex-wrap gap-2">
-            <span className="text-sm font-medium text-gray-700">カテゴリー:</span>
+            {/* すべてボタン */}
+            <button
+              onClick={handleResetFilters}
+              disabled={isFilterLoading}
+              className={`cursor-pointer rounded-full px-3 py-1 text-sm font-medium transition-colors disabled:opacity-50 ${
+                selectedCategory === null && selectedTags.length === 0
+                  ? 'bg-primary-600 text-white'
+                  : 'border border-gray-300 bg-transparent text-gray-700 hover:bg-gray-50'
+              }`}
+            >
+              すべて
+            </button>
+
+            {/* カテゴリーボタン */}
             {['自然保護', '環境活動', 'イベント', 'レポート', 'その他'].map((category) => (
               <button
                 key={category}
                 onClick={() => handleCategoryClick(category)}
-                className={`rounded-full px-3 py-1 text-sm transition-colors ${
+                disabled={isFilterLoading}
+                className={`cursor-pointer rounded-full px-3 py-1 text-sm font-medium transition-colors disabled:opacity-50 ${
                   selectedCategory === category
                     ? 'bg-green-600 text-white'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                    : 'border border-green-600 bg-green-50 text-green-700 hover:bg-green-100'
                 }`}
               >
                 {category}
               </button>
             ))}
-          </div>
 
-          {/* タグフィルター */}
-          <div className="flex flex-wrap gap-2">
-            <span className="text-sm font-medium text-gray-700">タグ:</span>
+            {/* タグボタン */}
             {['植林', '調査', '保全', '教育', '研究'].map((tag) => (
               <button
                 key={tag}
                 onClick={() => handleTagClick(tag)}
-                className={`rounded-full px-3 py-1 text-sm transition-colors ${
+                disabled={isFilterLoading}
+                className={`cursor-pointer rounded px-3 py-1 text-sm font-medium transition-colors disabled:opacity-50 ${
                   selectedTags.includes(tag)
                     ? 'bg-blue-600 text-white'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                    : 'border border-blue-600 bg-blue-50 text-blue-700 hover:bg-blue-100'
                 }`}
               >
                 {tag}
               </button>
             ))}
           </div>
-
-          {/* リセットボタン */}
-          {(selectedCategory || selectedTags.length > 0) && (
-            <button
-              onClick={handleResetFilters}
-              className="rounded bg-gray-500 px-3 py-1 text-sm text-white transition-colors hover:bg-gray-600"
-            >
-              フィルターリセット
-            </button>
-          )}
         </div>
       </div>
 
       {/* 記事一覧 */}
-      {isFilterLoading && (
-        <div className="flex items-center justify-center py-8">
-          <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-green-600"></div>
-        </div>
-      )}
-
       {!isFilterLoading && articles.length === 0 ? (
-        <div className="py-20 text-center">
-          <div className="mb-4 text-lg text-gray-500">条件に一致する記事が見つかりませんでした</div>
-          <Button
-            onClick={handleResetFilters}
-            className="bg-green-600 text-white hover:bg-green-700"
-          >
-            フィルターをリセット
-          </Button>
+        <div className="py-12 text-center">
+          <p className="text-lg text-gray-500">
+            {selectedCategory || selectedTags.length > 0
+              ? `${selectedCategory || ''}${selectedCategory && selectedTags.length > 0 ? '・' : ''}${selectedTags.join('・') || ''}の記事が見つかりませんでした`
+              : 'まだ記事がありません'}
+          </p>
         </div>
       ) : (
-        <div className="space-y-4">
-          {articles.map((article) => (
-            <article
-              key={article.id}
-              className="rounded-lg border border-gray-200 bg-white p-6 transition-shadow hover:shadow-md"
-            >
-              <div className="flex items-center justify-between">
-                {/* タイトル */}
-                <h2 className="text-lg font-semibold text-gray-900 transition-colors hover:text-green-600">
-                  <a href={`/article/${article.id}`} className="block">
-                    {article.title}
-                  </a>
-                </h2>
+        <section className="mb-12">
+          <div className="space-y-8">
+            {articles.map((article) => (
+              <article key={article.id} className="overflow-hidden rounded-lg bg-white shadow-lg">
+                <div className="p-6">
+                  <div className="mb-4 flex items-center justify-between">
+                    <div className="flex flex-1 items-center gap-4">
+                      {/* 日付 */}
+                      <div className="flex items-center text-base text-gray-500">
+                        <i className="fas fa-calendar mr-1"></i>
+                        {formatDate(article.publishedAt || article.createdAt)}
+                      </div>
 
-                {/* 日付 */}
-                <div className="ml-4 text-sm whitespace-nowrap text-gray-500">
-                  {formatDate(article.publishedAt || article.createdAt)}
+                      {/* カテゴリー（記事の場合は推測またはデフォルト） */}
+                      <div className="flex items-center space-x-2">
+                        <span
+                          className="cursor-pointer rounded-full px-3 py-1 text-sm font-medium transition-colors hover:opacity-80"
+                          style={{
+                            backgroundColor: '#10B98120',
+                            color: '#10B981',
+                            border: '1px solid #10B981'
+                          }}
+                        >
+                          記事
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    {/* タイトル */}
+                    <h2 className="cursor-pointer text-2xl font-bold text-gray-800 transition-colors hover:text-blue-600">
+                      <a href={`/article/${article.id}`} className="block">
+                        {article.title}
+                      </a>
+                    </h2>
+                  </div>
                 </div>
-              </div>
-            </article>
-          ))}
-        </div>
+              </article>
+            ))}
+          </div>
+        </section>
       )}
 
       {/* ページネーション */}
       {pagination && pagination.totalPages > 1 && (
-        <div className="mt-12">
+        <div className="flex justify-center">
           <Pagination
             currentPage={pagination.currentPage}
             totalPages={pagination.totalPages}
-            onPageChange={setCurrentPage}
             totalCount={pagination.totalCount}
             itemsPerPage={pagination.itemsPerPage}
+            onPageChange={(page) => {
+              setCurrentPage(page)
+              // ページの先頭にスクロール
+              window.scrollTo({ top: 0, behavior: 'smooth' })
+            }}
           />
         </div>
       )}
