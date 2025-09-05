@@ -1,13 +1,13 @@
 ---
-import LoginLayout from '@/layouts/LoginLayout.astro'
+import Layout from '@/layouts/FullLayout.astro'
 import LoginComponent from '@/components/Login'
 
 // URLパラメータからリダイレクト先を取得
 const redirect = Astro.url.searchParams.get('redirect') || '/'
 ---
 
-<LoginLayout title="ログイン">
+<Layout title="ログイン">
   <div class="w-full max-w-md">
     <LoginComponent client:only="react" redirect={redirect} />
   </div>
-</LoginLayout>
+</Layout>
