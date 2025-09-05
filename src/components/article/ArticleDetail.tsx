@@ -118,7 +118,7 @@ const ArticleDetail: React.FC<ArticleDetailProps> = ({ id }) => {
       )}
 
       {/* 記事本文 */}
-      <div className="prose prose-lg max-w-none">
+      <div className="prose prose-lg prose-img:my-0 max-w-none">
         {article.content && <ArticleMDXRenderer content={article.content} />}
       </div>
 

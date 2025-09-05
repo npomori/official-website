@@ -31,7 +31,6 @@ async function main() {
 
 森林ボランティア活動には様々な種類があります。初心者の方でも参加しやすい活動から順に紹介します。
 
-<div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
   <InfoCard
     title="森林散策・観察"
     description="季節ごとの森林の変化を観察し、動植物の生態を学びます。"
@@ -56,7 +55,6 @@ async function main() {
     icon="🪓"
     color="red"
   />
-</div>
 
 ## 必要な装備
 
@@ -113,11 +111,7 @@ A: 18歳以上が基本ですが、保護者同伴であれば中学生以上か
 **Q: 費用はかかりますか？**
 
 A: 基本的に無料ですが、保険料として年間1,000円をお願いしています。
-
-<div className="bg-green-100 p-6 rounded-lg my-8 border-2 border-green-200">
-  <h3 className="text-green-800 font-bold text-xl mb-3">🌳 一緒に森を守りませんか？</h3>
-  <p className="text-green-700 leading-relaxed">あなたの参加をお待ちしています。小さな一歩が、大きな森を育てます。</p>
-</div>`,
+`,
       featuredImage: '/images/forest-survey.jpg',
       images: ['forest-survey.jpg', 'forest-maintenance.jpg', 'spring-planting.jpg'],
       attachments: ['初心者ガイド.pdf', '活動スケジュール.pdf'],
@@ -197,20 +191,19 @@ A: 基本的に無料ですが、保険料として年間1,000円をお願いし
 
 午前中は主にクヌギの苗木120本を植樹しました。
 
-<div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
-  <InfoCard
-    title="植樹エリアA"
-    description="クヌギ80本を植樹。初心者の方中心に作業"
-    icon="🌳"
-    color="green"
-  />
-  <InfoCard
-    title="植樹エリアB"
-    description="クヌギ40本を植樹。経験者の方が指導"
-    icon="🌲"
-    color="blue"
-  />
-</div>
+<InfoCard
+  title="植樹エリアA"
+  description="クヌギ80本を植樹。初心者の方中心に作業"
+  icon="🌳"
+  color="green"
+/>
+
+<InfoCard
+  title="植樹エリアB"
+  description="クヌギ40本を植樹。経験者の方が指導"
+  icon="🌲"
+  color="blue"
+/>
 
 ### 12:00-13:00 昼食・休憩
 
@@ -273,11 +266,6 @@ A: 基本的に無料ですが、保険料として年間1,000円をお願いし
 4. **1年後**: 成長状況の詳細調査
 
 ## 次回活動のお知らせ
-
-<div className="bg-green-100 p-6 rounded-lg my-8 border-2 border-green-200">
-  <h3 className="text-green-800 font-bold text-xl mb-3">🌱 秋の植樹活動も開催予定！</h3>
-  <p className="text-green-700 leading-relaxed">次回は10月中旬に秋の植樹活動を予定しています。詳細が決まり次第、ホームページでお知らせいたします。</p>
-</div>
 
 ご参加いただいた皆様、ありがとうございました。`,
       featuredImage: '/images/activity-planting-1.jpg',

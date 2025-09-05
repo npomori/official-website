@@ -83,8 +83,10 @@ export default function ArticleMDXRenderer({ content }: ArticleMDXRendererProps)
   }
 
   return (
-    <MDXProvider components={components}>
-      <MDXContent />
-    </MDXProvider>
+    <div className="mdx-clear-float">
+      <MDXProvider components={components}>
+        <MDXContent />
+      </MDXProvider>
+    </div>
   )
 }

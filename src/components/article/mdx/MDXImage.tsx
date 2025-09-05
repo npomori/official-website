@@ -22,33 +22,53 @@ const MDXImage: React.FC<MDXImageProps> = ({
   shadow = true
 }) => {
   const sizeClasses = {
-    small: 'max-w-sm',
-    medium: 'max-w-2xl',
-    large: 'max-w-4xl',
-    full: 'w-full'
+    small: 'w-48',
+    medium: 'w-64',
+    large: 'w-80',
+    full: 'w-full max-w-2xl'
   }
 
-  const alignClasses = {
-    left: 'mr-6 float-left',
-    center: 'mx-auto',
-    right: 'ml-6 float-right'
+  // CSS クラスベースでのレイアウト制御
+  const getContainerClasses = () => {
+    const baseClasses = ['mdx-image-container']
+
+    if (align === 'left') {
+      baseClasses.push('mdx-image-float-left')
+    } else if (align === 'right') {
+      baseClasses.push('mdx-image-float-right')
+    } else {
+      baseClasses.push('text-center')
+    }
+
+    return baseClasses.join(' ')
   }
 
-  const imageClasses = [
-    sizeClasses[size],
-    alignClasses[align],
-    'w-full h-auto',
-    rounded ? 'rounded-lg' : '',
-    shadow ? 'shadow-md' : '',
-    className
-  ]
-    .filter(Boolean)
-    .join(' ')
+  const getImageClasses = () => {
+    const classes = [
+      sizeClasses[size],
+      'h-auto',
+      rounded ? 'rounded-lg' : '',
+      shadow ? 'shadow-md' : '',
+      className
+    ].filter(Boolean)
+
+    // 中央配置の場合のみmx-autoを追加
+    if (align === 'center') {
+      classes.push('mx-auto')
+    }
+
+    return classes.join(' ')
+  }
+
+  const getCaptionClasses = () => {
+    const baseClasses = 'mt-2 text-sm text-gray-600 italic'
+    return align === 'center' ? `${baseClasses} text-center` : baseClasses
+  }
 
   return (
-    <div className={`my-6 ${align === 'center' ? 'text-center' : ''}`}>
-      <img src={src} alt={alt} className={imageClasses} />
-      {caption && <p className="mt-2 text-center text-sm text-gray-600 italic">{caption}</p>}
+    <div className={getContainerClasses()}>
+      <img src={src} alt={alt} className={getImageClasses()} />
+      {caption && <p className={getCaptionClasses()}>{caption}</p>}
     </div>
   )
 }

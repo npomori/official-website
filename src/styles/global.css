@@ -438,6 +438,61 @@
   margin-bottom: 0 !important;
 }*/
 
+/* MDXImageコンポーネント用のスタイル */
+.prose .mdx-image-container {
+  margin: 1.5rem 0;
+}
+
+.prose .mdx-image-container.mdx-image-float-left {
+  float: left;
+  margin-right: 1rem;
+  margin-bottom: 1rem;
+  margin-top: 0;
+}
+
+.prose .mdx-image-container.mdx-image-float-right {
+  float: right;
+  margin-left: 1rem;
+  margin-bottom: 1rem;
+  margin-top: 0;
+}
+
+/* 見出し要素でfloatを自動クリア */
+.prose h1, 
+.prose h2, 
+.prose h3, 
+.prose h4, 
+.prose h5, 
+.prose h6 {
+  clear: both;
+}
+
+/* その他の主要なブロック要素でもfloatをクリア */
+.prose blockquote,
+.prose ul,
+.prose ol,
+.prose pre,
+.prose table {
+  clear: both;
+}
+
+/* クリアフィックス用のユーティリティ */
+.prose .mdx-clear-float::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* レスポンシブ対応：小画面ではfloatを無効化 */
+@media (max-width: 768px) {
+  .prose .mdx-image-container.mdx-image-float-left,
+  .prose .mdx-image-container.mdx-image-float-right {
+    float: none;
+    margin: 1.5rem auto;
+    text-align: center;
+  }
+}
+
 /* ダークモード対応 */
 @media (prefers-color-scheme: dark) {
   .prose code:not(pre code) {

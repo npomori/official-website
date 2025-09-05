@@ -23,7 +23,7 @@ const InfoCard: React.FC<InfoCardProps> = ({
   }
 
   return (
-    <div className={`rounded-lg border-2 p-6 ${colorClasses[color]} ${className}`}>
+    <div className={`clear-both my-4 rounded-lg border-2 p-6 ${colorClasses[color]} ${className}`}>
       <h3 className="mb-3 text-xl font-bold">
         {icon && <span className="mr-2">{icon}</span>}
         {title}

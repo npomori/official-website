@@ -21,7 +21,7 @@ const ImageTextLayout: React.FC<ImageTextLayoutProps> = ({
   const textClasses = 'flex flex-col justify-center'
 
   return (
-    <div className={`my-2 ${className}`}>
+    <div className={`clear-both my-2 ${className}`}>
       <div
         className={`grid grid-cols-1 items-center gap-6 md:grid-cols-2 ${
           imagePosition === 'right' ? 'md:grid-flow-col-dense' : ''
