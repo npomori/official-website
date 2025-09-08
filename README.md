@@ -282,3 +282,7 @@ pnpm run db:seed:articles:additional
 - `ImageGallery`: 複数画像のギャラリー表示
 
 このサンプルデータにより、実際のWebサイトで使用する記事コンテンツの形式とReactコンポーネントの統合を確認できます。
+
+## MDXコンポーネント仕様
+
+記事MDXで利用できるカスタムタグの仕様は docs/MDX_COMPONENTS.md を参照してください。
