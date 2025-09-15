@@ -15,7 +15,7 @@ import { BaseApiFetch } from '../base'
 class AdminRecordFetch extends BaseApiFetch {
   async createRecord(params: RecordCreateRequest) {
     const config = getConfig()
-    const response = await this.requestWithJson<RecordCreateResponse>(
+    const response = await this.requestWithJson<Record>(
       `${config.api.adminUrl}/record`,
       params,
       'POST'
@@ -38,7 +38,7 @@ class AdminRecordFetch extends BaseApiFetch {
       })
     }
 
-    const response = await this.requestWithFormData<RecordCreateResponse>(
+    const response = await this.requestWithFormData<Record>(
       `${config.api.adminUrl}/record`,
       formData,
       'POST'
@@ -48,7 +48,7 @@ class AdminRecordFetch extends BaseApiFetch {
 
   async updateRecord(id: number, params: RecordAdminRequest) {
     const config = getConfig()
-    const response = await this.requestWithJson<RecordCreateResponse>(
+    const response = await this.requestWithJson<Record>(
       `${config.api.adminUrl}/record/${id}`,
       params,
       'PUT'
@@ -70,7 +70,7 @@ class AdminRecordFetch extends BaseApiFetch {
       })
     }
 
-    const response = await this.requestWithFormData<RecordCreateResponse>(
+    const response = await this.requestWithFormData<Record>(
       `${config.api.adminUrl}/record/${id}`,
       formData,
       'PUT'
@@ -80,23 +80,22 @@ class AdminRecordFetch extends BaseApiFetch {
 
   async deleteRecord(id: number) {
     const config = getConfig()
-    const response = await this.request<RecordDeleteResponse>(
-      `${config.api.adminUrl}/record/${id}`,
-      { method: 'DELETE' }
-    )
+    const response = await this.request<Record>(`${config.api.adminUrl}/record/${id}`, {
+      method: 'DELETE'
+    })
     return response
   }
 
   async getRecord(id: number) {
     const config = getConfig()
-    const response = await this.request<RecordDetailResponse>(`${config.api.adminUrl}/record/${id}`)
+    const response = await this.request<Record>(`${config.api.adminUrl}/record/${id}`)
     return response
   }
 
   // 個別の記録を取得（getRecordByIdとして統一）
   async getRecordById(id: number) {
     const config = getConfig()
-    const response = await this.request<RecordDetailResponse>(`${config.api.adminUrl}/record/${id}`)
+    const response = await this.request<Record>(`${config.api.adminUrl}/record/${id}`)
     return response
   }
 }

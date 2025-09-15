@@ -2,7 +2,7 @@ import Alert from '@/components/base/Alert'
 import Button from '@/components/base/Button'
 import DateRangePicker from '@/components/DateRangePicker'
 import recordCategories from '@/config/record-category.json'
-import adminRecordFetch from '@/fetch/admin/record'
+import AdminRecordFetch from '@/fetch/admin/record'
 import { RecordDataSchema, safeValidateRecordData } from '@/schemas/record'
 import { getRecordUploadConfig } from '@/types/config'
 import type { Record } from '@/types/record'
@@ -72,8 +72,7 @@ const RecordModal: React.FC<RecordModalProps> = ({
     }
   })
 
-  // フォーカス制御用
-  const rangeRef = useRef<HTMLDivElement>(null)
+  // （削除）rangeRef: 未使用のため削除
 
   // 編集モード時にAPIからデータを取得
   useEffect(() => {
@@ -83,7 +82,7 @@ const RecordModal: React.FC<RecordModalProps> = ({
         setError('')
 
         try {
-          const response = await adminRecordFetch.getRecord(recordId)
+          const response = await AdminRecordFetch.getRecord(recordId)
           if (response.success && response.data) {
             setFetchedRecord(response.data)
           } else {
@@ -98,7 +97,7 @@ const RecordModal: React.FC<RecordModalProps> = ({
       }
     }
 
-    fetchRecordData()
+    void fetchRecordData()
   }, [isEditMode, recordId, fetchedRecord])
 
   useEffect(() => {
@@ -178,16 +177,13 @@ const RecordModal: React.FC<RecordModalProps> = ({
         return
       }
 
-      // 選択された日付をファイル名用の形式で送信
-      const dateForFilename = selectedDate
-        ? format(selectedDate, 'yyyyMMdd')
-        : format(new Date(), 'yyyyMMdd')
+      // 選択された日付をファイル名用の形式で送信（create時のみ使用）
 
       try {
         let responseData
         if (isEditMode && record) {
           // 編集モードの場合
-          responseData = await adminRecordFetch.updateRecordWithImages(record.id, {
+          responseData = await AdminRecordFetch.updateRecordWithImages(record.id, {
             data: validationResult.data,
             images: selectedImages
           })
@@ -197,7 +193,7 @@ const RecordModal: React.FC<RecordModalProps> = ({
             ? format(selectedDate, 'yyyyMMdd')
             : format(new Date(), 'yyyyMMdd')
 
-          responseData = await adminRecordFetch.createRecordWithImages({
+          responseData = await AdminRecordFetch.createRecordWithImages({
             dateForFilename,
             data: validationResult.data,
             images: selectedImages
@@ -370,7 +366,7 @@ const RecordModal: React.FC<RecordModalProps> = ({
                       <DateRangePicker
                         startDate={selectedDate}
                         endDate={selectedDate}
-                        onChange={(startDate, endDate) => {
+                        onChange={(startDate, _endDate) => {
                           setSelectedDate(startDate)
                           // DateRangePickerが閉じるのを待ってから処理を実行
                           setTimeout(() => {
@@ -602,7 +598,54 @@ const RecordModal: React.FC<RecordModalProps> = ({
                 {/* 画像アップロード */}
                 {recordConfig.enabled && (
                   <div className="col-span-4 mb-6">
-                    <label className="mb-1 block font-medium text-gray-900">活動写真</label>
+                    <label className="mb-1 block font-medium text-gray-900">
+                      活動写真
+                      <span className="group relative ml-2 inline-flex items-center text-gray-500">
+                        <svg
+                          className="h-4 w-4 cursor-help"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                          />
+                        </svg>
+                        <div className="absolute bottom-full left-0 mb-2 hidden w-[400px] transform rounded-lg bg-gray-900 p-3 text-sm text-white opacity-0 transition-opacity group-hover:block group-hover:opacity-100">
+                          <div className="space-y-2 whitespace-pre-wrap">
+                            <div className="font-medium">アップロード可能な画像</div>
+                            <div>
+                              {recordConfig.allowedTypes
+                                .map((type: string) => {
+                                  const typeMap: { [k: string]: string } = {
+                                    'image/jpeg': 'JPEG',
+                                    'image/png': 'PNG',
+                                    'image/gif': 'GIF',
+                                    'image/webp': 'WebP',
+                                    'image/heic': 'HEIC'
+                                  }
+                                  return typeMap[type] || type
+                                })
+                                .join(', ')}
+                            </div>
+                            <div className="border-t border-gray-700 pt-2">
+                              最大ファイル数: {recordConfig.maxFiles}個
+                            </div>
+                            <div>
+                              最大ファイルサイズ:{' '}
+                              {Math.round(recordConfig.maxFileSize / (1024 * 1024))}MB
+                            </div>
+                            <div className="text-gray-300">
+                              画像は記録ページにギャラリー表示されます。
+                            </div>
+                          </div>
+                          <div className="absolute -bottom-1 left-4 h-2 w-2 rotate-45 transform bg-gray-900" />
+                        </div>
+                      </span>
+                    </label>
                     <div className="space-y-4">
                       <div>
                         <div className="flex w-full items-start">
@@ -637,16 +680,7 @@ const RecordModal: React.FC<RecordModalProps> = ({
                             />
                           </label>
                         </div>
-                        <p className="mt-3 text-sm text-gray-500">
-                          {recordConfig.allowedTypes
-                            .map((type) => {
-                              const ext = type.split('/')[1]?.toUpperCase() || type
-                              return ext
-                            })
-                            .join('、')}
-                          形式の画像ファイルを選択してください（最大{recordConfig.maxFiles}個、
-                          {Math.round(recordConfig.maxFileSize / (1024 * 1024))}MB以下）
-                        </p>
+                        {/* 旧: 形式/最大数/サイズの説明文はツールチップへ移行したため削除 */}
                       </div>
 
                       {/* 画像プレビュー */}
