@@ -6,7 +6,12 @@ const config = {
   // 公開型: 一部にログインが必要なページがある
   //PROTECTED_ROUTES: ['/api/admin', '/admin'], // アクセス制限するURL
   PROTECTED_ROUTES: ['/admin', '/api/admin', '/api/member'], // アクセス制限するURL
-  EDITOR_ENABLED_ROUTES: ['/api/admin/event', '/api/admin/record', '/api/admin/news'], // EDITORロールがアクセスできるURL
+  EDITOR_ENABLED_ROUTES: [
+    '/api/admin/event',
+    '/api/admin/record',
+    '/api/admin/news',
+    '/api/admin/article'
+  ], // EDITORロールがアクセスできるURL
 
   SESSION_COOKIE_NAME: import.meta.env.SESSION_COOKIE_NAME || '__session', // クッキー作成用シークレットコード
   SESSION_COOKIE_SECRET: import.meta.env.SESSION_COOKIE_SECRET || 'secret',

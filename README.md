@@ -87,15 +87,19 @@ pnpm dev
 src/
   components/        # React/TSX コンポーネント
   content/           # astro:content のコレクション（articles など）
+  config/            # JSON 設定（menu.json / news-category.json など）
   fetch/             # フロントからの API 呼び出しラッパ（BaseApiFetch 等）
   hooks/             # SWR 共通 fetcher
   layouts/           # Astro レイアウト
   middleware/        # auth などのグローバルミドルウェア
   pages/             # Astro ページと API ルート（/api/**）
+  server/            # サーバサイド util / config / db
+    config.ts        # 保護ルート・Cookie/Redis 設定
+    db/              # DB 関連（必要に応じて）
+    utils/           # 認証/セッションユーティリティ
   store/             # Nanostores
-server/
-  config.ts          # サーバ設定・保護ルート・Cookie/Redis 設定
-  utils/             # 認証/セッションユーティリティ
+  schemas/           # Zod スキーマ（news, record など）
+  types/             # 共通型定義（ApiResponse, DTO 型 など）
 prisma/
   schema.prisma      # Prisma スキーマ
   seeds/*.mjs        # 初期データ投入スクリプト
@@ -108,7 +112,7 @@ public/              # 静的アセット・アップロード保存先
 
 - ミドルウェア `src/middleware/auth.ts` が `locals.user` と `locals.session` を設定
 - 保護対象: `PROTECTED_ROUTES = ['/admin', '/api/admin', '/api/member']`
-- Editor 許可: `EDITOR_ENABLED_ROUTES = ['/api/admin/event', '/api/admin/record', '/api/admin/news']`
+- EDITOR 許可: `EDITOR_ENABLED_ROUTES = ['/api/admin/event', '/api/admin/record', '/api/admin/news', '/api/admin/article']`
 - 未認証で保護 API にアクセスした場合は 403（JSON）、ページは `/login?redirect=...` へ
 
 ## API レスポンス規約
