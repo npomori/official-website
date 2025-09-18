@@ -1,10 +1,9 @@
-import { evaluate } from '@mdx-js/mdx'
-import { MDXProvider, useMDXComponents } from '@mdx-js/react'
+import { MDXProvider } from '@mdx-js/react'
 import React, { useEffect, useMemo, useState } from 'react'
-import * as jsxRuntime from 'react/jsx-runtime'
-import remarkGfm from 'remark-gfm'
+import { compileMdx } from './compileMdx'
 
 // カスタムMDXコンポーネント
+import Spinner from '../base/Spinner'
 import AutoEmbedLink from './mdx/AutoEmbedLink'
 import ImageGallery from './mdx/ImageGallery'
 import ImageTextLayout from './mdx/ImageTextLayout'
@@ -25,41 +24,34 @@ export default function ArticleMDXRenderer({ content }: ArticleMDXRendererProps)
       ImageGallery,
       InfoCard,
       ImageTextLayout,
-      a: AutoEmbedLink
+      a: AutoEmbedLink,
+      table: (props: React.HTMLAttributes<HTMLTableElement>) => (
+        <div className="mdx-table-wrapper">
+          <table {...props} className={`mdx-table ${props.className || ''}`.trim()} />
+        </div>
+      )
     }),
     []
   )
 
   useEffect(() => {
     let cancelled = false
-
-    async function compileAndRun() {
+    async function run() {
       setError(null)
       try {
-        const mod = (await evaluate(content, {
-          ...jsxRuntime,
-          baseUrl: import.meta.url,
-          development: false,
-          useMDXComponents,
-          remarkPlugins: [remarkGfm]
-        })) as { default: React.ComponentType }
-        if (!cancelled) {
-          setMDXContent(() => mod.default)
+        if (content && content.trim().length > 0) {
+          const C = await compileMdx(content)
+          if (!cancelled) setMDXContent(() => C)
+        } else {
+          if (!cancelled)
+            setMDXContent(() => () => <p className="text-gray-500">本文は準備中です。</p>)
         }
       } catch (err) {
         const message = err instanceof Error ? err.message : String(err)
-        if (!cancelled) {
-          setError(message)
-        }
+        if (!cancelled) setError(message)
       }
     }
-
-    if (content && content.trim().length > 0) {
-      void compileAndRun()
-    } else {
-      setMDXContent(() => () => <p className="text-gray-500">本文は準備中です。</p>)
-    }
-
+    void run()
     return () => {
       cancelled = true
     }
@@ -76,8 +68,7 @@ export default function ArticleMDXRenderer({ content }: ArticleMDXRendererProps)
   if (!MDXContent) {
     return (
       <div className="text-gray-500">
-        <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-transparent align-[-2px]"></span>
-        <span className="ml-2 text-sm">読み込み中…</span>
+        <Spinner size="sm" label="読み込み中…" />
       </div>
     )
   }
