@@ -501,3 +501,125 @@
     border-color: #6b7280;
   }
 }
+
+/* ===================================== */
+/* Markdown由来の通常画像 (MDXImage除外) */
+/* ドロップ時に生成される ![alt](src) の <img> を中サイズで中央表示 */
+/* ===================================== */
+/* 基本: 段落直下で単独の画像 (よくあるMarkdownパターン) */
+.prose p > img:only-child:not([class*="mdx-image"]){
+  display:block;
+  margin:1.25rem auto; /* 中央 */
+  width:100%;
+  max-width:640px; /* 中程度の最大幅 */
+  height:auto;
+  border-radius:0.5rem;
+}
+
+/* 直接 .prose 配下に来た (パーサによっては p を省く場合) */
+.prose > img:not([class*="mdx-image"]) {
+  display:block;
+  margin:1.25rem auto;
+  width:100%;
+  max-width:640px;
+  height:auto;
+  border-radius:0.5rem;
+}
+
+/* 複数画像が連続する場合、間隔を少し詰める */
+.prose p > img:only-child + p > img:only-child,
+.prose > img + img { margin-top:0.75rem; }
+
+/* 小画面では左右余白を活かしつつ100%表示 (max-widthは自然に働く) */
+@media (max-width: 680px){
+  .prose p > img:only-child:not([class*="mdx-image"]),
+  .prose > img:not([class*="mdx-image"]) { max-width:100%; }
+}
+
+/* エディタ textarea でタグ挿入時のスクロールジャンプ抑止 */
+textarea[data-no-anchor] {
+  /* ブラウザのレイアウト再計算による scroll anchoring を無効化 */
+  /*overflow-anchor: none;*/
+}
+
+/* ============================= */
+/* MDX Tables (GFM)              */
+/* ============================= */
+.mdx-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 1.5rem 0; /* mt-6 mb-6 */
+}
+
+.mdx-table-wrapper::-webkit-scrollbar { height: 8px; }
+.mdx-table-wrapper::-webkit-scrollbar-track { background: #f3f4f6; }
+.mdx-table-wrapper::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+.dark .mdx-table-wrapper::-webkit-scrollbar-track { background: #1f2937; }
+.dark .mdx-table-wrapper::-webkit-scrollbar-thumb { background: #475569; }
+
+.mdx-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  background: #ffffff;
+  border: 1px solid #e5e7eb; /* gray-200 */
+  border-radius: 0.5rem; /* rounded-lg */
+  overflow: hidden;
+}
+.dark .mdx-table { background: #1e293b; border-color: #334155; }
+
+.mdx-table thead { background: #f1f5f9; color: #0f172a; }
+.dark .mdx-table thead { background: #334155; color: #f1f5f9; }
+
+.mdx-table th, .mdx-table td {
+  padding: 0.625rem 0.875rem; /* py-2.5 px-3.5 */
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid #e5e7eb;
+}
+.dark .mdx-table th, .dark .mdx-table td { border-color: #334155; }
+
+.mdx-table th {
+  font-weight: 600;
+  font-size: 0.75rem; /* text-xs */
+  letter-spacing: 0.05em; /* tracking-wide */
+  text-transform: uppercase;
+}
+
+.mdx-table tbody tr:last-child td { border-bottom: none; }
+
+/* zebra stripe */
+.mdx-table tbody tr:nth-child(odd) { background: #ffffff; }
+.mdx-table tbody tr:nth-child(even) { background: #f8fafc; }
+.dark .mdx-table tbody tr:nth-child(odd) { background: #1e293b; }
+.dark .mdx-table tbody tr:nth-child(even) { background: #243044; }
+
+/* hover */
+.mdx-table tbody tr:hover { background: #eef2ff; }
+.dark .mdx-table tbody tr:hover { background: #373e4e; }
+
+/* caption */
+.mdx-table caption {
+  caption-side: bottom;
+  padding: 0.75rem 0.25rem;
+  font-size: 0.85rem;
+  color: #64748b;
+}
+.dark .mdx-table caption { color: #94a3b8; }
+
+/* code cell inside table */
+.mdx-table td code, .mdx-table th code {
+  background: #f1f5f9;
+  padding: 0.15rem 0.35rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+}
+.dark .mdx-table td code, .dark .mdx-table th code { background: #334155; }
+
+@media (max-width: 640px) {
+  .mdx-table th, .mdx-table td { padding: 0.5rem 0.625rem; }
+  .mdx-table-wrapper { margin: 1rem 0; }
+}

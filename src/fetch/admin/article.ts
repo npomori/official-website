@@ -13,6 +13,32 @@ interface ArticleResponse {
 }
 
 class AdminArticleFetch extends BaseApiFetch {
+  // 画像アップロード（記事関連で使用）
+  async uploadImage(file: File): Promise<{ url: string }> {
+    const formData = new FormData()
+    formData.append('file', file)
+    // 新しい管理用アップロードエンドポイント
+    const res = await this.requestWithFormData<{ url: string }>(
+      `/api/admin/article/upload`,
+      formData,
+      'POST'
+    )
+    if (!res.success || !res.data?.url) {
+      throw new Error(res.message || '画像アップロードに失敗しました')
+    }
+    return { url: res.data.url }
+  }
+  // 一時アップロード削除 (未使用の画像をクリーンアップ)
+  async deleteUploadedImage(url: string): Promise<boolean> {
+    try {
+      const endpoint = `/api/admin/article/upload?url=${encodeURIComponent(url)}`
+      const res = await fetch(endpoint, { method: 'DELETE' })
+      if (!res.ok) return false
+      return true
+    } catch {
+      return false
+    }
+  }
   // 管理者用の記事一覧を取得
   async getArticles(page: number = 1, limit?: number, category?: string, tags?: string[]) {
     const config = getConfig()
