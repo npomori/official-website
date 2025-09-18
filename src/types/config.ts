@@ -90,11 +90,17 @@ interface RecordContentConfig {
 
 interface NewsContentConfig {
   editDays: number
+  defaultAuthor?: string
+}
+
+interface ArticleContentConfig {
+  headingShift?: number
 }
 
 interface ContentConfig {
   record: RecordContentConfig
   news: NewsContentConfig
+  article?: ArticleContentConfig
 }
 
 export interface Config {
@@ -118,3 +124,4 @@ export const getAvatarUploadConfig = () => config.upload.avatar
 export const getNewsUploadConfig = () => config.upload.news
 export const getSiteConfig = () => config.site
 export const getConfig = () => config
+export const getArticleContentConfig = () => config.content.article

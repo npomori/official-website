@@ -89,6 +89,9 @@
     "news": {
       "editDays": 7,
       "defaultAuthor": "事務局"
+    },
+    "article": {
+      "headingShift": 1
     }
   }
 }
