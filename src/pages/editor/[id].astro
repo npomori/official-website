@@ -1,0 +1,18 @@
+---
+//import '@/styles/global.css'
+import Layout from '@/layouts/FullLayout.astro'
+import ArticleEditorPage from '@/components/editor/ArticleEditorPage'
+
+const { id } = Astro.params
+const numId = Number(id)
+---
+
+<Layout title="記事編集">
+  {
+    Number.isFinite(numId) ? (
+      <ArticleEditorPage id={numId} client:load />
+    ) : (
+      <div class="p-4 text-red-600">不正なIDです</div>
+    )
+  }
+</Layout>

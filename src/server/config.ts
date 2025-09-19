@@ -1,11 +1,8 @@
 // サーバ専用の定義値をここに設定する
 const config = {
-  // ### サイトのアクセス制御のパターンによって公開型、非公開型を区別する ###
-  // 非公開型: 閲覧するにはログインが必要
+  // アクセス制御用
   PUBLIC_ROUTES: ['/', '/api/auth/login', '/api/auth/logout'], // アクセス制限しないURL
-  // 公開型: 一部にログインが必要なページがある
-  //PROTECTED_ROUTES: ['/api/admin', '/admin'], // アクセス制限するURL
-  PROTECTED_ROUTES: ['/admin', '/api/admin', '/api/member'], // アクセス制限するURL
+  PROTECTED_ROUTES: ['/admin', '/editor', '/api/admin', '/api/member'], // ログインが必要なURL
   EDITOR_ENABLED_ROUTES: [
     '/api/admin/event',
     '/api/admin/record',
