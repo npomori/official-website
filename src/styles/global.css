@@ -1,6 +1,5 @@
 @import "tailwindcss";
 @plugin "flowbite/plugin";
-/*@plugin "@tailwindcss/typography";*/
 
 @theme {
   --font-sans: 'ヒラギノ角ゴ Pro W3', 'Hiragino Kaku Gothic Pro', 'メイリオ', 'Meiryo', '游ゴシック', 'Yu Gothic', 'ＭＳ Ｐゴシック', 'MS PGothic', 'sans-serif';
@@ -101,6 +100,22 @@
   --color-success-800: #166534;
   --color-success-900: #14532d;
   --color-success-950: #052e16;
+}
+
+:root {
+  --accent: 136, 58, 234;
+  --accent-light: 224, 204, 250;
+  --accent-dark: 49, 10, 101;
+  --accent-gradient: linear-gradient(
+    45deg,
+    rgb(var(--accent)),
+    rgb(var(--accent-light)) 30%,
+    white 60%
+  );
+}
+html {
+  background: #f6f6f6;
+  background-size: 224px;
 }
 
 /* Leafletマップラベルのスタイル */

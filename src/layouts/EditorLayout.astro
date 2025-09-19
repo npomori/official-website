@@ -1,6 +1,7 @@
 ---
 import '@/styles/global.css'
 import Head from '@/layouts/partials/Head.astro'
+import SizeIndicator from '@/components/SizeIndicator.astro'
 
 interface Props {
   title?: string
@@ -16,7 +17,8 @@ const { title = 'エディタ', description } = Astro.props as Props
     <Head title={title} {...description && { description }} />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   </head>
-  <body class="h-screen w-screen overflow-hidden bg-neutral-50">
+  <body class="h-screen w-screen overflow-hidden">
+    <SizeIndicator />
     <main class="h-full w-full">
       <slot />
     </main>

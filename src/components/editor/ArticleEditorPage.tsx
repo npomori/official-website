@@ -76,7 +76,7 @@ export default function ArticleEditorPage({ id }: ArticleEditorPageProps) {
 
   if (loading) {
     return (
-      <div className="relative flex h-screen w-full items-center justify-center bg-neutral-50">
+      <div className="relative flex h-screen w-full items-center justify-center">
         <SpinnerOverlay show fixed text="記事を読み込み中..." spinnerSize="lg" />
       </div>
     )
@@ -84,7 +84,7 @@ export default function ArticleEditorPage({ id }: ArticleEditorPageProps) {
 
   if (error) {
     return (
-      <div className="flex h-screen w-full items-center justify-center bg-neutral-50">
+      <div className="flex h-screen w-full items-center justify-center">
         <div className="max-w-md rounded-lg border border-red-200 bg-red-50 p-6 text-center shadow">
           <div className="mb-4 text-5xl">⚠️</div>
           <p className="mb-2 font-semibold text-red-600">エラーが発生しました</p>
@@ -117,7 +117,7 @@ export default function ArticleEditorPage({ id }: ArticleEditorPageProps) {
   }
 
   return (
-    <div className="flex h-screen w-full flex-col overflow-hidden bg-neutral-50">
+    <div className="flex h-screen w-full flex-col overflow-hidden">
       <ArticleEditorHeader
         title={`記事編集: ${article.title}`}
         onSave={handleSave}
