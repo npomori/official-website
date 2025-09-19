@@ -1,0 +1,24 @@
+---
+import '@/styles/global.css'
+import Head from '@/layouts/partials/Head.astro'
+
+interface Props {
+  title?: string
+  description?: string
+}
+
+const { title = 'エディタ', description } = Astro.props as Props
+---
+
+<!doctype html>
+<html lang="ja">
+  <head>
+    <Head title={title} {...description && { description }} />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  </head>
+  <body class="h-screen w-screen overflow-hidden bg-neutral-50">
+    <main class="h-full w-full">
+      <slot />
+    </main>
+  </body>
+</html>

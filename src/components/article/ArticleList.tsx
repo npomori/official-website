@@ -61,11 +61,8 @@ const ArticleList: React.FC = () => {
     }
   }
 
-  // 編集処理
-  const handleEdit = (article: Article) => {
-    // 今のところアラートで代用（後でモーダルを実装）
-    alert(`記事「${article.title}」の編集機能は実装中です`)
-  }
+  // 編集処理（リンク遷移に変更済み）
+  // const handleEdit = (article: Article) => {}
 
   // SWRでデータを取得
   const { data, error, isLoading, mutate } = useSWR(
@@ -361,7 +358,8 @@ const ArticleList: React.FC = () => {
                         <Button
                           variant="info"
                           size="md"
-                          onClick={() => handleEdit(article)}
+                          type="link"
+                          href={`/editor/${article.id}`}
                           icon="mdi:pencil"
                           text="編集"
                           title="編集"
