@@ -39,14 +39,17 @@ export default function ArticleEditorHeader({
   return (
     <div className={`flex-shrink-0 ${className}`}>
       {/* ナビゲーションバー */}
-      <div className="flex items-center justify-between border-b border-neutral-200 bg-white px-6 py-4 shadow-sm">
+      <div className="flex items-center justify-between border-b border-neutral-200 bg-white px-6 py-4">
         <div className="flex items-center gap-4">
           {onBack && (
             <button
               className="cursor-pointer rounded-md border border-neutral-300 bg-neutral-100 px-4 py-2 text-sm text-neutral-700 transition-all duration-200 hover:border-neutral-400 hover:bg-neutral-200"
               onClick={onBack}
             >
-              ← 戻る
+              <span className="flex items-center gap-2">
+                <Icon icon="mdi:arrow-left" className="h-5 w-5" aria-hidden="true" />
+                <span>戻る</span>
+              </span>
             </button>
           )}
           <h1 className="m-0 text-xl font-semibold text-neutral-900">{title}</h1>

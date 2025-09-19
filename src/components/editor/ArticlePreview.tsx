@@ -33,7 +33,7 @@ export default function ArticlePreview({ content, className = '' }: PreviewProps
     <div
       className={`flex h-full flex-col overflow-hidden rounded-lg border border-neutral-200 bg-white ${className}`}
     >
-      <div className="flex flex-shrink-0 items-center border-b border-neutral-200 bg-neutral-50 px-4 py-3">
+      <div className="flex h-14 flex-shrink-0 items-center border-b border-neutral-200 bg-neutral-50 px-4">
         <span className="font-bold text-neutral-700">プレビュー</span>
       </div>
       <div className="relative min-h-0 flex-1" aria-busy={isLoading && !error}>
