@@ -8,7 +8,7 @@ import AdminNewsFetch from '@/fetch/admin/news'
 import { newsCreateSchema, type NewsCreate } from '@/schemas/news'
 import type { NewsAttachment } from '@/types/news'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Controller, useForm, type FieldErrors } from 'react-hook-form'
 
 interface NewsModalProps {
@@ -25,6 +25,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]) // 選択されたファイル
   const [existingFiles, setExistingFiles] = useState<NewsAttachment[]>([]) // 既存ファイル
   const [removedFiles, setRemovedFiles] = useState<string[]>([]) // 削除されたファイル
+  const scrollRef = useRef<HTMLDivElement>(null) // スクロールコンテナ参照
 
   // お知らせの設定を直接取得
   const newsConfig = config.upload.news
@@ -99,6 +100,18 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
       })
     }
   }, [reset, isEditMode, news])
+
+  // 成功/エラーメッセージが更新されたら先頭にスクロールして見えるようにする
+  useEffect(() => {
+    if ((success || error) && scrollRef.current) {
+      try {
+        scrollRef.current.scrollTo({ top: 0, behavior: 'smooth' })
+      } catch {
+        // fallback
+        scrollRef.current.scrollTop = 0
+      }
+    }
+  }, [success, error])
 
   const onSubmit = async (values: NewsCreate) => {
     // メッセージリセット
@@ -306,7 +319,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
         </div>
 
         {/* コンテンツ - スクロール可能 */}
-        <div className="flex-1 overflow-y-auto px-6">
+        <div ref={scrollRef} className="flex-1 overflow-y-auto px-6">
           <form onSubmit={handleSubmit(onSubmit, onInvalid)} className="space-y-6">
             {success && <Alert message={success} type="success" />}
             {error && <Alert message={error} type="error" />}
