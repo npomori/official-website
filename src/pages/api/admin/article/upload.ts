@@ -1,11 +1,12 @@
 import { getArticleUploadConfig } from '@/types/config'
 import type { APIRoute } from 'astro'
 import { mkdir, writeFile } from 'node:fs/promises'
-import { extname } from 'node:path'
+import { extname, join } from 'node:path'
 
 const cfg = getArticleUploadConfig()
 // 保存先: config.upload.article.directory
-const UPLOAD_DIR = new URL(`../../../../../${cfg.directory}/`, import.meta.url)
+// 規約: ディレクトリへのアクセスは process.cwd() を基準に
+const UPLOAD_DIR = join(process.cwd(), cfg.directory)
 
 function randomId(len = 8) {
   const chars = 'abcdefghijklmnopqrstuvwxyz0123456789'
@@ -57,7 +58,7 @@ export const POST: APIRoute = async ({ request }) => {
 
     await mkdir(UPLOAD_DIR, { recursive: true })
     const buf = Buffer.from(await file.arrayBuffer())
-    await writeFile(new URL(filename, UPLOAD_DIR), buf)
+    await writeFile(join(UPLOAD_DIR, filename), buf)
 
     const baseUrl = cfg.url.replace(/\/$/, '')
     const url = `${baseUrl}/${filename}`
@@ -99,7 +100,7 @@ export const DELETE: APIRoute = async ({ request }) => {
         headers: { 'content-type': 'application/json; charset=utf-8' }
       })
     }
-    const fileUrl = new URL(filename, UPLOAD_DIR)
+    const fileUrl = join(UPLOAD_DIR, filename)
     const { unlink } = await import('node:fs/promises')
     try {
       await unlink(fileUrl)
