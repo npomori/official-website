@@ -51,6 +51,7 @@ interface UploadConfig {
   avatar: AvatarUploadConfig
   record: RecordUploadConfig
   news: NewsUploadConfig
+  article: ArticleUploadConfig
 }
 
 interface ApiConfig {
@@ -122,6 +123,22 @@ export default config
 export const getRecordUploadConfig = () => config.upload.record
 export const getAvatarUploadConfig = () => config.upload.avatar
 export const getNewsUploadConfig = () => config.upload.news
+export const getArticleUploadConfig = () => config.upload.article
 export const getSiteConfig = () => config.site
 export const getConfig = () => config
 export const getArticleContentConfig = () => config.content.article
+
+// 記事用のアップロード設定
+interface ArticleUploadConfig {
+  enabled: boolean
+  url: string
+  directory: string
+  maxFiles: number
+  maxFileSize: number
+  allowedTypes: string[]
+  maxSize: {
+    width: number
+    height: number
+  }
+  quality: number
+}

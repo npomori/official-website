@@ -50,6 +50,19 @@
         "image/png",
         "image/gif"
       ]
+    },
+    "article": {
+      "enabled": true,
+      "url": "/uploads/articles",
+      "directory": "public/uploads/articles",
+      "maxFiles": 30,
+      "maxFileSize": 10485760,
+      "allowedTypes": ["image/jpeg", "image/png", "image/gif", "image/webp"],
+      "maxSize": {
+        "width": 1920,
+        "height": 1920
+      },
+      "quality": 85
     }
   },
   "api": {

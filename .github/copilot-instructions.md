@@ -7,7 +7,6 @@
 - 言語: `TypeScript`（`astro/tsconfigs/strict` を継承）
 - フロント: React 19（`react`/`react-dom`）、SWR 2、Nanostores
 - スタイル: Tailwind CSS 4（`@tailwindcss/vite`、`prettier-plugin-tailwindcss`）
-- コンテンツ: `astro:content`（`src/content/config.ts` の collections）
 - サーバ/API: Astro Middleware + API Routes（`src/middleware/*`, `src/pages/api/*`）
 - 認証/セッション: Redis セッション（`ioredis`）+ Cookie（Remember Me）
 - DB: Prisma + MySQL（`prisma/schema.prisma`）
@@ -21,12 +20,12 @@
 - `src/middleware/*` … `auth` などのグローバルミドルウェア
 - `src/server/*` … サーバサイドの util / config
 - `src/store/*` … Nanostores によるクライアント状態
-- `src/content/*` … Content Collections 定義と記事
 - `prisma/*` … Prisma スキーマ、マイグレーション、シード
 
 ## 型とコード規約
 - TS 設定は厳格。`noUnusedLocals`/`noUnusedParameters` を満たすこと。
 - パス解決は `@/*` を使用（`tsconfig.json` の `baseUrl: ./src`）。相対 `../../` は避ける。
+- ディレクトリへのアクセスは `process.cwd()` を基準にしてください。
 - UI は React Function Component + hooks。副作用は最小限に。
 - CSS は Tailwind を基本に、ユーティリティは `tailwind-merge` を使用可。
 - API レスポンスは `types/api.ts` の `ApiResponse<T>` 形式を優先（`{ success, data?, message?, errors? }`）。

@@ -1,4 +1,4 @@
-import type { Article } from '@/types/article'
+import type { Article, CreateArticleData, UpdateArticleData } from '@/types/article'
 import { getConfig } from '@/types/config'
 import { BaseApiFetch } from '../base'
 
@@ -59,7 +59,7 @@ class AdminArticleFetch extends BaseApiFetch {
     }
 
     const response = await this.request<ArticleResponse>(
-      `${config.api.adminUrl}/articles?${params.toString()}`
+      `${config.api.adminUrl}/article?${params.toString()}`
     )
     return response
   }
@@ -67,36 +67,30 @@ class AdminArticleFetch extends BaseApiFetch {
   // 記事の詳細を取得
   async getArticle(id: number | string) {
     const config = getConfig()
-    const response = await this.request<Article>(`${config.api.adminUrl}/articles/${id}`)
+    const response = await this.request<Article>(`${config.api.adminUrl}/article/${id}`)
     return response
   }
 
   // 記事を削除
   async deleteArticle(id: number) {
     const config = getConfig()
-    const response = await this.request(`${config.api.adminUrl}/articles/${id}`, {
+    const response = await this.request(`${config.api.adminUrl}/article/${id}`, {
       method: 'DELETE'
     })
     return response
   }
 
-  // 記事を更新
-  async updateArticle(id: number, data: FormData) {
+  // 記事を更新（JSON）
+  async updateArticle(id: number, data: UpdateArticleData & { content: string }) {
     const config = getConfig()
-    const response = await this.request(`${config.api.adminUrl}/articles/${id}`, {
-      method: 'PUT',
-      body: data
-    })
+    const response = await this.requestWithJson(`${config.api.adminUrl}/article/${id}`, data, 'PUT')
     return response
   }
 
-  // 記事を作成
-  async createArticle(data: FormData) {
+  // 記事を作成（JSON）
+  async createArticle(data: CreateArticleData) {
     const config = getConfig()
-    const response = await this.request(`${config.api.adminUrl}/articles`, {
-      method: 'POST',
-      body: data
-    })
+    const response = await this.requestWithJson(`${config.api.adminUrl}/article`, data, 'POST')
     return response
   }
 }

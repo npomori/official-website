@@ -1,5 +1,5 @@
 import type { CreateArticleData, UpdateArticleData } from '@/types/article'
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient, type Prisma } from '@prisma/client'
 
 class ArticleDB {
   private prisma: PrismaClient
@@ -12,7 +12,7 @@ class ArticleDB {
   async getArticlesWithPagination(
     page: number,
     limit: number,
-    isAdmin: boolean = false,
+    _isAdmin: boolean = false,
     isLoggedIn: boolean = false,
     category?: string,
     tags?: string[]
@@ -20,7 +20,7 @@ class ArticleDB {
     const skip = (page - 1) * limit
 
     // 基本条件を構築
-    const where: any = {
+    const where: Record<string, unknown> = {
       status: 'published' // 公開済みの記事のみ
     }
 
@@ -31,9 +31,7 @@ class ArticleDB {
 
     // タグフィルター
     if (tags && tags.length > 0) {
-      where.tags = {
-        array_contains: tags
-      }
+      Object.assign(where, { tags: { array_contains: tags } })
     }
 
     // 会員限定コンテンツの制御
@@ -92,12 +90,35 @@ class ArticleDB {
     return article
   }
 
+  // 管理用: ステータスに関わらずIDで取得
+  async getArticleByIdAdmin(id: number) {
+    return await this.prisma.article.findUnique({
+      where: { id },
+      include: {
+        creator: {
+          select: { id: true, name: true }
+        }
+      }
+    })
+  }
+
   // 記事を作成
   async createArticle(data: CreateArticleData) {
     return await this.prisma.article.create({
       data: {
-        ...data,
-        publishedAt: data.status === 'published' ? new Date() : null
+        title: data.title,
+        content: data.content,
+        featuredImage: data.featuredImage ?? null,
+        images: data.images ?? [],
+        attachments: (data.attachments ?? null) as unknown as Prisma.InputJsonValue,
+        tags: data.tags ?? [],
+        category: data.category ?? null,
+        status: data.status ?? 'draft',
+        publishedAt: data.status === 'published' ? new Date() : null,
+        seoDescription: data.seoDescription ?? null,
+        seoKeywords: data.seoKeywords ?? null,
+        isMemberOnly: data.isMemberOnly ?? false,
+        creatorId: data.creatorId
       },
       include: {
         creator: {
@@ -115,8 +136,22 @@ class ArticleDB {
     return await this.prisma.article.update({
       where: { id },
       data: {
-        ...data,
-        publishedAt: data.status === 'published' ? new Date() : null
+        ...(data.title !== undefined && { title: data.title }),
+        ...(data.content !== undefined && { content: data.content }),
+        ...(data.featuredImage !== undefined && { featuredImage: data.featuredImage }),
+        ...(data.images !== undefined && { images: data.images }),
+        ...(data.attachments !== undefined && {
+          attachments: (data.attachments as unknown as Prisma.InputJsonValue) ?? null
+        }),
+        ...(data.tags !== undefined && { tags: data.tags }),
+        ...(data.category !== undefined && { category: data.category }),
+        ...(data.status !== undefined && { status: data.status }),
+        ...(data.seoDescription !== undefined && { seoDescription: data.seoDescription }),
+        ...(data.seoKeywords !== undefined && { seoKeywords: data.seoKeywords }),
+        ...(data.isMemberOnly !== undefined && { isMemberOnly: data.isMemberOnly }),
+        ...(data.status !== undefined && {
+          publishedAt: data.status === 'published' ? new Date() : null
+        })
       },
       include: {
         creator: {
@@ -156,8 +191,9 @@ class ArticleDB {
   async getTags() {
     const articles = await this.prisma.article.findMany({
       where: {
-        status: 'published',
-        tags: { not: null }
+        status: 'published'
+        // Prisma JSON not null filter: use { not: Prisma.JsonNull }
+        // but to keep it simple, fetch all and filter below
       },
       select: {
         tags: true
@@ -178,7 +214,7 @@ class ArticleDB {
     tags?: string[],
     limit: number = 3
   ) {
-    const where: any = {
+    const where: Record<string, unknown> = {
       id: { not: currentArticleId },
       status: 'published'
     }
@@ -188,7 +224,7 @@ class ArticleDB {
     }
 
     if (tags && tags.length > 0) {
-      where.OR = [{ category: category }, { tags: { array_contains: tags } }]
+      Object.assign(where, { OR: [{ category: category }, { tags: { array_contains: tags } }] })
     }
 
     return await this.prisma.article.findMany({
