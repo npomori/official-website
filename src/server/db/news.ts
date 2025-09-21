@@ -370,35 +370,36 @@ class NewsDB extends BaseDB {
   // お知らせを削除
   async deleteNews(id: number): Promise<boolean> {
     try {
-      // お知らせを取得して添付ファイル情報を取得
-      const news = await BaseDB.prisma.news.findUnique({
-        where: { id },
-        select: { attachments: true }
-      })
+      // // お知らせを取得して添付ファイル情報を取得
+      // const news = await BaseDB.prisma.news.findUnique({
+      //   where: { id },
+      //   select: { attachments: true }
+      // })
 
       // お知らせを削除
-      await BaseDB.prisma.news.delete({
+      const deletedEvent = await BaseDB.prisma.news.delete({
         where: { id }
       })
 
       // 添付ファイルがあれば削除
-      if (news?.attachments && Array.isArray(news.attachments)) {
-        const { newsFileUploader } = await import('@/server/utils/file-upload')
-        const filenames: string[] = []
-        for (const att of news.attachments) {
-          if (
-            att &&
-            typeof att === 'object' &&
-            'filename' in att &&
-            typeof att.filename === 'string'
-          ) {
-            filenames.push(att.filename)
-          }
-        }
-        await newsFileUploader.deleteFiles(filenames)
-      }
+      // if (news?.attachments && Array.isArray(news.attachments)) {
+      //   //const { newsFileUploader } = await import('@/server/utils/file-upload')
+      //   const newsFileUploader = new FileUploader(UPLOAD_DIR)
+      //   const filenames: string[] = []
+      //   for (const att of news.attachments) {
+      //     if (
+      //       att &&
+      //       typeof att === 'object' &&
+      //       'filename' in att &&
+      //       typeof att.filename === 'string'
+      //     ) {
+      //       filenames.push(att.filename)
+      //     }
+      //   }
+      //   await newsFileUploader.deleteFiles(filenames)
+      // }
 
-      return true
+      return deletedEvent ? true : false
     } catch (err) {
       console.error(err)
       return false

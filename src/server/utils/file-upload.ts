@@ -1,13 +1,14 @@
 import { existsSync } from 'fs'
 import { mkdir, unlink, writeFile } from 'fs/promises'
 import { join } from 'path'
+import { v4 as uuidv4 } from 'uuid'
 
 interface UploadedFile {
   originalName: string
   filename: string
 }
 
-export class FileUploader {
+export default class FileUploader {
   private uploadDir: string
 
   constructor(uploadDir: string) {
@@ -72,7 +73,8 @@ export class FileUploader {
    * ユニークなファイル名を生成（UUIDベース）
    */
   private generateUniqueFileName(): string {
-    return `file_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`
+    //return `file_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`
+    return uuidv4()
   }
 
   /**
@@ -128,4 +130,4 @@ export class FileUploader {
 /**
  * お知らせ用のファイルアップローダー
  */
-export const newsFileUploader = new FileUploader('public/uploads/news')
+//export const newsFileUploader = new FileUploader('public/uploads/news')

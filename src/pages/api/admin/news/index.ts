@@ -1,11 +1,15 @@
 import config from '@/config/config.json'
 import { validateNewsApi } from '@/schemas/news'
 import NewsDB from '@/server/db/news'
-import { newsFileUploader } from '@/server/utils/file-upload'
-import { getConfig } from '@/types/config'
+import FileUploader from '@/server/utils/file-upload'
+import { getConfig, getNewsUploadConfig } from '@/types/config'
 import type { CreateNewsData, NewsCreateResponse, NewsListResponse } from '@/types/news'
 import type { APIRoute } from 'astro'
+import { join } from 'path'
 import { z } from 'zod'
+
+const cfg = getNewsUploadConfig()
+const UPLOAD_DIR = join(process.cwd(), cfg.directory)
 
 // 管理者用のお知らせ一覧取得
 export const GET: APIRoute = async ({ url }) => {
@@ -92,6 +96,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const priority = (formData.get('priority') as string) || null
     const isMemberOnly = formData.get('isMemberOnly') === 'true'
     const author = formData.get('author') as string
+
+    const newsFileUploader = new FileUploader(UPLOAD_DIR)
 
     // zodスキーマでバリデーション
     try {

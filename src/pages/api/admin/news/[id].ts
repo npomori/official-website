@@ -1,5 +1,7 @@
 import { validateNewsApi } from '@/schemas/news'
 import NewsDB from '@/server/db/news'
+import FileUploader from '@/server/utils/file-upload'
+import { getNewsUploadConfig } from '@/types/config'
 import type {
   NewsDeleteResponse,
   NewsDetailResponse,
@@ -7,7 +9,11 @@ import type {
   UpdateNewsData
 } from '@/types/news'
 import type { APIRoute } from 'astro'
+import { join } from 'path'
 import { z } from 'zod'
+
+const cfg = getNewsUploadConfig()
+const UPLOAD_DIR = join(process.cwd(), cfg.directory)
 
 // 管理者用の個別お知らせ取得
 export const GET: APIRoute = async ({ params }) => {
@@ -216,6 +222,22 @@ export const DELETE: APIRoute = async ({ params }) => {
       )
     }
 
+    // 添付ファイルがあれば削除
+    if (existingNews?.attachments && Array.isArray(existingNews.attachments)) {
+      const newsFileUploader = new FileUploader(UPLOAD_DIR)
+      const filenames: string[] = []
+      for (const att of existingNews.attachments) {
+        if (
+          att &&
+          typeof att === 'object' &&
+          'filename' in att &&
+          typeof att.filename === 'string'
+        ) {
+          filenames.push(att.filename)
+        }
+      }
+      await newsFileUploader.deleteFiles(filenames)
+    }
     return new Response(
       JSON.stringify({
         success: true,
