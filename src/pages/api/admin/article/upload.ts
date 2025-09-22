@@ -1,24 +1,23 @@
+import FileUploader from '@/server/utils/file-upload'
 import { getArticleUploadConfig } from '@/types/config'
 import type { APIRoute } from 'astro'
-import { mkdir, writeFile } from 'node:fs/promises'
-import { extname, join } from 'node:path'
+import { join } from 'node:path'
 
 const cfg = getArticleUploadConfig()
 // 保存先: config.upload.article.directory
 // 規約: ディレクトリへのアクセスは process.cwd() を基準に
 const UPLOAD_DIR = join(process.cwd(), cfg.directory)
-
-function randomId(len = 8) {
-  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789'
-  let out = ''
-  for (let i = 0; i < len; i++) out += chars[Math.floor(Math.random() * chars.length)]
-  return out
-}
-
+const uploader = new FileUploader(UPLOAD_DIR)
 const ALLOWED = cfg.allowedTypes
 
 export const POST: APIRoute = async ({ request }) => {
   try {
+    if (!cfg.enabled) {
+      return new Response(
+        JSON.stringify({ success: false, message: 'アップロードは無効化されています' }),
+        { status: 403, headers: { 'content-type': 'application/json; charset=utf-8' } }
+      )
+    }
     const form = await request.formData()
     const file = form.get('file') as File | null
 
@@ -29,36 +28,23 @@ export const POST: APIRoute = async ({ request }) => {
       })
     }
 
-    if (!ALLOWED.includes(file.type)) {
+    // タイプ/サイズのバリデーション
+    if (!uploader.validateFileType(file, ALLOWED)) {
       return new Response(JSON.stringify({ success: false, message: 'unsupported file type' }), {
         status: 400,
         headers: { 'content-type': 'application/json; charset=utf-8' }
       })
     }
-
-    let ext = ''
-    switch (file.type) {
-      case 'image/jpeg':
-        ext = '.jpg'
-        break
-      case 'image/png':
-        ext = '.png'
-        break
-      case 'image/gif':
-        ext = '.gif'
-        break
-      case 'image/webp':
-        ext = '.webp'
-        break
-      default:
-        ext = extname(file.name || '') || ''
+    if (!uploader.validateFileSize(file, cfg.maxFileSize)) {
+      return new Response(JSON.stringify({ success: false, message: 'file too large' }), {
+        status: 400,
+        headers: { 'content-type': 'application/json; charset=utf-8' }
+      })
     }
 
-    const filename = `${Date.now()}_${randomId()}${ext}`
-
-    await mkdir(UPLOAD_DIR, { recursive: true })
-    const buf = Buffer.from(await file.arrayBuffer())
-    await writeFile(join(UPLOAD_DIR, filename), buf)
+    // 保存（FileUploader 経由）
+    const saved = await uploader.uploadFile(file)
+    const filename = saved.filename
 
     const baseUrl = cfg.url.replace(/\/$/, '')
     const url = `${baseUrl}/${filename}`
@@ -77,6 +63,12 @@ export const POST: APIRoute = async ({ request }) => {
 
 export const DELETE: APIRoute = async ({ request }) => {
   try {
+    if (!cfg.enabled) {
+      return new Response(
+        JSON.stringify({ success: false, message: 'アップロードは無効化されています' }),
+        { status: 403, headers: { 'content-type': 'application/json; charset=utf-8' } }
+      )
+    }
     const { searchParams } = new URL(request.url)
     const urlParam = searchParams.get('url')
     if (!urlParam) {
@@ -100,13 +92,8 @@ export const DELETE: APIRoute = async ({ request }) => {
         headers: { 'content-type': 'application/json; charset=utf-8' }
       })
     }
-    const fileUrl = join(UPLOAD_DIR, filename)
-    const { unlink } = await import('node:fs/promises')
-    try {
-      await unlink(fileUrl)
-    } catch {
-      // ファイルが存在しない場合も 200 (冪等性)
-    }
+    // FileUploader 経由で削除（存在しない場合も true/false で返るが 200 とする）
+    await uploader.deleteFile(filename)
     return new Response(JSON.stringify({ success: true, data: { deleted: true } }), {
       status: 200,
       headers: { 'content-type': 'application/json; charset=utf-8' }
