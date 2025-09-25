@@ -132,6 +132,17 @@ class AdminNewsFetch extends BaseApiFetch {
     return response
   }
 
+  // 管理者用のお知らせを更新（ファイルアップロード対応）
+  async updateNewsWithFiles(id: number, formData: FormData) {
+    const config = getConfig()
+    const response = await this.requestWithFormData<News>(
+      `${config.api.adminUrl}/news/${id}`,
+      formData,
+      'PUT'
+    )
+    return response
+  }
+
   // 管理者用のお知らせを削除
   async deleteNews(id: number) {
     const config = getConfig()

@@ -22,7 +22,7 @@
     "db:seed:articles:additional": "node prisma/seeds/articles-additional.mjs"
   },
   "dependencies": {
-    "@astrojs/node": "^9.4.3",
+    "@astrojs/node": "^9.4.4",
     "@astrojs/react": "^4.3.1",
     "@fullcalendar/core": "^6.1.19",
     "@fullcalendar/daygrid": "^6.1.19",
@@ -32,14 +32,14 @@
     "@mdx-js/react": "^3.1.1",
     "@nanostores/react": "^1.0.0",
     "@prisma/client": "^6.16.2",
-    "astro": "^5.13.9",
+    "astro": "^5.13.11",
     "astro-icon": "^1.1.5",
     "bcryptjs": "^3.0.2",
     "cookie-signature": "^1.2.2",
     "date-fns": "^4.1.0",
     "flowbite": "^3.1.2",
     "generate-password-ts": "^1.6.5",
-    "ioredis": "^5.7.0",
+    "ioredis": "^5.8.0",
     "leaflet": "^1.9.4",
     "nanostores": "^1.0.1",
     "react": "^19.1.1",
@@ -65,7 +65,7 @@
     "@types/react": "^19.1.13",
     "@types/react-dom": "^19.1.9",
     "@types/unist": "^3.0.3",
-    "@typescript-eslint/parser": "^8.44.0",
+    "@typescript-eslint/parser": "^8.44.1",
     "astro-eslint-parser": "^1.2.2",
     "eslint": "^9.36.0",
     "eslint-plugin-astro": "^1.3.1",
@@ -74,11 +74,11 @@
     "prettier-plugin-astro": "^0.14.1",
     "prettier-plugin-tailwindcss": "^0.6.14",
     "prisma": "^6.16.2",
-    "sass-embedded": "^1.93.0",
+    "sass-embedded": "^1.93.2",
     "sharp": "^0.34.4",
     "tailwindcss": "^4.1.13",
     "typescript": "^5.9.2",
-    "typescript-eslint": "^8.44.0",
+    "typescript-eslint": "^8.44.1",
     "unist-util-visit": "^5.0.0"
   }
 }

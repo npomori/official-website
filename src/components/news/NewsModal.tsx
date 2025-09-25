@@ -129,16 +129,27 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
       const dateString = values.date!.toLocaleString('sv-SE').split(' ')[0]
 
       if (isEditMode && news?.id) {
-        // お知らせの更新の場合
-        const result = await AdminNewsFetch.updateNews(parseInt(news.id), {
-          title: values.title,
-          content: values.content,
-          date: dateString as string,
-          categories: values.categories,
-          priority: values.priority,
-          isMemberOnly: values.isMemberOnly,
-          author: values.author
+        // お知らせの更新の場合（ファイルアップロード対応）
+        const formData = new FormData()
+        formData.append('title', values.title)
+        formData.append('content', values.content)
+        formData.append('date', dateString as string)
+        formData.append('categories', JSON.stringify(values.categories))
+        if (values.priority) formData.append('priority', values.priority)
+        formData.append('isMemberOnly', values.isMemberOnly.toString())
+        formData.append('author', values.author)
+
+        // 新規追加ファイル
+        selectedFiles.forEach((file) => {
+          formData.append('files', file)
         })
+
+        // 既存ファイルのうち削除対象（サーバー側で消す用にfilenameを渡す）
+        if (removedFiles.length > 0) {
+          formData.append('removedFiles', JSON.stringify(removedFiles))
+        }
+
+        const result = await AdminNewsFetch.updateNewsWithFiles(parseInt(news.id), formData)
 
         if (result.success) {
           setSuccess('お知らせを更新しました')

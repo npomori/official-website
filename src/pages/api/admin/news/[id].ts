@@ -2,12 +2,7 @@ import { validateNewsApi } from '@/schemas/news'
 import NewsDB from '@/server/db/news'
 import FileUploader from '@/server/utils/file-upload'
 import { getNewsUploadConfig } from '@/types/config'
-import type {
-  NewsDeleteResponse,
-  NewsDetailResponse,
-  NewsUpdateResponse,
-  UpdateNewsData
-} from '@/types/news'
+import type { UpdateNewsData } from '@/types/news'
 import type { APIRoute } from 'astro'
 import { join } from 'path'
 import { z } from 'zod'
@@ -77,9 +72,36 @@ export const PUT: APIRoute = async ({ params, request }) => {
         }
       })
     }
+    // Content-Typeを確認（multipart/form-data のみ受け付け）
+    const contentType = request.headers.get('content-type') || ''
+    if (!contentType.includes('multipart/form-data')) {
+      return new Response(
+        JSON.stringify({ success: false, message: 'multipart/form-data で送信してください' }),
+        { status: 415, headers: { 'Content-Type': 'application/json' } }
+      )
+    }
 
-    const body = await request.json()
-    const { title, content, date, categories, priority, isMemberOnly, author, attachments } = body
+    // FormDataから値を取得
+    const formData = await request.formData()
+    const title = String(formData.get('title') || '')
+    const content = String(formData.get('content') || '')
+    const date = String(formData.get('date') || '')
+    let categories: string[]
+    try {
+      categories = JSON.parse(String(formData.get('categories') || '[]'))
+    } catch {
+      categories = []
+    }
+    const priority = (formData.get('priority') as string) || null
+    const isMemberOnly = String(formData.get('isMemberOnly') || 'false') === 'true'
+    const author = String(formData.get('author') || '')
+    const newFiles = (formData.getAll('files') as File[]) || []
+    let removedFiles: string[]
+    try {
+      removedFiles = JSON.parse(String(formData.get('removedFiles') || '[]'))
+    } catch {
+      removedFiles = []
+    }
 
     // zodスキーマでバリデーション
     try {
@@ -134,12 +156,71 @@ export const PUT: APIRoute = async ({ params, request }) => {
       date: new Date((date as string) + 'T00:00:00+09:00'), // 日本時間に変換
       categories,
       isMemberOnly,
-      author,
-      attachments: attachments || []
+      author
     }
 
     if (priority) {
       updateData.priority = priority
+    }
+
+    // 添付ファイルの処理（既存 - 削除 + 新規アップロード）
+    const newsFileUploader = new FileUploader(UPLOAD_DIR)
+    const newsConfig = (await import('@/config/config.json')).default.upload.news
+
+    // バリデーション（ファイル数/型/サイズ）
+    if (newFiles.length > 0) {
+      for (const file of newFiles) {
+        if (!newsFileUploader.validateFileType(file, newsConfig.allowedTypes)) {
+          return new Response(
+            JSON.stringify({
+              success: false,
+              message: `ファイルタイプが許可されていません: ${file.name}`
+            }),
+            { status: 400, headers: { 'Content-Type': 'application/json' } }
+          )
+        }
+        if (!newsFileUploader.validateFileSize(file, newsConfig.maxFileSize)) {
+          const maxSizeMB = Math.round(newsConfig.maxFileSize / (1024 * 1024))
+          return new Response(
+            JSON.stringify({
+              success: false,
+              message: `ファイルサイズが大きすぎます: ${file.name} (最大${maxSizeMB}MB)`
+            }),
+            { status: 400, headers: { 'Content-Type': 'application/json' } }
+          )
+        }
+      }
+    }
+
+    // 既存添付から削除対象を除外
+    const currentAttachments = (existingNews.attachments || []).filter((att) =>
+      removedFiles.length > 0 ? !removedFiles.includes(att.filename) : true
+    )
+
+    // 合計ファイル数の検証（既存-削除+新規 <= maxFiles）
+    const totalAfterUpdate = currentAttachments.length + newFiles.length
+    if (totalAfterUpdate > newsConfig.maxFiles) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: `ファイル数が多すぎます (最大${newsConfig.maxFiles}個)`
+        }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      )
+    }
+
+    // 新規ファイルをアップロード
+    let uploadedAttachments: { originalName: string; filename: string }[] = []
+    if (newFiles.length > 0) {
+      uploadedAttachments = await newsFileUploader.uploadFiles(newFiles)
+    }
+
+    // 合成
+    updateData.attachments = [...currentAttachments, ...uploadedAttachments]
+
+    // 物理削除
+    if (removedFiles.length > 0) {
+      await newsFileUploader.deleteFiles(removedFiles)
     }
 
     const updatedNews = await NewsDB.updateNews(id, updateData)
