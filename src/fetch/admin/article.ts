@@ -81,19 +81,18 @@ class AdminArticleFetch extends BaseApiFetch {
   }
 
   // 記事を更新（JSON）
-  async updateArticle(id: number, data: UpdateArticleData & { content: string }) {
+  /*async updateArticle(id: number, data: UpdateArticleData & { content: string }) {
     const config = getConfig()
     const response = await this.requestWithJson(`${config.api.adminUrl}/article/${id}`, data, 'PUT')
     return response
-  }
+  }*/
 
   // 記事を作成（JSON）
-  async createArticle(data: CreateArticleData) {
+  /*async createArticle(data: CreateArticleData) {
     const config = getConfig()
     const response = await this.requestWithJson(`${config.api.adminUrl}/article`, data, 'POST')
     return response
-  }
+  }*/
 }
 
-const adminArticleFetch = new AdminArticleFetch()
-export default adminArticleFetch
+export default new AdminArticleFetch()

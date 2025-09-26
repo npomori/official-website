@@ -13,7 +13,7 @@ import type {
 import { BaseApiFetch } from '../base'
 
 class AdminRecordFetch extends BaseApiFetch {
-  async createRecord(params: RecordCreateRequest) {
+  /*async createRecord(params: RecordCreateRequest) {
     const config = getConfig()
     const response = await this.requestWithJson<Record>(
       `${config.api.adminUrl}/record`,
@@ -21,7 +21,7 @@ class AdminRecordFetch extends BaseApiFetch {
       'POST'
     )
     return response
-  }
+  }*/
 
   async createRecordWithImages(params: RecordCreateWithImagesRequest) {
     const config = getConfig()
@@ -46,7 +46,7 @@ class AdminRecordFetch extends BaseApiFetch {
     return response
   }
 
-  async updateRecord(id: number, params: RecordAdminRequest) {
+  /*async updateRecord(id: number, params: RecordAdminRequest) {
     const config = getConfig()
     const response = await this.requestWithJson<Record>(
       `${config.api.adminUrl}/record/${id}`,
@@ -54,7 +54,7 @@ class AdminRecordFetch extends BaseApiFetch {
       'PUT'
     )
     return response
-  }
+  }*/
 
   async updateRecordWithImages(id: number, params: RecordUpdateWithImagesRequest) {
     const config = getConfig()

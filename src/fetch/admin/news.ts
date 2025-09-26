@@ -74,7 +74,7 @@ class AdminNewsFetch extends BaseApiFetch {
   }
 
   // 管理者用のお知らせを作成（従来の方法）
-  async createNews(newsData: {
+  /*async createNews(newsData: {
     title: string
     content: string
     date: string
@@ -107,9 +107,10 @@ class AdminNewsFetch extends BaseApiFetch {
       'POST'
     )
     return response
-  }
+  }*/
 
   // 管理者用のお知らせを更新
+  /*
   async updateNews(
     id: number,
     newsData: {
@@ -130,7 +131,7 @@ class AdminNewsFetch extends BaseApiFetch {
       'PUT'
     )
     return response
-  }
+  }*/
 
   // 管理者用のお知らせを更新（ファイルアップロード対応）
   async updateNewsWithFiles(id: number, formData: FormData) {
