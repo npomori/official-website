@@ -1,10 +1,10 @@
 # NPO森 公式サイト（official-website）
 
-Astro v5 + React 19 + Tailwind CSS 4 をベースに、会員向け機能（ニュース/記録/イベント/記事）と管理UIを備えた公式ウェブサイトです。サーバーは Astro Node アダプタ（standalone）で、認証は Redis セッション + Cookie（Remember Me）、DB は Prisma + MySQL を使用します。
+Astro v5 + React 19 + Tailwind CSS 4 をベースに、会員向け機能（ニュース/活動記録/イベント/記事）と管理UIを備えた公式ウェブサイトです。サーバーは Astro Node アダプタ（standalone）で、認証は Redis セッション + Cookie（Remember Me）、DB は Prisma + MySQL を使用します。
 
 ## 技術スタック
 
-- フレームワーク: `Astro v5`（Hybrid SSR/CSR）、`@astrojs/react`
+- フレームワーク: `Astro v5`（SSR）、`@astrojs/react`
 - 言語: `TypeScript`
 - フロント: `React 19`、`SWR 2`、`Nanostores`
 - スタイル: `Tailwind CSS 4`（`@tailwindcss/vite`、`prettier-plugin-tailwindcss`）
@@ -149,7 +149,7 @@ public/              # 静的アセット・アップロード保存先
 
 ## ライセンス
 
-本リポジトリに LICENSE は含まれていません。必要に応じてプロジェクト方針に合ったライセンスを追加してください。
+このプロジェクトは [MITライセンス](./LICENSE) の下で提供されています。
 
 ## 参考リンク
 
