@@ -8,7 +8,6 @@ Astro v5 + React 19 + Tailwind CSS 4 をベースに、会員向け機能（ニ�
 - 言語: `TypeScript`
 - フロント: `React 19`、`SWR 2`、`Nanostores`
 - スタイル: `Tailwind CSS 4`（`@tailwindcss/vite`、`prettier-plugin-tailwindcss`）
-- コンテンツ: `astro:content`（`src/content/config.ts`）
 - サーバ/API: Astro Middleware + API Routes（`src/middleware/*`, `src/pages/api/*`）
 - 認証/セッション: Redis セッション（`ioredis`）+ Cookie（Remember Me）
 - DB: Prisma + MySQL（`prisma/schema.prisma`）

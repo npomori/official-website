@@ -23,6 +23,8 @@ export const getErrorMessage = (status: number, message?: string): string => {
       return 'アクセス権限がありません'
     case 404:
       return 'リソースが見つかりません'
+    case 415:
+      return message || 'サポートされていないメディアタイプです'
     case 422:
       return message || '入力内容に問題があります'
     case 500:
