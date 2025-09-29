@@ -96,6 +96,7 @@
     }
   },
   "content": {
+    "titleMaxLength": 30,
     "record": {
       "editDays": 7
     },

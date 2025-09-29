@@ -1,12 +1,15 @@
+import config from '@/types/config'
 import { z } from 'zod'
 
 // 記録データのスキーマ
+const TITLE_MAX = config.content.titleMaxLength ?? 100
+
 export const RecordDataSchema = z.object({
   location: z
     .string()
     .trim()
     .min(1, '活動場所は必須です')
-    .max(200, '活動場所は200文字以内で入力してください'),
+    .max(TITLE_MAX, `活動場所は${TITLE_MAX}文字以内で入力してください`),
   datetime: z
     .string()
     .trim()
@@ -67,7 +70,7 @@ export const safeValidateRecordData = (
     return { success: true, data: validatedData }
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const firstError = error.errors[0]
+      const firstError = error.issues[0]
       return { success: false, error: firstError?.message || 'バリデーションエラーが発生しました' }
     }
     return { success: false, error: 'バリデーションエラーが発生しました' }
@@ -82,7 +85,7 @@ export const safeValidateRecordRequest = (
     return { success: true, data: validatedData }
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const firstError = error.errors[0]
+      const firstError = error.issues[0]
       return { success: false, error: firstError?.message || 'バリデーションエラーが発生しました' }
     }
     return { success: false, error: 'バリデーションエラーが発生しました' }

@@ -1,3 +1,4 @@
+import config from '@/types/config'
 import { z } from 'zod'
 
 // ファイル添付のスキーマ
@@ -9,12 +10,14 @@ export const attachmentSchema = z
   .or(z.string()) // 文字列（ファイル名のみ）も許可
 
 // 基本的なお知らせスキーマ
+const TITLE_MAX = config.content.titleMaxLength ?? 100
+
 export const newsBaseSchema = z.object({
   title: z
     .string()
     .trim()
     .min(1, { message: 'タイトルは必須です' })
-    .max(100, { message: 'タイトルは100文字以内で入力してください' }),
+    .max(TITLE_MAX, { message: `タイトルは${TITLE_MAX}文字以内で入力してください` }),
   content: z
     .string()
     .trim()
