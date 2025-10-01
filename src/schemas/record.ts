@@ -1,8 +1,9 @@
-import config from '@/types/config'
+import { getConfig } from '@/types/config'
 import { z } from 'zod'
 
 // 記録データのスキーマ
-const TITLE_MAX = config.content.titleMaxLength ?? 100
+const config = getConfig()
+const TITLE_MAX = config.content?.titleMaxLength ?? 100
 
 export const RecordDataSchema = z.object({
   location: z
