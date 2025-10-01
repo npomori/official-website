@@ -30,7 +30,7 @@ const NewsList: React.FC = () => {
 
   // 設定を取得
   const config = getConfig()
-  const itemsPerPage = config.pagination.newsList.itemsPerPage
+  const itemsPerPage = config.pagination?.newsList?.itemsPerPage ?? 10
 
   // 管理権限をチェック
   const hasAdminRole =
