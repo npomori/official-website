@@ -17,7 +17,7 @@ import React, { useEffect, useState } from 'react'
 const UpcomingEvents: React.FC = () => {
   // 設定から表示件数を取得
   const config = getConfig()
-  const itemsPerPage = config.home.events.itemsPerPage
+  const itemsPerPage = config.home?.events?.itemsPerPage ?? 3
 
   const [events, setEvents] = useState<EventResponse[]>([])
   const [loading, setLoading] = useState(true)
