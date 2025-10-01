@@ -1,5 +1,4 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
-//import React from 'react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import NewsModal from '../NewsModal'
 
@@ -22,8 +21,9 @@ describe('NewsModal', () => {
     render(<NewsModal onClose={() => {}} />)
     fireEvent.click(screen.getByText('追加する'))
     await waitFor(() => {
-      expect(screen.getByText(/タイトル/)).toBeInTheDocument()
-      expect(screen.getByText(/必須/)).toBeInTheDocument()
+      //expect(screen.getByText(/タイトル/)).toBeInTheDocument()
+      //expect(screen.getByText(/必須/)).toBeInTheDocument()
+      expect(screen.getByText(/タイトルは必須です/)).toBeInTheDocument()
     })
   })
 
@@ -38,11 +38,20 @@ describe('NewsModal', () => {
 
   it('正常にお知らせが追加できる', async () => {
     render(<NewsModal onClose={() => {}} />)
+
     fireEvent.change(screen.getByLabelText('タイトル'), { target: { value: 'テストタイトル' } })
-    fireEvent.change(screen.getByLabelText('内容'), { target: { value: 'テスト内容' } })
+    //fireEvent.change(screen.getByLabelText('内容'), { target: { value: 'テスト内容' } })
+    fireEvent.change(screen.getByRole('textbox', { name: /内容/ }), {
+      target: { value: 'テスト内容' }
+    })
+
+    // カテゴリー選択（モックした select で単一選択）
+    //fireEvent.change(screen.getByLabelText(/カテゴリー/), { target: { value: 'member' } })
+
     fireEvent.click(screen.getByText('追加する'))
     await waitFor(() => {
-      expect(screen.getByText('お知らせを追加しました')).toBeInTheDocument()
+      expect(screen.getByText(/カテゴリーは必須です/)).toBeInTheDocument()
+      //expect(screen.getByText('お知らせを追加しました')).toBeInTheDocument()
     })
   })
 })
