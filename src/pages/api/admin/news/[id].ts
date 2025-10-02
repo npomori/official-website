@@ -1,3 +1,4 @@
+import config from '@/config/config.json'
 import { validateNewsApi } from '@/schemas/news'
 import NewsDB from '@/server/db/news'
 import FileUploader from '@/server/utils/file-upload'
@@ -8,7 +9,10 @@ import { join } from 'path'
 import { z } from 'zod'
 
 const cfg = getNewsUploadConfig()
-const UPLOAD_DIR = join(process.cwd(), cfg.directory)
+console.log('News upload config:', cfg)
+console.log('News upload config:', config.upload.news.directory)
+//const UPLOAD_DIR = join(process.cwd(), cfg.directory)
+const UPLOAD_DIR = join(process.cwd(), config.upload.news.directory)
 
 // 管理者用の個別お知らせ取得
 export const GET: APIRoute = async ({ params }) => {
