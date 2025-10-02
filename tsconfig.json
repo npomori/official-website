@@ -12,8 +12,7 @@
     "noUnusedParameters": true,
 
     // module resolution
-    //"moduleResolution": "bundler",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "moduleDetection": "force",
     
