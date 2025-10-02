@@ -29,7 +29,7 @@ const RecordList: React.FC = () => {
   // 設定を取得
   const config = getConfig()
   const recordConfig = getRecordUploadConfig()
-  const itemsPerPage = config.pagination?.recordList?.itemsPerPage ?? 10
+  const itemsPerPage = config.pagination.recordList.itemsPerPage
 
   // SWRでデータを取得（カテゴリーフィルター対応）
   const { data, error, isLoading, mutate } = useSWR(

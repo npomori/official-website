@@ -7,7 +7,7 @@ import React from 'react'
 const NewsSection: React.FC = () => {
   // 設定から表示件数を取得
   const config = getConfig()
-  const itemsPerPage = config.home?.news?.itemsPerPage ?? 3
+  const itemsPerPage = config.home.news.itemsPerPage
 
   // 最新のお知らせを取得
   const {

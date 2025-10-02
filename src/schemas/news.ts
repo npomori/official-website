@@ -1,4 +1,4 @@
-import { getConfig } from '@/types/config'
+import config from '@/types/config'
 import { z } from 'zod'
 
 // ファイル添付のスキーマ
@@ -10,8 +10,7 @@ export const attachmentSchema = z
   .or(z.string()) // 文字列（ファイル名のみ）も許可
 
 // 基本的なお知らせスキーマ
-const config = getConfig()
-const TITLE_MAX = config.content?.titleMaxLength ?? 100
+const TITLE_MAX = config.content.titleMaxLength ?? 100
 
 export const newsBaseSchema = z.object({
   title: z
