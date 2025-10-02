@@ -2,19 +2,16 @@ import { safeValidateRecordData } from '@/schemas/record'
 import { RecordDB } from '@/server/db'
 import { getRecordUploadConfig } from '@/types/config'
 import type { APIRoute } from 'astro'
-import { mkdir, unlink } from 'fs/promises'      // 最大ファイル数チェック
-import type { join } from 'path'
-      if (images.length > (recordConfig?.maxFiles || 10)) {
-        return new Response(
-          JSON.stringify({
-            success: false,
-            message: `画像ファイルは最大${recordConfig?.maxFiles || 10}個までアップロードできます`
-          }), { join } from 'path'
+import { mkdir, unlink } from 'fs/promises'
+import { join } from 'path'
 import sharp from 'sharp'
 import { v4 as uuidv4 } from 'uuid'
 
 // 削除された画像ファイルを物理的に削除する関数
-async function deleteImageFiles(imageNames: string[], recordConfig: any) {
+async function deleteImageFiles(
+  imageNames: string[],
+  recordConfig: { directory?: string } | undefined
+) {
   const uploadDir = join(process.cwd(), recordConfig?.directory || 'public/uploads/records')
 
   await Promise.all(
@@ -188,7 +185,14 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
 
     // Content-Typeをチェックして、FormDataかJSONかを判定
     const contentType = request.headers.get('content-type') || ''
-    let body: any
+    let body: {
+      title?: string
+      date?: string
+      datetime?: string
+      category?: string
+      content?: string
+      [key: string]: unknown
+    }
     let images: File[] = []
 
     if (contentType.includes('multipart/form-data')) {
@@ -325,7 +329,7 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
       } else {
         eventDate = existingRecord.eventDate
       }
-    } catch (error) {
+    } catch {
       eventDate = existingRecord.eventDate
     }
 
