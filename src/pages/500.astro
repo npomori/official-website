@@ -1,0 +1,46 @@
+---
+import Layout from '@/layouts/Layout.astro'
+---
+
+<Layout title="サーバーエラー">
+  <div class="flex min-h-screen items-center justify-center bg-gray-50 px-4">
+    <div class="max-w-md text-center">
+      <div class="mb-8">
+        <svg
+          class="mx-auto h-24 w-24 text-red-500"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+          ></path>
+        </svg>
+      </div>
+      <h1 class="mb-4 text-4xl font-bold text-gray-800">サーバーエラー</h1>
+      <p class="mb-8 text-gray-600">
+        申し訳ございません。サーバーでエラーが発生しました。
+        <br />
+        しばらく時間をおいてから再度お試しください。
+      </p>
+      <div class="space-y-4">
+        <a
+          href="/"
+          class="bg-primary-600 hover:bg-primary-700 inline-block rounded-lg px-6 py-3 text-white transition-colors"
+        >
+          トップページに戻る
+        </a>
+        <button
+          onclick="window.location.reload()"
+          class="block w-full rounded-lg border border-gray-300 bg-white px-6 py-3 text-gray-700 transition-colors hover:bg-gray-50"
+        >
+          ページを再読み込み
+        </button>
+      </div>
+    </div>
+  </div>
+</Layout>

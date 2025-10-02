@@ -1,5 +1,7 @@
 import { sequence } from 'astro/middleware'
 
 import { auth } from './auth'
+import { onRequest as errorHandler } from './error'
 
-export const onRequest = sequence(auth)
+// エラーハンドリングを最外層に配置
+export const onRequest = sequence(errorHandler, auth)
