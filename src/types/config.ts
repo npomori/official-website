@@ -122,13 +122,13 @@ const config = configData as Config
 export default config
 
 // 便利な関数をエクスポート
-export const getRecordUploadConfig = () => config.upload.record
-export const getAvatarUploadConfig = () => config.upload.avatar
-export const getNewsUploadConfig = () => config.upload.news
-export const getArticleUploadConfig = () => config.upload.article
-export const getSiteConfig = () => config.site
+export const getRecordUploadConfig = () => config?.upload?.record
+export const getAvatarUploadConfig = () => config?.upload?.avatar
+export const getNewsUploadConfig = () => config?.upload?.news
+export const getArticleUploadConfig = () => config?.upload?.article
+export const getSiteConfig = () => config?.site
 export const getConfig = () => config
-export const getArticleContentConfig = () => config.content.article
+export const getArticleContentConfig = () => config?.content?.article
 
 // 記事用のアップロード設定
 interface ArticleUploadConfig {

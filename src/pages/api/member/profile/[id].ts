@@ -35,7 +35,10 @@ export const PUT: APIRoute = async (context) => {
     }
 
     // アップロードディレクトリの確認と作成
-    const uploadDir = path.join(process.cwd(), config.upload.avatar.directory)
+    const uploadDir = path.join(
+      process.cwd(),
+      config?.upload?.avatar?.directory || 'public/uploads/avatars'
+    )
     if (!fs.existsSync(uploadDir)) {
       fs.mkdirSync(uploadDir, { recursive: true })
     }

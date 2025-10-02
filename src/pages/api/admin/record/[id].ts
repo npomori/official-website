@@ -2,14 +2,20 @@ import { safeValidateRecordData } from '@/schemas/record'
 import { RecordDB } from '@/server/db'
 import { getRecordUploadConfig } from '@/types/config'
 import type { APIRoute } from 'astro'
-import { mkdir, unlink } from 'fs/promises'
-import { join } from 'path'
+import { mkdir, unlink } from 'fs/promises'      // 最大ファイル数チェック
+import type { join } from 'path'
+      if (images.length > (recordConfig?.maxFiles || 10)) {
+        return new Response(
+          JSON.stringify({
+            success: false,
+            message: `画像ファイルは最大${recordConfig?.maxFiles || 10}個までアップロードできます`
+          }), { join } from 'path'
 import sharp from 'sharp'
 import { v4 as uuidv4 } from 'uuid'
 
 // 削除された画像ファイルを物理的に削除する関数
 async function deleteImageFiles(imageNames: string[], recordConfig: any) {
-  const uploadDir = join(process.cwd(), recordConfig.directory)
+  const uploadDir = join(process.cwd(), recordConfig?.directory || 'public/uploads/records')
 
   await Promise.all(
     imageNames.map(async (imageName) => {
@@ -216,7 +222,7 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
       const recordConfig = getRecordUploadConfig()
 
       // 画像アップロード機能の有効性チェック
-      if (!recordConfig.enabled) {
+      if (!recordConfig?.enabled) {
         return new Response(
           JSON.stringify({
             success: false,
@@ -248,21 +254,21 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
       }
 
       // アップロードディレクトリを作成
-      const uploadDir = join(process.cwd(), recordConfig.directory)
+      const uploadDir = join(process.cwd(), recordConfig?.directory || 'public/uploads/records')
       await mkdir(uploadDir, { recursive: true })
 
       uploadedImageNames = await Promise.all(
         images.map(async (file) => {
           // ファイル形式チェック
-          if (!recordConfig.allowedTypes.includes(file.type)) {
+          if (!(recordConfig?.allowedTypes || []).includes(file.type)) {
             throw new Error(
-              `対応していないファイル形式です。対応形式: ${recordConfig.allowedTypes.join(', ')}`
+              `対応していないファイル形式です。対応形式: ${(recordConfig?.allowedTypes || []).join(', ')}`
             )
           }
 
           // ファイルサイズチェック
-          if (file.size > recordConfig.maxFileSize) {
-            const maxSizeMB = Math.round(recordConfig.maxFileSize / (1024 * 1024))
+          if (file.size > (recordConfig?.maxFileSize || 5242880)) {
+            const maxSizeMB = Math.round((recordConfig?.maxFileSize || 5242880) / (1024 * 1024))
             throw new Error(`ファイルサイズは${maxSizeMB}MB以下にしてください`)
           }
 
