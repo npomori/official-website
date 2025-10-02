@@ -1,4 +1,3 @@
-import config from '@/config/config.json'
 import { validateNewsApi } from '@/schemas/news'
 import NewsDB from '@/server/db/news'
 import FileUploader from '@/server/utils/file-upload'
@@ -7,6 +6,7 @@ import type { UpdateNewsData } from '@/types/news'
 import type { APIRoute } from 'astro'
 import { join } from 'path'
 import { z } from 'zod'
+import config from '../../../../config/config.json'
 
 const cfg = getNewsUploadConfig()
 console.log('News upload config:', cfg)
