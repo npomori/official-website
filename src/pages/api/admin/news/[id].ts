@@ -8,7 +8,7 @@ import { join } from 'path'
 import { z } from 'zod'
 
 const cfg = getNewsUploadConfig()
-const UPLOAD_DIR = join(process.cwd(), cfg?.directory || 'public/uploads/news')
+const UPLOAD_DIR = join(process.cwd(), cfg.directory)
 
 // 管理者用の個別お知らせ取得
 export const GET: APIRoute = async ({ params }) => {
@@ -170,7 +170,7 @@ export const PUT: APIRoute = async ({ params, request }) => {
     // バリデーション（ファイル数/型/サイズ）
     if (newFiles.length > 0) {
       for (const file of newFiles) {
-        if (!newsFileUploader.validateFileType(file, newsConfig?.allowedTypes || [])) {
+        if (!newsFileUploader.validateFileType(file, newsConfig.allowedTypes)) {
           return new Response(
             JSON.stringify({
               success: false,
@@ -179,8 +179,8 @@ export const PUT: APIRoute = async ({ params, request }) => {
             { status: 400, headers: { 'Content-Type': 'application/json' } }
           )
         }
-        if (!newsFileUploader.validateFileSize(file, newsConfig?.maxFileSize || 10485760)) {
-          const maxSizeMB = Math.round((newsConfig?.maxFileSize || 10485760) / (1024 * 1024))
+        if (!newsFileUploader.validateFileSize(file, newsConfig.maxFileSize)) {
+          const maxSizeMB = Math.round(newsConfig.maxFileSize / (1024 * 1024))
           return new Response(
             JSON.stringify({
               success: false,
@@ -199,11 +199,11 @@ export const PUT: APIRoute = async ({ params, request }) => {
 
     // 合計ファイル数の検証（既存-削除+新規 <= maxFiles）
     const totalAfterUpdate = currentAttachments.length + newFiles.length
-    if (totalAfterUpdate > (newsConfig?.maxFiles || 5)) {
+    if (totalAfterUpdate > newsConfig.maxFiles) {
       return new Response(
         JSON.stringify({
           success: false,
-          message: `ファイル数が多すぎます (最大${newsConfig?.maxFiles || 5}個)`
+          message: `ファイル数が多すぎます (最大${newsConfig.maxFiles}個)`
         }),
         { status: 400, headers: { 'Content-Type': 'application/json' } }
       )

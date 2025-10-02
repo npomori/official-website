@@ -116,7 +116,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
       if (imageFiles.length > 0) {
         // 画像アップロード機能の有効性チェック
-        if (!recordConfig?.enabled) {
+        if (!recordConfig.enabled) {
           return new Response(
             JSON.stringify({
               success: false,
@@ -132,11 +132,11 @@ export const POST: APIRoute = async ({ request, locals }) => {
         }
 
         // ファイル数の制限チェック
-        if (imageFiles.length > (recordConfig?.maxFiles || 10)) {
+        if (imageFiles.length > recordConfig.maxFiles) {
           return new Response(
             JSON.stringify({
               success: false,
-              message: `画像ファイルは最大${recordConfig?.maxFiles || 10}個までアップロードできます`
+              message: `画像ファイルは最大${recordConfig.maxFiles}個までアップロードできます`
             }),
             {
               status: 400,
@@ -148,21 +148,21 @@ export const POST: APIRoute = async ({ request, locals }) => {
         }
 
         // アップロードディレクトリを作成
-        const uploadDir = join(process.cwd(), recordConfig?.directory || 'public/uploads/records')
+        const uploadDir = join(process.cwd(), recordConfig.directory)
         await mkdir(uploadDir, { recursive: true })
 
         uploadedImageNames = await Promise.all(
           imageFiles.map(async (file, index) => {
             // ファイル形式チェック
-            if (!(recordConfig?.allowedTypes || []).includes(file.type)) {
+            if (!recordConfig.allowedTypes.includes(file.type)) {
               throw new Error(
-                `対応していないファイル形式です。対応形式: ${(recordConfig?.allowedTypes || []).join(', ')}`
+                `対応していないファイル形式です。対応形式: ${recordConfig.allowedTypes.join(', ')}`
               )
             }
 
             // ファイルサイズチェック
-            if (file.size > (recordConfig?.maxFileSize || 5242880)) {
-              const maxSizeMB = Math.round((recordConfig?.maxFileSize || 5242880) / (1024 * 1024))
+            if (file.size > recordConfig.maxFileSize) {
+              const maxSizeMB = Math.round(recordConfig.maxFileSize / (1024 * 1024))
               throw new Error(`ファイルサイズは${maxSizeMB}MB以下にしてください`)
             }
 

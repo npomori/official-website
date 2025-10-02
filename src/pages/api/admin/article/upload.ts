@@ -6,13 +6,13 @@ import { join } from 'node:path'
 const cfg = getArticleUploadConfig()
 // 保存先: config.upload.article.directory
 // 規約: ディレクトリへのアクセスは process.cwd() を基準に
-const UPLOAD_DIR = join(process.cwd(), cfg?.directory || 'public/uploads/articles')
+const UPLOAD_DIR = join(process.cwd(), cfg.directory)
 const uploader = new FileUploader(UPLOAD_DIR)
-const ALLOWED = cfg?.allowedTypes || []
+const ALLOWED = cfg.allowedTypes
 
 export const POST: APIRoute = async ({ request }) => {
   try {
-    if (!cfg?.enabled) {
+    if (!cfg.enabled) {
       return new Response(
         JSON.stringify({ success: false, message: 'アップロードは無効化されています' }),
         { status: 403, headers: { 'content-type': 'application/json; charset=utf-8' } }
@@ -35,7 +35,7 @@ export const POST: APIRoute = async ({ request }) => {
         headers: { 'content-type': 'application/json; charset=utf-8' }
       })
     }
-    if (!uploader.validateFileSize(file, cfg?.maxFileSize || 10485760)) {
+    if (!uploader.validateFileSize(file, cfg.maxFileSize)) {
       return new Response(JSON.stringify({ success: false, message: 'file too large' }), {
         status: 400,
         headers: { 'content-type': 'application/json; charset=utf-8' }
@@ -46,7 +46,7 @@ export const POST: APIRoute = async ({ request }) => {
     const saved = await uploader.uploadFile(file)
     const filename = saved.filename
 
-    const baseUrl = cfg?.url?.replace(/\/$/, '') || '/uploads/articles'
+    const baseUrl = cfg.url.replace(/\/$/, '')
     const url = `${baseUrl}/${filename}`
 
     return new Response(JSON.stringify({ success: true, data: { url } }), {
@@ -63,7 +63,7 @@ export const POST: APIRoute = async ({ request }) => {
 
 export const DELETE: APIRoute = async ({ request }) => {
   try {
-    if (!cfg?.enabled) {
+    if (!cfg.enabled) {
       return new Response(
         JSON.stringify({ success: false, message: 'アップロードは無効化されています' }),
         { status: 403, headers: { 'content-type': 'application/json; charset=utf-8' } }
@@ -78,7 +78,7 @@ export const DELETE: APIRoute = async ({ request }) => {
       })
     }
     // 期待形式: <cfg.url>/<filename>
-    const baseUrl = cfg?.url?.replace(/\/$/, '') || '/uploads/articles'
+    const baseUrl = cfg.url.replace(/\/$/, '')
     if (!urlParam.startsWith(`${baseUrl}/`)) {
       return new Response(JSON.stringify({ success: false, message: 'invalid path' }), {
         status: 400,

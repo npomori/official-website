@@ -9,7 +9,7 @@ import { join } from 'path'
 import { z } from 'zod'
 
 const cfg = getNewsUploadConfig()
-const UPLOAD_DIR = join(process.cwd(), cfg?.directory || 'public/uploads/news')
+const UPLOAD_DIR = join(process.cwd(), cfg.directory)
 
 // 管理者用のお知らせ一覧取得
 export const GET: APIRoute = async ({ url }) => {
@@ -145,11 +145,11 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
     if (files && files.length > 0) {
       // ファイル数のバリデーション
-      if (!newsFileUploader.validateFileCount(files, newsConfig?.maxFiles || 5)) {
+      if (!newsFileUploader.validateFileCount(files, newsConfig.maxFiles)) {
         return new Response(
           JSON.stringify({
             success: false,
-            message: `ファイル数が多すぎます (最大${newsConfig?.maxFiles || 5}個)`
+            message: `ファイル数が多すぎます (最大${newsConfig.maxFiles}個)`
           }),
           {
             status: 400,
@@ -162,7 +162,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
       // ファイルのバリデーション
       for (const file of files) {
-        if (!newsFileUploader.validateFileType(file, newsConfig?.allowedTypes || [])) {
+        if (!newsFileUploader.validateFileType(file, newsConfig.allowedTypes)) {
           return new Response(
             JSON.stringify({
               success: false,
@@ -177,8 +177,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
           )
         }
 
-        if (!newsFileUploader.validateFileSize(file, newsConfig?.maxFileSize || 10485760)) {
-          const maxSizeMB = Math.round((newsConfig?.maxFileSize || 10485760) / (1024 * 1024))
+        if (!newsFileUploader.validateFileSize(file, newsConfig.maxFileSize)) {
+          const maxSizeMB = Math.round(newsConfig.maxFileSize / (1024 * 1024))
           return new Response(
             JSON.stringify({
               success: false,

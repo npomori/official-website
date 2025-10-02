@@ -5,7 +5,7 @@ import { join } from 'node:path'
 // MDX本文から /uploads/articles/... のURLを抽出
 export function extractArticleImageUrls(content: string): string[] {
   if (!content) return []
-  const uploadUrl = getArticleUploadConfig()?.url?.replace(/\/$/, '') || '/uploads/articles'
+  const uploadUrl = getArticleUploadConfig().url.replace(/\/$/, '')
   const re = new RegExp(String.raw`${escapeRegExp(uploadUrl)}/[^\s"'()<>]+`, 'g')
   const set = new Set<string>()
   let m: RegExpExecArray | null
@@ -23,13 +23,13 @@ export function urlToFilename(url: string): string | null {
 
 // 記事ID配下のURLか判定
 export function isArticleScopedUrl(url: string, articleId: number): boolean {
-  const uploadUrl = getArticleUploadConfig()?.url?.replace(/\/$/, '') || '/uploads/articles'
+  const uploadUrl = getArticleUploadConfig().url.replace(/\/$/, '')
   return url.startsWith(`${uploadUrl}/${articleId}/`)
 }
 
 // ドラフト配下のURLか判定
 export function isDraftScopedUrl(url: string, draftId: string): boolean {
-  const uploadUrl = getArticleUploadConfig()?.url?.replace(/\/$/, '') || '/uploads/articles'
+  const uploadUrl = getArticleUploadConfig().url.replace(/\/$/, '')
   return url.startsWith(`${uploadUrl}/_draft/${draftId}/`)
 }
 
@@ -40,7 +40,7 @@ export async function deleteUnusedArticleImages(
   articleId: number
 ) {
   const uploadCfg = getArticleUploadConfig()
-  const baseDir = join(process.cwd(), uploadCfg?.directory || 'public/uploads/articles')
+  const baseDir = join(process.cwd(), uploadCfg.directory)
   const oldUrls = extractArticleImageUrls(oldContent).filter((u) =>
     isArticleScopedUrl(u, articleId)
   )
@@ -72,8 +72,8 @@ export async function moveDraftImagesToArticle(
 ): Promise<string> {
   if (!draftId || !content) return content
   const uploadCfg = getArticleUploadConfig()
-  const uploadUrl = uploadCfg?.url?.replace(/\/$/, '') || '/uploads/articles'
-  const baseDir = join(process.cwd(), uploadCfg?.directory || 'public/uploads/articles')
+  const uploadUrl = uploadCfg.url.replace(/\/$/, '')
+  const baseDir = join(process.cwd(), uploadCfg.directory)
 
   const urls = extractArticleImageUrls(content).filter((u) => isDraftScopedUrl(u, draftId))
   if (urls.length === 0) return content
@@ -122,7 +122,7 @@ export async function deleteUnusedArticleImagesByNames(
   newNames: string[] | null | undefined
 ) {
   const uploadCfg = getArticleUploadConfig()
-  const baseDir = join(process.cwd(), uploadCfg?.directory || 'public/uploads/articles')
+  const baseDir = join(process.cwd(), uploadCfg.directory)
   const oldSet = new Set(oldNames || [])
   const newSet = new Set(newNames || [])
   const targets = Array.from(oldSet).filter((n) => !newSet.has(n))
