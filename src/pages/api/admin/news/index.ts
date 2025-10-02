@@ -8,8 +8,13 @@ import type { APIRoute } from 'astro'
 import { join } from 'path'
 import { z } from 'zod'
 
+//const cfg = getNewsUploadConfig()
+//const UPLOAD_DIR = join(process.cwd(), cfg.directory)
 const cfg = getNewsUploadConfig()
-const UPLOAD_DIR = join(process.cwd(), cfg.directory)
+console.log('News upload config:', cfg)
+console.log('News upload config:', config.upload.news.directory)
+//const UPLOAD_DIR = join(process.cwd(), cfg.directory)
+const UPLOAD_DIR = join(process.cwd(), config.upload.news.directory)
 
 // 管理者用のお知らせ一覧取得
 export const GET: APIRoute = async ({ url }) => {
