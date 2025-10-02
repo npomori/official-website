@@ -9,6 +9,7 @@ import { join } from 'path'
 import { z } from 'zod'
 
 const cfg = getNewsUploadConfig()
+console.log('News upload config:', config)
 console.log('News upload config:', cfg)
 console.log('News upload config:', config.upload.news.directory)
 //const UPLOAD_DIR = join(process.cwd(), cfg.directory)

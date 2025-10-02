@@ -22,13 +22,9 @@
     "esModuleInterop": true,
 
     // Path aliases
-    // "baseUrl": "./src",
-    // "paths": {
-    //   "@/*": ["*"]
-    // }
-    "baseUrl": ".",
+    "baseUrl": "./src",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["*"]
     }
   }
 }
