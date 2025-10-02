@@ -1,3 +1,4 @@
+import config from '@/config/config.json'
 import { validateNewsApi } from '@/schemas/news'
 import NewsDB from '@/server/db/news'
 import FileUploader from '@/server/utils/file-upload'
@@ -6,7 +7,6 @@ import type { CreateNewsData, NewsCreateResponse, NewsListResponse } from '@/typ
 import type { APIRoute } from 'astro'
 import { join } from 'path'
 import { z } from 'zod'
-import config from '../../../../config/config.json'
 
 //const cfg = getNewsUploadConfig()
 //const UPLOAD_DIR = join(process.cwd(), cfg.directory)
