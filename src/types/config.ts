@@ -3,7 +3,8 @@ import configData from '@/config/config.json'
 // 設定ファイルの型定義
 interface SiteConfig {
   title: string
-  logo: string
+  logoSite: string
+  logoAdmin: string
   favicon: string
   comments: {
     enabled: boolean
