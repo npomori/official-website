@@ -6,6 +6,13 @@ interface SiteConfig {
   logoSite: string
   logoAdmin: string
   favicon: string
+  organization: {
+    name: string
+    url: string
+  }
+  head: {
+    defaultDescription: string
+  }
   comments: {
     enabled: boolean
   }

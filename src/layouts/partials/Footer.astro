@@ -1,4 +1,6 @@
 ---
+import config from '@/config/config.json'
+
 const currentYear = new Date().getFullYear()
 ---
 
@@ -35,7 +37,7 @@ const currentYear = new Date().getFullYear()
       </div>
     </div>
     <div class="mt-8 text-center">
-      <p>&copy; {currentYear} 日本森林ボランティア協会 All rights reserved.</p>
+      <p>&copy; {currentYear} {config.site.organization.name} All rights reserved.</p>
     </div>
   </div>
 </footer>

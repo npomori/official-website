@@ -1,4 +1,6 @@
 ---
+import config from '@/config/config.json'
+
 interface Props {
   titleLine1?: string
   titleLine2?: string
@@ -7,7 +9,7 @@ interface Props {
 
 const {
   titleLine1 = 'NPO法人',
-  titleLine2 = '日本森林ボランティア協会へようこそ',
+  titleLine2 = config.site.title + 'へようこそ',
   subtitle = '自然と人々のつながりを大切に、森林の保全活動を行っています'
 } = Astro.props
 ---

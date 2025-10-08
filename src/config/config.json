@@ -1,9 +1,16 @@
 {
   "site": {
-    "title": "カレンダーデモ",
+    "title": "仮想森林ボランティア協会",
     "logoSite": "/images/logo-site.png",
     "logoAdmin": "/images/logo-admin.png",
     "favicon": "/images/favicon.png",
+    "head": {
+      "defaultDescription": "森林ボランティア活動を通じて、自然環境の保全と地域社会の発展に貢献します。"
+    },
+    "organization": {
+      "name": "NPO法人 仮想森林ボランティア協会",
+      "url": "https://www.example.com"
+    },
     "comments": {
       "enabled": true
     }

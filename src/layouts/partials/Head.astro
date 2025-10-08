@@ -6,10 +6,7 @@ interface Props {
   description?: string
 }
 
-const {
-  title,
-  description = '森林ボランティア活動を通じて、自然環境の保全と地域社会の発展に貢献します。'
-} = Astro.props
+const { title, description = config.site.head.defaultDescription } = Astro.props
 ---
 
 <meta charset="UTF-8" />
@@ -21,4 +18,4 @@ const {
   rel="stylesheet"
   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 />
-<title>{title} | 日本森林ボランティア協会</title>
+<title>{title} | {config.site.title}</title>
