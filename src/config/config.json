@@ -1,7 +1,8 @@
 {
   "site": {
     "title": "カレンダーデモ",
-    "logo": "/images/logo.png",
+    "logoSite": "/images/logo-site.png",
+    "logoAdmin": "/images/logo-admin.png",
     "favicon": "/images/favicon.png",
     "comments": {
       "enabled": true
