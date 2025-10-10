@@ -1,6 +1,7 @@
 ---
 import { Icon } from 'astro-icon/components'
 import config from '@/config/config.json'
+import InitialsAvatar from '@/components/base/InitialsAvatar'
 
 interface Props {
   variant?: 'desktop' | 'mobile'
@@ -72,9 +73,12 @@ const avatarUrl = user?.avatar ? `${config.upload.avatar.url}/${user.avatar}` : 
             class="h-8 w-8 cursor-pointer rounded-full border border-gray-300 object-cover"
           />
         ) : (
-          <div class="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-gray-300 bg-blue-600">
-            <Icon class="h-8 w-8 text-white" name="mdi:account" />
-          </div>
+          <InitialsAvatar
+            name={user.name}
+            alt={`${user.name}のアバター`}
+            className="h-8 w-8 cursor-pointer rounded-full border border-gray-300"
+            boxSize={64}
+          />
         )}
         <svg class="ml-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
