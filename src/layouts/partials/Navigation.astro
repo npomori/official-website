@@ -4,10 +4,10 @@ import SearchMenu from './SearchMenu.astro'
 import AdminMenu from './AdminMenu.astro'
 import UserStoreInitializer from '@/components/UserStoreInitializer'
 import menuData from '@/config/menu.json'
-import { Icon } from 'astro-icon/components'
 import config from '@/config/config.json'
 import type { UserSessionData, UserAuth } from '@/types/user'
 import { convertToUserAuth } from '@/types/user'
+import InitialsAvatar from '@/components/base/InitialsAvatar'
 
 const user = (
   Astro.locals as {
@@ -47,16 +47,16 @@ const { currentPage } = Astro.props
                 <img
                   src={avatarUrl}
                   alt={`${user.name}のアバター`}
-                  class="h-8 w-8 cursor-pointer rounded-full border border-gray-300 object-cover"
+                  class="h-9 w-9 cursor-pointer rounded-full ring-1 ring-white/60 ring-offset-gray-300"
                   id="mobile-avatar"
                 />
               ) : (
-                <div
-                  class="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-gray-300 bg-blue-600"
-                  id="mobile-avatar"
-                >
-                  <Icon class="h-6 w-6 text-white" name="mdi:account" />
-                </div>
+                <InitialsAvatar
+                  name={user.name}
+                  alt={`${user.name}のアバター`}
+                  className="h-9 w-9 cursor-pointer rounded-full ring-1 ring-white/60 ring-offset-gray-300"
+                  boxSize={64}
+                />
               )}
             </div>
           )

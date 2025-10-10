@@ -70,13 +70,13 @@ const avatarUrl = user?.avatar ? `${config.upload.avatar.url}/${user.avatar}` : 
           <img
             src={avatarUrl}
             alt={`${user.name}のアバター`}
-            class="h-8 w-8 cursor-pointer rounded-full border border-gray-300 object-cover"
+            class="h-9 w-9 cursor-pointer rounded-full ring-1 ring-white/60 ring-offset-gray-300"
           />
         ) : (
           <InitialsAvatar
             name={user.name}
             alt={`${user.name}のアバター`}
-            className="h-8 w-8 cursor-pointer rounded-full border border-gray-300"
+            className="h-9 w-9 cursor-pointer rounded-full ring-1 ring-white/60 ring-offset-gray-300"
             boxSize={64}
           />
         )}
