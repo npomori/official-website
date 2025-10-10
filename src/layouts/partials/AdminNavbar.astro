@@ -1,8 +1,13 @@
 ---
 import config from '@/config/config.json'
 import InitialsAvatar from '@/components/base/InitialsAvatar'
+import type { UserSessionData } from '@/types/user'
 
-const user = Astro.locals.user
+const user = (
+  Astro.locals as {
+    user?: UserSessionData
+  }
+).user
 const avatarUrl = user?.avatar ? `${config.upload.avatar.url}/${user.avatar}` : null
 ---
 
@@ -47,56 +52,62 @@ const avatarUrl = user?.avatar ? `${config.upload.avatar.url}/${user.avatar}` : 
         </a>
       </div>
       <div class="mr-0 flex items-center lg:mr-64">
-        <!-- Profile -->
-        <div class="flex items-center">
-          <button
-            type="button"
-            class="inline-flex items-center justify-center overflow-hidden rounded-full"
-            aria-expanded="false"
-            data-dropdown-toggle="accountDropdown"
-            aria-label="userアイコン"
-          >
-            <span class="sr-only">Open user menu</span>
-            {
-              avatarUrl ? (
-                <img
-                  src={avatarUrl}
-                  alt={`${user.name}のアバター`}
-                  class="h-9 w-9 cursor-pointer rounded-full ring-1 ring-white/60 ring-offset-gray-300"
-                />
-              ) : (
-                <InitialsAvatar
-                  name={user.name}
-                  alt={`${user.name}のアバター`}
-                  className="h-9 w-9 cursor-pointer rounded-full ring-1 ring-white/60 ring-offset-gray-300"
-                  boxSize={64}
-                />
-              )
-            }
-          </button>
-          <!-- Dropdown menu -->
-          <div
-            class="z-50 my-4 hidden list-none divide-y divide-gray-100 rounded bg-white text-base shadow ring-1 ring-black/5"
-            id="accountDropdown"
-          >
-            <div class="px-4 py-3" role="none">
-              <p class="text-gray-900" role="none">{user.name}</p>
-              <p class="truncate text-gray-900" role="none">
-                {user.email}
-              </p>
+        {/* ユーザメニュー */}
+        {
+          user && (
+            <div class="flex items-center">
+              <button
+                type="button"
+                class="inline-flex items-center justify-center overflow-hidden rounded-full"
+                aria-expanded="false"
+                data-dropdown-toggle="accountDropdown"
+                aria-label="userアイコン"
+              >
+                <span class="sr-only">Open user menu</span>
+                {avatarUrl ? (
+                  <img
+                    src={avatarUrl}
+                    alt={`${user.name}のアバター`}
+                    class="h-9 w-9 cursor-pointer rounded-full ring-1 ring-white/60 ring-offset-gray-300"
+                  />
+                ) : (
+                  <InitialsAvatar
+                    name={user.name}
+                    alt={`${user.name}のアバター`}
+                    className="h-9 w-9 cursor-pointer rounded-full ring-1 ring-white/60 ring-offset-gray-300"
+                    boxSize={64}
+                  />
+                )}
+              </button>
+              {/* Dropdown menu */}
+              <div
+                class="z-50 my-4 hidden list-none divide-y divide-gray-100 rounded bg-white text-base shadow ring-1 ring-black/5"
+                id="accountDropdown"
+              >
+                <div class="px-4 py-3" role="none">
+                  <p class="text-gray-900" role="none">
+                    {user.name}
+                  </p>
+                  <p class="truncate text-gray-900" role="none">
+                    {user.email}
+                  </p>
+                </div>
+                <ul class="py-1" role="none">
+                  <li>
+                    <a
+                      id="logout"
+                      href="#"
+                      class="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                      role="menuitem"
+                    >
+                      ログアウト
+                    </a>
+                  </li>
+                </ul>
+              </div>
             </div>
-            <ul class="py-1" role="none">
-              <li>
-                <a
-                  id="logout"
-                  href="#"
-                  class="block px-4 py-2 text-gray-700 hover:bg-gray-100"
-                  role="menuitem">ログアウト</a
-                >
-              </li>
-            </ul>
-          </div>
-        </div>
+          )
+        }
       </div>
     </div>
   </div>
