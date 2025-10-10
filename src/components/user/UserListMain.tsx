@@ -70,13 +70,13 @@ const UserList: FC<UserListProps> = ({ users, onEdit, onDelete }) => {
                         <img
                           src={`${config.upload.avatar.url}/${user.avatar}`}
                           alt={`${user.name}のアバター`}
-                          className="h-10 w-10 cursor-pointer rounded-full ring-1 ring-white/60 ring-offset-gray-300"
+                          className="h-10 w-10 rounded-full ring-1 ring-white/60 ring-offset-gray-300"
                         />
                       ) : (
                         <InitialsAvatar
                           name={user.name}
                           alt={`${user.name}のアバター`}
-                          className="h-10 w-10 cursor-pointer rounded-full ring-1 ring-white/60 ring-offset-gray-300"
+                          className="h-10 w-10 rounded-full ring-1 ring-white/60 ring-offset-gray-300"
                           boxSize={64}
                         />
                       )}
