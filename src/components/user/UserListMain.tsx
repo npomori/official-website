@@ -1,4 +1,5 @@
 import Button from '@/components/base/Button'
+import InitialsAvatar from '@/components/base/InitialsAvatar'
 import config from '@/config/config.json'
 import { type IUser } from '@/types/user'
 import type { FC } from 'react'
@@ -56,7 +57,7 @@ const UserList: FC<UserListProps> = ({ users, onEdit, onDelete }) => {
                 {currentUsers.map((user) => (
                   <tr key={user.id} className="hover:bg-gray-100">
                     <td className="mr-12 flex items-center space-x-6 p-4 whitespace-nowrap">
-                      <img
+                      {/*<img
                         className="h-10 w-10 rounded-full border border-gray-300 object-cover"
                         src={
                           user.avatar
@@ -64,7 +65,21 @@ const UserList: FC<UserListProps> = ({ users, onEdit, onDelete }) => {
                             : `${config.upload.avatar.url}/${config.upload.avatar.default}`
                         }
                         alt={`${user.name} avatar`}
-                      />
+                      />*/}
+                      {user.avatar ? (
+                        <img
+                          src={`${config.upload.avatar.url}/${user.avatar}`}
+                          alt={`${user.name}のアバター`}
+                          className="h-10 w-10 cursor-pointer rounded-full ring-1 ring-white/60 ring-offset-gray-300"
+                        />
+                      ) : (
+                        <InitialsAvatar
+                          name={user.name}
+                          alt={`${user.name}のアバター`}
+                          className="h-10 w-10 cursor-pointer rounded-full ring-1 ring-white/60 ring-offset-gray-300"
+                          boxSize={64}
+                        />
+                      )}
                       <div className="font-normal text-gray-500">
                         <div className="text-base font-semibold text-gray-900">{user.name}</div>
                         <div className="font-normal text-gray-500">{user.email}</div>

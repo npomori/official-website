@@ -1,5 +1,6 @@
 import Alert from '@/components/base/Alert'
 import Button from '@/components/base/Button'
+import InitialsAvatar from '@/components/base/InitialsAvatar'
 import config from '@/config/config.json'
 import { MemberProfileFetch } from '@/fetch/member'
 import { showProfileModal } from '@/store/profile'
@@ -235,7 +236,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ userid }) => {
             {/* アバター設定 */}
             <div className="flex items-center space-x-4">
               <label className="group relative cursor-pointer">
-                <img
+                {/*<img
                   src={
                     tempImageUrl ||
                     (formData.avatar
@@ -244,7 +245,21 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ userid }) => {
                   }
                   alt="プロフィール画像"
                   className="h-20 w-20 rounded-full object-cover ring-2 ring-gray-200 transition-all group-hover:ring-blue-400"
-                />
+                />*/}
+                {tempImageUrl || formData.avatar ? (
+                  <img
+                    src={tempImageUrl || `${config.upload.avatar.url}/${formData.avatar}`}
+                    alt={`${formData.name}のプロフィール画像`}
+                    className="h-20 w-20 cursor-pointer rounded-full ring-1 ring-white/60 ring-offset-gray-300"
+                  />
+                ) : (
+                  <InitialsAvatar
+                    name={formData.name}
+                    alt={`${formData.name}のプロフィール画像`}
+                    className="h-20 w-20 cursor-pointer rounded-full ring-1 ring-white/60 ring-offset-gray-300"
+                    boxSize={64}
+                  />
+                )}
                 <span className="absolute right-0 bottom-0 cursor-pointer rounded-full bg-blue-600 p-2 text-white transition-colors hover:bg-blue-700">
                   <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path

@@ -1,5 +1,6 @@
 import Alert from '@/components/base/Alert'
 import Button from '@/components/base/Button'
+import InitialsAvatar from '@/components/base/InitialsAvatar'
 import config from '@/config/config.json'
 import { AdminEventFetch } from '@/fetch/admin'
 import CommentFetch from '@/fetch/comment'
@@ -400,6 +401,7 @@ const EventInfoModal: React.FC<EventInfoModalProps> = ({ isOpen, event, onClose,
                 {comments.map((comment) => (
                   <div key={comment.id} className="rounded-lg border border-gray-200 bg-white p-4">
                     <div className="flex items-start space-x-3">
+                      {/*}
                       <img
                         src={
                           comment.avatar ||
@@ -407,7 +409,21 @@ const EventInfoModal: React.FC<EventInfoModalProps> = ({ isOpen, event, onClose,
                         }
                         alt={comment.author}
                         className="h-10 w-10 rounded-full object-cover"
-                      />
+                      />*/}
+                      {comment.avatar ? (
+                        <img
+                          src={`${comment.avatar}`}
+                          alt={`${comment.author}のアバター`}
+                          className="h-10 w-10 cursor-pointer rounded-full ring-1 ring-white/60 ring-offset-gray-300"
+                        />
+                      ) : (
+                        <InitialsAvatar
+                          name={comment.author}
+                          alt={`${comment.author}のアバター`}
+                          className="h-10 w-10 cursor-pointer rounded-full ring-1 ring-white/60 ring-offset-gray-300"
+                          boxSize={64}
+                        />
+                      )}
                       <div className="flex-1 space-y-1">
                         <div className="flex items-center justify-between">
                           <h4 className="font-medium text-gray-900">{comment.author}</h4>

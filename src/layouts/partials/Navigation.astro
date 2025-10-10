@@ -47,14 +47,14 @@ const { currentPage } = Astro.props
                 <img
                   src={avatarUrl}
                   alt={`${user.name}のアバター`}
-                  class="h-9 w-9 cursor-pointer rounded-full ring-1 ring-white/60 ring-offset-gray-300"
+                  class="h-10 w-10 cursor-pointer rounded-full ring-1 ring-white/60 ring-offset-gray-300"
                   id="mobile-avatar"
                 />
               ) : (
                 <InitialsAvatar
                   name={user.name}
                   alt={`${user.name}のアバター`}
-                  className="h-9 w-9 cursor-pointer rounded-full ring-1 ring-white/60 ring-offset-gray-300"
+                  className="h-10 w-10 cursor-pointer rounded-full ring-1 ring-white/60 ring-offset-gray-300"
                   boxSize={64}
                 />
               )}

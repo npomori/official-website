@@ -1,5 +1,6 @@
 import Alert from '@/components/base/Alert'
 import Button from '@/components/base/Button'
+import InitialsAvatar from '@/components/base/InitialsAvatar'
 import config from '@/config/config.json'
 import { AdminUserFetch } from '@/fetch/admin'
 import { type IUser } from '@/types/user'
@@ -87,7 +88,7 @@ const UserDeleteModal: FC<UserDeleteModalProps> = ({ open, user, onClose, onUser
                 <div className="col-span-4">
                   <label className="mb-1 block font-medium text-gray-500">アバター</label>
                   <div className="flex items-center space-x-4">
-                    <img
+                    {/*<img
                       className="h-16 w-16 rounded-full border border-gray-300 object-cover"
                       src={
                         user.avatar
@@ -95,7 +96,21 @@ const UserDeleteModal: FC<UserDeleteModalProps> = ({ open, user, onClose, onUser
                           : `${config.upload.avatar.url}/${config.upload.avatar.default}`
                       }
                       alt={`${user.name} avatar`}
-                    />
+                    />*/}
+                    {user.avatar ? (
+                      <img
+                        src={`${config.upload.avatar.url}/${user.avatar}`}
+                        alt={`${user.name}のアバター`}
+                        className="h-16 w-16 rounded-full ring-1 ring-white/60 ring-offset-gray-300"
+                      />
+                    ) : (
+                      <InitialsAvatar
+                        name={user.name}
+                        alt={`${user.name}のアバター`}
+                        className="h-16 w-16 rounded-full ring-1 ring-white/60 ring-offset-gray-300"
+                        boxSize={64}
+                      />
+                    )}
                   </div>
                 </div>
 
