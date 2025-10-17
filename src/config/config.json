@@ -5,7 +5,7 @@
     "logoAdmin": "/images/logo-admin.png",
     "favicon": "/images/favicon.png",
     "head": {
-      "defaultDescription": "森林ボランティア活動を通じて、自然環境の保全と地域社会の発展に貢献します。"
+      "defaultDescription": "自然と人々のつながりを大切に、森林の保全活動を行っています。"
     },
     "organization": {
       "name": "NPO法人 仮想森林ボランティア協会",
@@ -115,5 +115,10 @@
     "article": {
       "headingShift": 1
     }
+  },
+  "contact": {
+    "nameMaxLength": 50,
+    "emailMaxLength": 50,
+    "messageMaxLength": 500
   }
 }

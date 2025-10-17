@@ -10,7 +10,7 @@ interface Props {
 const {
   titleLine1 = 'NPO法人',
   titleLine2 = config.site.title + 'へようこそ',
-  subtitle = '自然と人々のつながりを大切に、森林の保全活動を行っています'
+  subtitle = '人づくり、森づくり、未来づくり。自然と共生する豊かな社会を目指して。'
 } = Astro.props
 ---
 
@@ -25,7 +25,7 @@ const {
           <div class="whitespace-nowrap drop-shadow-lg">{titleLine2}</div>
         </h1>
       </div>
-      <p class="text-xl text-white drop-shadow-md">
+      <p class="text-xl text-white drop-shadow-md md:text-2xl">
         {subtitle}
       </p>
     </div>
