@@ -1,10 +1,12 @@
 import config from '@/config/config.json'
+import contactSubjects from '@/config/contact-subject.json'
 import type { ApiResponse } from '@/types/api'
 import { useState, type FormEvent } from 'react'
 
 interface ContactFormData {
   name: string
   email: string
+  memberType: 'member' | 'non-member' | ''
   subject: string
   message: string
   privacy: boolean
@@ -13,6 +15,7 @@ interface ContactFormData {
 const initialFormData: ContactFormData = {
   name: '',
   email: '',
+  memberType: '',
   subject: '',
   message: '',
   privacy: false
@@ -70,6 +73,7 @@ export default function ContactForm() {
     const trimmedData = {
       name: formData.name.trim(),
       email: formData.email.trim(),
+      memberType: formData.memberType,
       subject: formData.subject.trim(),
       message: formData.message.trim(),
       privacy: formData.privacy
@@ -171,6 +175,41 @@ export default function ContactForm() {
         </div>
 
         <div>
+          <label className="mb-2 block text-base font-medium text-gray-700">会員種別</label>
+          <div className="flex gap-6">
+            <label className="flex items-center">
+              <input
+                type="radio"
+                id="memberType"
+                name="memberType"
+                value="member"
+                checked={formData.memberType === 'member'}
+                onChange={handleChange}
+                className="text-primary-600 focus:ring-primary-500 h-4 w-4 border-gray-300"
+                required
+              />
+              <span className="ml-2 text-base text-gray-700">会員</span>
+            </label>
+            <label className="flex items-center">
+              <input
+                type="radio"
+                id="memberType"
+                name="memberType"
+                value="non-member"
+                checked={formData.memberType === 'non-member'}
+                onChange={handleChange}
+                className="text-primary-600 focus:ring-primary-500 h-4 w-4 border-gray-300"
+                required
+              />
+              <span className="ml-2 text-base text-gray-700">非会員</span>
+            </label>
+          </div>
+          {fieldErrors.memberType && (
+            <p className="mt-1 text-sm text-red-600">{fieldErrors.memberType}</p>
+          )}
+        </div>
+
+        <div>
           <label htmlFor="subject" className="mb-1 block text-base font-medium text-gray-700">
             件名
           </label>
@@ -184,11 +223,11 @@ export default function ContactForm() {
             required
           >
             <option value="">選択してください</option>
-            <option value="general">一般のお問い合わせ</option>
-            <option value="membership">会員について</option>
-            <option value="activities">活動について</option>
-            <option value="volunteer">ボランティアについて</option>
-            <option value="other">その他</option>
+            {contactSubjects.map((subject) => (
+              <option key={subject.value} value={subject.value}>
+                {subject.label}
+              </option>
+            ))}
           </select>
           {fieldErrors.subject && (
             <p className="mt-1 text-sm text-red-600">{fieldErrors.subject}</p>
@@ -225,7 +264,12 @@ export default function ContactForm() {
             required
           />
           <label htmlFor="privacy" className="ml-2 block text-base text-gray-700">
-            <a href="/privacy" className="text-primary-600 hover:text-primary-800">
+            <a
+              href="/privacy"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary-600 hover:text-primary-800"
+            >
               プライバシーポリシー
             </a>
             に同意する

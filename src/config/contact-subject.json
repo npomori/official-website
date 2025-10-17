@@ -1,0 +1,22 @@
+[
+  {
+    "value": "membership",
+    "label": "会員について"
+  },
+  {
+    "value": "activities",
+    "label": "活動について"
+  },
+  {
+    "value": "university",
+    "label": "森林大学について"
+  },
+  {
+    "value": "lectures",
+    "label": "講習会について"
+  },
+  {
+    "value": "other",
+    "label": "その他"
+  }
+]

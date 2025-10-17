@@ -66,13 +66,14 @@ export const POST: APIRoute = async (context) => {
       })
     }
 
-    const { name, email, subject, message } = validationResult.data
+    const { name, email, memberType, subject, message } = validationResult.data
 
     // メール送信
     try {
       await sendContactEmail({
         name,
         email,
+        memberType,
         subject,
         message
       })

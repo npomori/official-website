@@ -5,6 +5,8 @@
  * 本番環境では nodemailer や外部サービス（SendGrid、Amazon SES等）を使用
  */
 
+import contactSubjects from '@/config/contact-subject.json'
+
 interface EmailOptions {
   to: string
   subject: string
@@ -15,6 +17,7 @@ interface EmailOptions {
 interface ContactEmailData {
   name: string
   email: string
+  memberType: 'member' | 'non-member'
   subject: string
   message: string
 }
@@ -60,17 +63,16 @@ export async function sendEmail(options: EmailOptions): Promise<void> {
  * お問い合わせメールを送信
  */
 export async function sendContactEmail(data: ContactEmailData): Promise<void> {
-  const { name, email, subject, message } = data
+  const { name, email, memberType, subject, message } = data
 
-  // 件名の日本語変換
-  const subjectMap: Record<string, string> = {
-    general: '一般のお問い合わせ',
-    membership: '会員について',
-    activities: '活動について',
-    volunteer: 'ボランティアについて',
-    other: 'その他'
-  }
+  // 件名の日本語変換（JSONから生成）
+  const subjectMap: Record<string, string> = Object.fromEntries(
+    contactSubjects.map((item) => [item.value, item.label])
+  )
   const subjectText = subjectMap[subject] || subject
+
+  // 会員種別の日本語変換
+  const memberTypeText = memberType === 'member' ? '会員' : '非会員'
 
   // 管理者宛のメール本文
   const adminText = `
@@ -81,6 +83,9 @@ ${name}
 
 【メールアドレス】
 ${email}
+
+【会員種別】
+${memberTypeText}
 
 【件名】
 ${subjectText}
@@ -100,6 +105,9 @@ ${name}</p>
 
 <p><strong>【メールアドレス】</strong><br>
 <a href="mailto:${email}">${email}</a></p>
+
+<p><strong>【会員種別】</strong><br>
+${memberTypeText}</p>
 
 <p><strong>【件名】</strong><br>
 ${subjectText}</p>
