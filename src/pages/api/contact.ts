@@ -1,3 +1,4 @@
+import config from '@/config/config.json'
 import { ContactFormSchema } from '@/schemas/contact'
 import { validateCsrfForPost } from '@/server/utils/csrf'
 import { sendContactEmail } from '@/server/utils/email'
@@ -10,6 +11,20 @@ import type { APIRoute } from 'astro'
  */
 export const POST: APIRoute = async (context) => {
   const { request } = context
+
+  // お問い合わせ機能が無効の場合
+  if (!config.site.contact.enabled) {
+    const response: ApiResponse<null> = {
+      success: false,
+      message: '現在、お問い合わせ機能は利用できません'
+    }
+    return new Response(JSON.stringify(response), {
+      status: 503,
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+  }
 
   // CSRF対策: Origin/Refererヘッダーの検証
   if (!validateCsrfForPost(request)) {

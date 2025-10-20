@@ -26,7 +26,11 @@ const NAME_MAX_LENGTH = config.contact.nameMaxLength
 const EMAIL_MAX_LENGTH = config.contact.emailMaxLength
 const MESSAGE_MAX_LENGTH = config.contact.messageMaxLength
 
-export default function ContactForm() {
+interface ContactFormProps {
+  disabled?: boolean
+}
+
+export default function ContactForm({ disabled = false }: ContactFormProps) {
   const [formData, setFormData] = useState<ContactFormData>(initialFormData)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<{
@@ -65,6 +69,16 @@ export default function ContactForm() {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+
+    // フォームが無効化されている場合は送信しない
+    if (disabled) {
+      setSubmitStatus({
+        type: 'error',
+        message: 'お問い合わせ機能は現在利用できません'
+      })
+      return
+    }
+
     setIsSubmitting(true)
     setSubmitStatus({ type: null, message: '' })
     setFieldErrors({})
@@ -279,10 +293,10 @@ export default function ContactForm() {
 
         <button
           type="submit"
-          disabled={isSubmitting}
+          disabled={isSubmitting || disabled}
           className="bg-primary-600 hover:bg-primary-700 focus:ring-primary-500 w-full rounded-md px-4 py-2 text-white focus:ring-2 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {isSubmitting ? '送信中...' : '送信する'}
+          {disabled ? '送信できません' : isSubmitting ? '送信中...' : '送信する'}
         </button>
       </form>
     </div>

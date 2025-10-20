@@ -23,6 +23,16 @@ const config = {
   REMEMBERME_COOKIE_DAYS: import.meta.env.AUTH_REMEMBERME_COOKIE_DAYS || 120, // 120日
   REMEMBERME_EXPIRES: import.meta.env.AUTH_REMEMBERME_EXPIRES
     ? parseInt(import.meta.env.AUTH_REMEMBERME_EXPIRES, 10)
-    : 60 * 60 * 24 * 120 // 120日
+    : 60 * 60 * 24 * 120, // 120日
+
+  // メール送信設定（お問い合わせフォーム）
+  CONTACT_EMAIL: import.meta.env.CONTACT_EMAIL || 'info@example.com',
+
+  // SMTP設定
+  SMTP_HOST: import.meta.env.SMTP_HOST || 'smtp.example.com',
+  SMTP_PORT: import.meta.env.SMTP_PORT || 587,
+  SMTP_USER: import.meta.env.SMTP_USER || 'your-email@example.com',
+  SMTP_PASSWORD: import.meta.env.SMTP_PASSWORD || 'your-password',
+  MAIL_FROM: import.meta.env.MAIL_FROM || 'noreply@example.com'
 }
 export default config

@@ -1,17 +1,51 @@
 ---
 import Layout from '../layouts/Layout.astro'
 import ContactForm from '@/components/ContactForm'
+import config from '@/config/config.json'
 
 const title = 'お問い合わせ'
+const contactEnabled = config.site.contact.enabled
 ---
 
 <Layout title={title}>
   <div class="mx-auto max-w-4xl">
     <h1 class="mb-8 text-3xl font-bold">お問い合わせ</h1>
 
-    <div class="mb-12">
-      <ContactForm client:load />
-    </div>
+    {
+      contactEnabled ? (
+        <div class="mb-12">
+          <ContactForm client:load />
+        </div>
+      ) : (
+        <div class="mb-12 rounded-lg bg-yellow-50 p-6 shadow-md">
+          <div class="flex items-start">
+            <svg
+              class="h-6 w-6 text-yellow-600"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+              />
+            </svg>
+            <div class="ml-3">
+              <h3 class="text-lg font-bold text-yellow-800">
+                お問い合わせフォームは現在ご利用いただけません
+              </h3>
+              <p class="mt-2 text-yellow-700">
+                申し訳ございませんが、現在オンラインフォームからのお問い合わせは受け付けておりません。
+                <br />
+                お急ぎの方は、以下の方法でお問い合わせください。
+              </p>
+            </div>
+          </div>
+        </div>
+      )
+    }
 
     <section class="mb-12">
       <h2 class="mb-4 text-2xl font-bold">その他のお問い合わせ方法</h2>

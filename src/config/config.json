@@ -13,6 +13,9 @@
     },
     "comments": {
       "enabled": true
+    },
+    "contact": {
+      "enabled": true
     }
   },
   "upload": {
