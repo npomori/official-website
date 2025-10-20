@@ -1,12 +1,10 @@
 /**
  * メール送信ユーティリティ
- *
- * nodemailer の代わりに、まずはコンソールログでメール内容を出力する実装
- * 本番環境では nodemailer や外部サービス（SendGrid、Amazon SES等）を使用
  */
-
 import contactSubjects from '@/config/contact-subject.json'
 import config from '@/server/config'
+import type { Transporter } from 'nodemailer'
+import nodemailer from 'nodemailer'
 
 interface EmailOptions {
   to: string
@@ -27,14 +25,40 @@ interface ContactEmailData {
  * メール送信（開発用: コンソール出力）
  */
 export async function sendEmail(options: EmailOptions): Promise<void> {
-  console.log('=== メール送信 ===')
-  console.log('To:', options.to)
-  console.log('Subject:', options.subject)
-  console.log('Text:', options.text)
-  if (options.html) {
-    console.log('HTML:', options.html)
+  // console.log('=== メール送信 ===')
+  // console.log('To:', options.to)
+  // console.log('Subject:', options.subject)
+  // console.log('Text:', options.text)
+  // if (options.html) {
+  //   console.log('HTML:', options.html)
+  // }
+  // console.log('==================')
+
+  // 本番モード: nodemailer を使用して実際にメール送信
+  try {
+    const transporter: Transporter = nodemailer.createTransport({
+      host: config.SMTP_HOST,
+      port: config.SMTP_PORT,
+      secure: config.SMTP_PORT === 465,
+      auth: {
+        user: config.SMTP_USER,
+        pass: config.SMTP_PASSWORD
+      }
+    })
+
+    const info = await transporter.sendMail({
+      from: config.MAIL_FROM,
+      to: options.to,
+      subject: options.subject,
+      text: options.text,
+      html: options.html
+    })
+
+    console.log('メール送信成功:', info.messageId)
+  } catch (error) {
+    console.error('メール送信エラー:', error)
+    throw new Error('メール送信に失敗しました')
   }
-  console.log('==================')
 
   // TODO: 本番環境では実際のメール送信処理を実装
   // 例: nodemailer, SendGrid, Amazon SES など
