@@ -1,3 +1,15 @@
+// 環境変数を数値に変換するユーティリティ
+const toNumber = (value: unknown, fallback: number): number => {
+  if (typeof value === 'number') return Number.isFinite(value) ? value : fallback
+  if (typeof value === 'string') {
+    const v = value.trim()
+    if (v === '') return fallback
+    const n = Number(v)
+    return Number.isFinite(n) ? n : fallback
+  }
+  return fallback
+}
+
 // サーバ専用の定義値をここに設定する
 const config = {
   // アクセス制御用
@@ -30,7 +42,7 @@ const config = {
 
   // SMTP設定
   SMTP_HOST: import.meta.env.SMTP_HOST || 'smtp.example.com',
-  SMTP_PORT: import.meta.env.SMTP_PORT || 587,
+  SMTP_PORT: toNumber(import.meta.env.SMTP_PORT, 587),
   SMTP_USER: import.meta.env.SMTP_USER || 'your-email@example.com',
   SMTP_PASSWORD: import.meta.env.SMTP_PASSWORD || 'your-password',
   MAIL_FROM: import.meta.env.MAIL_FROM || 'noreply@example.com'

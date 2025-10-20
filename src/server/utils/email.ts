@@ -43,7 +43,8 @@ export async function sendEmail(options: EmailOptions): Promise<void> {
       auth: {
         user: config.SMTP_USER,
         pass: config.SMTP_PASSWORD
-      }
+      },
+      logger: true
     })
 
     const info = await transporter.sendMail({
@@ -53,35 +54,11 @@ export async function sendEmail(options: EmailOptions): Promise<void> {
       text: options.text,
       html: options.html
     })
-
     console.log('メール送信成功:', info.messageId)
   } catch (error) {
     console.error('メール送信エラー:', error)
     throw new Error('メール送信に失敗しました')
   }
-
-  // TODO: 本番環境では実際のメール送信処理を実装
-  // 例: nodemailer, SendGrid, Amazon SES など
-  /*
-  const nodemailer = require('nodemailer');
-  const transporter = nodemailer.createTransport({
-    host: config.SMTP_HOST,
-    port: config.SMTP_PORT,
-    secure: config.SMTP_PORT === 465,
-    auth: {
-      user: config.SMTP_USER,
-      pass: config.SMTP_PASSWORD,
-    },
-  });
-  
-  await transporter.sendMail({
-    from: config.MAIL_FROM,
-    to: options.to,
-    subject: options.subject,
-    text: options.text,
-    html: options.html,
-  });
-  */
 }
 
 /**
