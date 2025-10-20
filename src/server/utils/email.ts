@@ -6,6 +6,7 @@
  */
 
 import contactSubjects from '@/config/contact-subject.json'
+import config from '@/server/config'
 
 interface EmailOptions {
   to: string
@@ -40,17 +41,17 @@ export async function sendEmail(options: EmailOptions): Promise<void> {
   /*
   const nodemailer = require('nodemailer');
   const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: process.env.SMTP_PORT,
-    secure: true,
+    host: config.SMTP_HOST,
+    port: config.SMTP_PORT,
+    secure: config.SMTP_PORT === 465,
     auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASSWORD,
+      user: config.SMTP_USER,
+      pass: config.SMTP_PASSWORD,
     },
   });
   
   await transporter.sendMail({
-    from: process.env.MAIL_FROM,
+    from: config.MAIL_FROM,
     to: options.to,
     subject: options.subject,
     text: options.text,
@@ -121,7 +122,7 @@ ${message.replace(/\n/g, '<br>')}</p>
 
   // 管理者にメールを送信
   await sendEmail({
-    to: process.env.CONTACT_EMAIL || 'info@example.com',
+    to: config.CONTACT_EMAIL,
     subject: `【お問い合わせ】${subjectText} - ${name}様より`,
     text: adminText,
     html: adminHtml

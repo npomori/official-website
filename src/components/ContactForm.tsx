@@ -38,6 +38,7 @@ export default function ContactForm({ disabled = false }: ContactFormProps) {
     message: string
   }>({ type: null, message: '' })
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
+  const [isSubmitted, setIsSubmitted] = useState(false)
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -108,9 +109,9 @@ export default function ContactForm({ disabled = false }: ContactFormProps) {
         const response = data as ApiResponse<{ message: string }>
         setSubmitStatus({
           type: 'success',
-          message: response.message || 'お問い合わせを送信しました。ご連絡ありがとうございます。'
+          message: response.data?.message || 'お問い合わせを送信しました'
         })
-        setFormData(initialFormData)
+        setIsSubmitted(true)
       } else {
         // バリデーションエラーの場合
         if (res.status === 422 && data.errors) {
@@ -162,10 +163,11 @@ export default function ContactForm({ disabled = false }: ContactFormProps) {
             value={formData.name}
             onChange={handleChange}
             maxLength={NAME_MAX_LENGTH}
-            className={`focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border px-3 py-2 focus:outline-none ${
+            className={`focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border bg-gray-50 px-3 py-2 focus:outline-none ${
               fieldErrors.name ? 'border-red-500' : 'border-gray-300'
             }`}
             required
+            disabled={disabled || isSubmitted}
           />
           {fieldErrors.name && <p className="mt-1 text-sm text-red-600">{fieldErrors.name}</p>}
         </div>
@@ -180,10 +182,11 @@ export default function ContactForm({ disabled = false }: ContactFormProps) {
             value={formData.email}
             onChange={handleChange}
             maxLength={EMAIL_MAX_LENGTH}
-            className={`focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border px-3 py-2 focus:outline-none ${
+            className={`focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border bg-gray-50 px-3 py-2 focus:outline-none ${
               fieldErrors.email ? 'border-red-500' : 'border-gray-300'
             }`}
             required
+            disabled={disabled || isSubmitted}
           />
           {fieldErrors.email && <p className="mt-1 text-sm text-red-600">{fieldErrors.email}</p>}
         </div>
@@ -201,6 +204,7 @@ export default function ContactForm({ disabled = false }: ContactFormProps) {
                 onChange={handleChange}
                 className="text-primary-600 focus:ring-primary-500 h-4 w-4 border-gray-300"
                 required
+                disabled={disabled || isSubmitted}
               />
               <span className="ml-2 text-base text-gray-700">会員</span>
             </label>
@@ -214,6 +218,7 @@ export default function ContactForm({ disabled = false }: ContactFormProps) {
                 onChange={handleChange}
                 className="text-primary-600 focus:ring-primary-500 h-4 w-4 border-gray-300"
                 required
+                disabled={disabled || isSubmitted}
               />
               <span className="ml-2 text-base text-gray-700">非会員</span>
             </label>
@@ -231,10 +236,11 @@ export default function ContactForm({ disabled = false }: ContactFormProps) {
             id="subject"
             value={formData.subject}
             onChange={handleChange}
-            className={`focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border px-3 py-2 focus:outline-none ${
+            className={`focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border bg-gray-50 px-3 py-2 focus:outline-none ${
               fieldErrors.subject ? 'border-red-500' : 'border-gray-300'
             }`}
             required
+            disabled={disabled || isSubmitted}
           >
             <option value="">選択してください</option>
             {contactSubjects.map((subject) => (
@@ -258,10 +264,11 @@ export default function ContactForm({ disabled = false }: ContactFormProps) {
             value={formData.message}
             onChange={handleChange}
             maxLength={MESSAGE_MAX_LENGTH}
-            className={`focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border px-3 py-2 focus:outline-none ${
+            className={`focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border bg-gray-50 px-3 py-2 focus:outline-none ${
               fieldErrors.message ? 'border-red-500' : 'border-gray-300'
             }`}
             required
+            disabled={disabled || isSubmitted}
           />
           {fieldErrors.message && (
             <p className="mt-1 text-sm text-red-600">{fieldErrors.message}</p>
@@ -276,6 +283,7 @@ export default function ContactForm({ disabled = false }: ContactFormProps) {
             onChange={handleCheckboxChange}
             className="text-primary-600 focus:ring-primary-500 h-4 w-4 rounded border-gray-300"
             required
+            disabled={disabled || isSubmitted}
           />
           <label htmlFor="privacy" className="ml-2 block text-base text-gray-700">
             <a
@@ -293,10 +301,16 @@ export default function ContactForm({ disabled = false }: ContactFormProps) {
 
         <button
           type="submit"
-          disabled={isSubmitting || disabled}
+          disabled={isSubmitting || disabled || isSubmitted}
           className="bg-primary-600 hover:bg-primary-700 focus:ring-primary-500 w-full rounded-md px-4 py-2 text-white focus:ring-2 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {disabled ? '送信できません' : isSubmitting ? '送信中...' : '送信する'}
+          {disabled
+            ? '送信できません'
+            : isSubmitting
+              ? '送信中...'
+              : isSubmitted
+                ? '送信済み'
+                : '送信する'}
         </button>
       </form>
     </div>
