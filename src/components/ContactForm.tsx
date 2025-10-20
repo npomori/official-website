@@ -162,7 +162,7 @@ export default function ContactForm({ disabled = false }: ContactFormProps) {
             value={formData.name}
             onChange={handleChange}
             maxLength={NAME_MAX_LENGTH}
-            className={`focus:border-primary-500 w-full rounded-md border px-3 py-2 focus:outline-none ${
+            className={`focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border px-3 py-2 focus:outline-none ${
               fieldErrors.name ? 'border-red-500' : 'border-gray-300'
             }`}
             required
@@ -180,7 +180,7 @@ export default function ContactForm({ disabled = false }: ContactFormProps) {
             value={formData.email}
             onChange={handleChange}
             maxLength={EMAIL_MAX_LENGTH}
-            className={`focus:border-primary-500 w-full rounded-md border px-3 py-2 focus:outline-none ${
+            className={`focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border px-3 py-2 focus:outline-none ${
               fieldErrors.email ? 'border-red-500' : 'border-gray-300'
             }`}
             required
@@ -231,7 +231,7 @@ export default function ContactForm({ disabled = false }: ContactFormProps) {
             id="subject"
             value={formData.subject}
             onChange={handleChange}
-            className={`focus:border-primary-500 w-full rounded-md border px-3 py-2 focus:outline-none ${
+            className={`focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border px-3 py-2 focus:outline-none ${
               fieldErrors.subject ? 'border-red-500' : 'border-gray-300'
             }`}
             required
@@ -258,7 +258,7 @@ export default function ContactForm({ disabled = false }: ContactFormProps) {
             value={formData.message}
             onChange={handleChange}
             maxLength={MESSAGE_MAX_LENGTH}
-            className={`focus:border-primary-500 w-full rounded-md border px-3 py-2 focus:outline-none ${
+            className={`focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border px-3 py-2 focus:outline-none ${
               fieldErrors.message ? 'border-red-500' : 'border-gray-300'
             }`}
             required
