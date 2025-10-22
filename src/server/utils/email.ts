@@ -25,14 +25,18 @@ interface ContactEmailData {
  * メール送信（開発用: コンソール出力）
  */
 export async function sendEmail(options: EmailOptions): Promise<void> {
-  // console.log('=== メール送信 ===')
-  // console.log('To:', options.to)
-  // console.log('Subject:', options.subject)
-  // console.log('Text:', options.text)
-  // if (options.html) {
-  //   console.log('HTML:', options.html)
-  // }
-  // console.log('==================')
+  if (config.SMTP_HOST === 'smtp.example.com') {
+    // デフォルト値の場合はコンソール出力のみ
+    console.log('=== メール送信 ===')
+    console.log('To:', options.to)
+    console.log('Subject:', options.subject)
+    console.log('Text:', options.text)
+    if (options.html) {
+      console.log('HTML:', options.html)
+    }
+    console.log('==================')
+    return
+  }
 
   // 本番モード: nodemailer を使用して実際にメール送信
   try {

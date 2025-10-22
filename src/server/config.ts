@@ -37,14 +37,14 @@ const config = {
     ? parseInt(import.meta.env.AUTH_REMEMBERME_EXPIRES, 10)
     : 60 * 60 * 24 * 120, // 120日
 
-  // メール送信設定（お問い合わせフォーム）
-  CONTACT_EMAIL: import.meta.env.CONTACT_EMAIL || 'info@example.com',
-
   // SMTP設定
   SMTP_HOST: import.meta.env.SMTP_HOST || 'smtp.example.com',
   SMTP_PORT: toNumber(import.meta.env.SMTP_PORT, 587),
   SMTP_USER: import.meta.env.SMTP_USER || 'your-email@example.com',
   SMTP_PASSWORD: import.meta.env.SMTP_PASSWORD || 'your-password',
-  MAIL_FROM: import.meta.env.MAIL_FROM || 'noreply@example.com'
+  MAIL_FROM: import.meta.env.MAIL_FROM || 'noreply@example.com',
+
+  // メール送信設定
+  CONTACT_EMAIL: import.meta.env.CONTACT_EMAIL || 'info@example.com' // お問い合わせ送信先メールアドレス
 }
 export default config
