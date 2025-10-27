@@ -3,6 +3,8 @@
  */
 import contactSubjects from '@/config/contact-subject.json'
 import config from '@/server/config'
+import fs from 'node:fs/promises'
+import path from 'node:path'
 import type { Transporter } from 'nodemailer'
 import nodemailer from 'nodemailer'
 
@@ -19,6 +21,24 @@ interface ContactEmailData {
   memberType: 'member' | 'non-member'
   subject: string
   message: string
+}
+
+/**
+ * テンプレートファイルを読み込んで変数を置換
+ */
+async function renderTemplate(
+  templateName: string,
+  variables: Record<string, string>
+): Promise<string> {
+  const templatePath = path.join(process.cwd(), 'src/templates/email', templateName)
+  let template = await fs.readFile(templatePath, 'utf-8')
+
+  // 変数を置換
+  for (const [key, value] of Object.entries(variables)) {
+    template = template.replace(new RegExp(`{{${key}}}`, 'g'), value)
+  }
+
+  return template
 }
 
 /**
@@ -80,50 +100,26 @@ export async function sendContactEmail(data: ContactEmailData): Promise<void> {
   // 会員種別の日本語変換
   const memberTypeText = memberType === 'member' ? '会員' : '非会員'
 
-  // 管理者宛のメール本文
-  const adminText = `
-新しいお問い合わせがありました。
+  // テンプレート変数
+  const adminVariables = {
+    name,
+    email,
+    memberType: memberTypeText,
+    subject: subjectText,
+    message,
+    messageHtml: message.replace(/\n/g, '<br>')
+  }
 
-【お名前】
-${name}
+  const userVariables = {
+    name,
+    subject: subjectText,
+    message,
+    messageHtml: message.replace(/\n/g, '<br>')
+  }
 
-【メールアドレス】
-${email}
-
-【会員種別】
-${memberTypeText}
-
-【件名】
-${subjectText}
-
-【お問い合わせ内容】
-${message}
-
----
-このメールは公式サイトのお問い合わせフォームから送信されました。
-`
-
-  const adminHtml = `
-<h2>新しいお問い合わせがありました</h2>
-
-<p><strong>【お名前】</strong><br>
-${name}</p>
-
-<p><strong>【メールアドレス】</strong><br>
-<a href="mailto:${email}">${email}</a></p>
-
-<p><strong>【会員種別】</strong><br>
-${memberTypeText}</p>
-
-<p><strong>【件名】</strong><br>
-${subjectText}</p>
-
-<p><strong>【お問い合わせ内容】</strong><br>
-${message.replace(/\n/g, '<br>')}</p>
-
-<hr>
-<p><small>このメールは公式サイトのお問い合わせフォームから送信されました。</small></p>
-`
+  // テンプレートから本文を生成
+  const adminText = await renderTemplate('contact-admin.txt', adminVariables)
+  const adminHtml = await renderTemplate('contact-admin.html', adminVariables)
 
   // 管理者にメールを送信
   await sendEmail({
@@ -133,46 +129,9 @@ ${message.replace(/\n/g, '<br>')}</p>
     html: adminHtml
   })
 
-  // 送信者への自動返信（オプション）
-  const userText = `
-${name} 様
-
-この度は、お問い合わせいただきありがとうございます。
-以下の内容でお問い合わせを受け付けました。
-
-【件名】
-${subjectText}
-
-【お問い合わせ内容】
-${message}
-
-内容を確認の上、担当者より折り返しご連絡させていただきます。
-今しばらくお待ちくださいますようお願い申し上げます。
-
----
-このメールは自動送信されています。
-返信いただいても対応できませんのでご了承ください。
-`
-
-  const userHtml = `
-<p>${name} 様</p>
-
-<p>この度は、お問い合わせいただきありがとうございます。<br>
-以下の内容でお問い合わせを受け付けました。</p>
-
-<p><strong>【件名】</strong><br>
-${subjectText}</p>
-
-<p><strong>【お問い合わせ内容】</strong><br>
-${message.replace(/\n/g, '<br>')}</p>
-
-<p>内容を確認の上、担当者より折り返しご連絡させていただきます。<br>
-今しばらくお待ちくださいますようお願い申し上げます。</p>
-
-<hr>
-<p><small>このメールは自動送信されています。<br>
-返信いただいても対応できませんのでご了承ください。</small></p>
-`
+  // テンプレートから本文を生成（送信者向け）
+  const userText = await renderTemplate('contact-user.txt', userVariables)
+  const userHtml = await renderTemplate('contact-user.html', userVariables)
 
   // 送信者に自動返信メールを送信
   await sendEmail({
