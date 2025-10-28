@@ -27,6 +27,14 @@ const Alert: React.FC<AlertProps> = ({ message, type = 'info' }) => {
     info: 'status'
   }
 
+  // \n を改行に変換
+  const formattedMessage = message.split('\\n').map((line, index, array) => (
+    <span key={index}>
+      {line}
+      {index < array.length - 1 && <br />}
+    </span>
+  ))
+
   return (
     <div
       className={`mb-4 flex items-center rounded-lg p-4 text-sm ${alertStyles[type]}`}
@@ -34,7 +42,7 @@ const Alert: React.FC<AlertProps> = ({ message, type = 'info' }) => {
     >
       <Icon className="mr-1 h-8 w-8" icon={alertIcons[type]} />
       <span className="sr-only">{type}</span>
-      <div>{message}</div>
+      <div>{formattedMessage}</div>
     </div>
   )
 }

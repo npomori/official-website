@@ -48,6 +48,6 @@ const config = {
   CONTACT_EMAIL: import.meta.env.CONTACT_EMAIL || 'info@example.com', // お問い合わせ送信先メールアドレス
 
   // サイトURL
-  SITE_URL: import.meta.env.SITE_URL || 'http://localhost:4321'
+  SITE_URL: import.meta.env.SITE_URL || 'http://localhost:3000'
 }
 export default config
