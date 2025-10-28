@@ -56,6 +56,13 @@
 - Content Collections
   - `src/content/config.ts` に定義済み。`draft` は既定 false。記事一覧/UI では draft をフィルタ。
 
+## データベースアクセス指針
+- Prisma の操作は必ず `BaseDB` を継承した専用 DB クラス経由で実行する。
+- DB クラスの各メソッドは以下のいずれかのパターンで値を返す。
+  - `値 | null`
+  - `値[]`
+  - `boolean`
+
 ## 生成時のアンチパターン（避けるべきこと）
 - 相対パスの深い import（`../../..`）→ `@/*` を使う。
 - API レスポンス形式のばらつき→ `ApiResponse<T>` に統一。
