@@ -51,7 +51,17 @@ export const POST: APIRoute = async ({ request }) => {
       const expiresAt = new Date(Date.now() + 60 * 60 * 1000)
 
       // DBに保存
-      await UserDB.setPasswordResetToken(user.id, resetToken, expiresAt)
+      const isTokenSet = await UserDB.setPasswordResetToken(user.id, resetToken, expiresAt)
+
+      if (!isTokenSet) {
+        return new Response(
+          JSON.stringify({
+            success: false,
+            message: 'パスワードリセット申請に失敗しました'
+          } satisfies ApiResponse<never>),
+          { status: 500, headers: { 'Content-Type': 'application/json' } }
+        )
+      }
 
       // メール送信
       await sendPasswordResetEmail({

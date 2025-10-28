@@ -55,7 +55,17 @@ export const POST: APIRoute = async ({ request }) => {
     const hashedPassword = await hash(newPassword)
 
     // パスワード更新とトークン削除
-    await UserDB.updatePasswordAndClearResetToken(user.id, hashedPassword)
+    const isPasswordUpdated = await UserDB.updatePasswordAndClearResetToken(user.id, hashedPassword)
+
+    if (!isPasswordUpdated) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: 'パスワードの更新に失敗しました'
+        } satisfies ApiResponse<never>),
+        { status: 500, headers: { 'Content-Type': 'application/json' } }
+      )
+    }
 
     return new Response(
       JSON.stringify({
