@@ -37,7 +37,7 @@ const Alert: React.FC<AlertProps> = ({ message, type = 'info' }) => {
 
   return (
     <div
-      className={`mb-4 flex items-center rounded-lg p-4 text-sm ${alertStyles[type]}`}
+      className={`mb-4 flex items-center rounded-lg p-4 text-base ${alertStyles[type]}`}
       role={alertRoles[type]}
     >
       <Icon className="mr-1 h-8 w-8" icon={alertIcons[type]} />

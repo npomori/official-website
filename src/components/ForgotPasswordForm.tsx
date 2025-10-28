@@ -33,7 +33,7 @@ const ForgotPasswordForm: React.FC = () => {
       <div className="w-full space-y-8 rounded-lg bg-white p-6 shadow ring-1 ring-black/5 sm:p-8">
         <h2 className="text-2xl font-bold text-gray-900">メールを送信しました</h2>
         <Alert
-          message="パスワードリセット用のメールを送信しました。\nメールをご確認ください。"
+          message="パスワードリセット用のメールを送信しました。メールをご確認ください。"
           type="success"
         />
         <div className="space-y-4">
