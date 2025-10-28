@@ -16,6 +16,8 @@ model User {
   biography             String?   @db.Text
   rememberMeToken       String?   @unique
   rememberMeTokenExpiry DateTime?
+  passwordResetToken     String?   @db.VarChar(255)
+  passwordResetExpiresAt DateTime?
   role                  String
   isGuest               Boolean   @default(false)
   isEnabled             Boolean   @default(true)

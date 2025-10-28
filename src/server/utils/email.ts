@@ -23,6 +23,13 @@ interface ContactEmailData {
   message: string
 }
 
+interface PasswordResetEmailData {
+  name: string
+  email: string
+  resetToken: string
+  expiresInMinutes: number
+}
+
 /**
  * テンプレートファイルを読み込んで変数を置換
  */
@@ -139,5 +146,30 @@ export async function sendContactEmail(data: ContactEmailData): Promise<void> {
     subject: 'お問い合わせを受け付けました',
     text: userText,
     html: userHtml
+  })
+}
+
+/**
+ * パスワードリセットメールを送信
+ */
+export async function sendPasswordResetEmail(data: PasswordResetEmailData): Promise<void> {
+  const { name, email, resetToken, expiresInMinutes } = data
+
+  const resetUrl = `${config.SITE_URL}/reset-password?token=${resetToken}`
+
+  const variables = {
+    name,
+    resetUrl,
+    expiresIn: String(expiresInMinutes)
+  }
+
+  const text = await renderTemplate('password-reset.txt', variables)
+  const html = await renderTemplate('password-reset.html', variables)
+
+  await sendEmail({
+    to: email,
+    subject: 'パスワードリセットのご案内',
+    text,
+    html
   })
 }

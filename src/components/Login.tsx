@@ -24,7 +24,7 @@ const Login: React.FC = () => {
         //setError(result.message || 'ログインに失敗しました')
         setError('ログインに失敗しました')
       }
-    } catch (error) {
+    } catch {
       setError('ログインに失敗しました')
     }
   }
@@ -110,7 +110,13 @@ const Login: React.FC = () => {
             <span className="ml-2 text-gray-900">ログイン状態を保持する</span>
           </label>
         </div>
-        <div className="flex justify-end">
+        <div className="flex items-center justify-between">
+          <a
+            href="/forgot-password"
+            className="text-primary-600 hover:text-primary-500 text-base font-medium"
+          >
+            パスワードを忘れた方はこちら
+          </a>
           <Button variant="primary" type="submit" text="ログイン" />
         </div>
       </form>

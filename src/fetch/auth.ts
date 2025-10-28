@@ -1,14 +1,12 @@
 import config from '@/config/config.json'
 import { BaseApiFetch } from './base'
 
-interface LoginRequest {
-  email: string
-  password: string
-  rememberMe: boolean
-}
-
 interface AuthResponse {
   message: string
+}
+
+interface VerifyResetTokenResponse {
+  valid: boolean
 }
 
 class AuthFetch extends BaseApiFetch {
@@ -22,6 +20,29 @@ class AuthFetch extends BaseApiFetch {
 
   async logout() {
     return this.request<AuthResponse>(`${config.api.rootUrl}/auth/logout`, { method: 'POST' })
+  }
+
+  async forgotPassword(email: string) {
+    return this.requestWithJson<AuthResponse>(
+      `${config.api.rootUrl}/auth/forgot-password`,
+      { email },
+      'POST'
+    )
+  }
+
+  async verifyResetToken(token: string) {
+    return this.request<VerifyResetTokenResponse>(
+      `${config.api.rootUrl}/auth/verify-reset-token?token=${encodeURIComponent(token)}`,
+      { method: 'GET' }
+    )
+  }
+
+  async resetPassword(token: string, newPassword: string) {
+    return this.requestWithJson<AuthResponse>(
+      `${config.api.rootUrl}/auth/reset-password`,
+      { token, newPassword },
+      'POST'
+    )
   }
 }
 

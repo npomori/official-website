@@ -319,5 +319,62 @@ class UserDB extends BaseDB {
       console.error(err)
     }
   }
+
+  /**
+   * パスワードリセットトークンを設定
+   */
+  async setPasswordResetToken(userId: number, token: string, expiresAt: Date): Promise<void> {
+    try {
+      await BaseDB.prisma.user.update({
+        where: { id: userId },
+        data: {
+          passwordResetToken: token,
+          passwordResetExpiresAt: expiresAt
+        }
+      })
+    } catch (err) {
+      console.error(err)
+      throw new Error('パスワードリセットトークンの設定に失敗しました')
+    }
+  }
+
+  /**
+   * パスワードリセットトークンでユーザーを検索
+   */
+  async getUserByResetToken(token: string): Promise<User | null> {
+    try {
+      const user = await BaseDB.prisma.user.findFirst({
+        where: {
+          passwordResetToken: token,
+          passwordResetExpiresAt: {
+            gt: new Date() // 有効期限内
+          }
+        }
+      })
+      return user
+    } catch (err) {
+      console.error(err)
+      return null
+    }
+  }
+
+  /**
+   * パスワードを更新してリセットトークンを削除
+   */
+  async updatePasswordAndClearResetToken(userId: number, hashedPassword: string): Promise<void> {
+    try {
+      await BaseDB.prisma.user.update({
+        where: { id: userId },
+        data: {
+          password: hashedPassword,
+          passwordResetToken: null,
+          passwordResetExpiresAt: null
+        }
+      })
+    } catch (err) {
+      console.error(err)
+      throw new Error('パスワードの更新に失敗しました')
+    }
+  }
 }
 export default new UserDB()

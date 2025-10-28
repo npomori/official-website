@@ -45,6 +45,9 @@ const config = {
   MAIL_FROM: import.meta.env.MAIL_FROM || 'noreply@example.com',
 
   // メール送信設定
-  CONTACT_EMAIL: import.meta.env.CONTACT_EMAIL || 'info@example.com' // お問い合わせ送信先メールアドレス
+  CONTACT_EMAIL: import.meta.env.CONTACT_EMAIL || 'info@example.com', // お問い合わせ送信先メールアドレス
+
+  // サイトURL
+  SITE_URL: import.meta.env.SITE_URL || 'http://localhost:4321'
 }
 export default config
