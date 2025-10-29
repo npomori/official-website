@@ -2,6 +2,7 @@ import Alert from '@/components/base/Alert'
 import Button from '@/components/base/Button'
 import Spinner from '@/components/base/Spinner'
 import AuthFetch from '@/fetch/auth'
+import { generate } from 'generate-password-ts'
 import { type FormEventHandler, useEffect, useState } from 'react'
 
 interface ResetPasswordFormProps {
@@ -18,6 +19,14 @@ const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ token }) => {
   const [isValidToken, setIsValidToken] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+
+  // パスワード生成関数
+  function generatePassword(): string {
+    return generate({
+      length: 10,
+      numbers: true
+    })
+  }
 
   // トークンの検証
   useEffect(() => {
@@ -136,9 +145,36 @@ const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ token }) => {
 
       <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="newPassword" className="mb-1 block font-medium text-gray-900">
-            新しいパスワード
-          </label>
+          <div className="mb-1 flex items-center">
+            <label htmlFor="newPassword" className="mr-2 block font-medium text-gray-900">
+              新しいパスワード
+            </label>
+            <button
+              type="button"
+              onClick={() => {
+                const pwd = generatePassword()
+                setNewPassword(pwd)
+                setConfirmPassword(pwd)
+              }}
+              className="hover:text-primary-600 cursor-pointer text-gray-400 focus:outline-none"
+              title="ランダムパスワード生成"
+              aria-label="ランダムパスワード生成"
+            >
+              <svg
+                className="h-5 w-5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M4.5 12a7.5 7.5 0 0113.5-5.303M19.5 12a7.5 7.5 0 01-13.5 5.303M4.5 12H2.25M19.5 12h2.25"
+                />
+              </svg>
+            </button>
+          </div>
           <div className="relative">
             <input
               type={showPassword ? 'text' : 'password'}
