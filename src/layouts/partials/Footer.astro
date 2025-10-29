@@ -14,8 +14,14 @@ const copyrightYear =
       <div>
         <h3 class="mb-4 text-xl font-bold">お問い合わせ</h3>
         <p>〒{contactInfo.postalCode}</p>
-        <p>{contactInfo.address}</p>
-        <p>TEL: {contactInfo.tel}</p>
+        {
+          Array.isArray(contactInfo.address) ? (
+            contactInfo.address.map((line) => <p>{line}</p>)
+          ) : (
+            <p>{contactInfo.address}</p>
+          )
+        }
+        <p>TEL(FAX): {contactInfo.tel}</p>
         <p>Email: {contactInfo.email}</p>
         <p class="mt-4">
           <a href={contactInfo.formLink.href} class="text-white hover:text-gray-300">
