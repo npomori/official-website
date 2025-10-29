@@ -5,6 +5,7 @@ import config from '@/config/config.json'
 
 const title = 'お問い合わせ'
 const contactEnabled = config.site.contact.enabled
+const { contactInfo } = config.footer
 ---
 
 <Layout title={title}>
@@ -53,16 +54,27 @@ const contactEnabled = config.site.contact.enabled
         <div class="space-y-4">
           <div>
             <h3 class="mb-3 text-xl font-bold">電話でのお問い合わせ</h3>
-            <p class="text-gray-700">03-xxxx-xxxx（平日9:00-17:00）</p>
+            <p class="text-gray-700">
+              {contactInfo.tel}
+              {
+                contactInfo.businessHours && (
+                  <span class="text-gray-600">（{contactInfo.businessHours}）</span>
+                )
+              }
+            </p>
           </div>
           <div>
             <h3 class="mb-3 text-xl font-bold">メールでのお問い合わせ</h3>
-            <p class="text-gray-700">info@example.com</p>
+            <p class="text-gray-700">{contactInfo.email}</p>
           </div>
-          <div>
-            <h3 class="mb-3 text-xl font-bold">FAXでのお問い合わせ</h3>
-            <p class="text-gray-700">03-xxxx-xxxx</p>
-          </div>
+          {
+            contactInfo.fax && (
+              <div>
+                <h3 class="mb-3 text-xl font-bold">FAXでのお問い合わせ</h3>
+                <p class="text-gray-700">{contactInfo.fax}</p>
+              </div>
+            )
+          }
         </div>
       </div>
     </section>
