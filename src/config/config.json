@@ -129,7 +129,9 @@
       "postalCode": "xxx-xxxx",
       "address": "東京都○○区○○町1-2-3",
       "tel": "03-xxxx-xxxx",
+      "fax": "03-xxxx-xxxx",
       "email": "info@example.com",
+      "businessHours": "平日9:00-17:00",
       "formLink": {
         "href": "/contact",
         "label": "お問い合わせフォーム"
