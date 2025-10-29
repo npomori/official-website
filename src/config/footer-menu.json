@@ -1,0 +1,29 @@
+{
+  "links": [
+    {
+      "id": "staff",
+      "label": "事務局員紹介",
+      "href": "/staff"
+    },
+    {
+      "id": "access",
+      "label": "アクセス",
+      "href": "/access"
+    },
+    {
+      "id": "privacy",
+      "label": "プライバシーポリシー",
+      "href": "/privacy"
+    },
+    {
+      "id": "sitemap",
+      "label": "サイトマップ",
+      "href": "/sitemap"
+    },
+    {
+      "id": "member",
+      "label": "会員専用",
+      "href": "/member"
+    }
+  ]
+}

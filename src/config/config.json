@@ -123,5 +123,25 @@
     "nameMaxLength": 50,
     "emailMaxLength": 50,
     "messageMaxLength": 500
+  },
+  "footer": {
+    "contactInfo": {
+      "postalCode": "xxx-xxxx",
+      "address": "東京都○○区○○町1-2-3",
+      "tel": "03-xxxx-xxxx",
+      "email": "info@example.com",
+      "formLink": {
+        "href": "/contact",
+        "label": "お問い合わせフォーム"
+      }
+    },
+    "social": {
+      "twitter": "#",
+      "facebook": "#",
+      "instagram": "#"
+    },
+    "copyright": {
+      "startYear": 2025
+    }
   }
 }

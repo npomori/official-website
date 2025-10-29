@@ -1,7 +1,11 @@
 ---
 import config from '@/config/config.json'
+import footerMenu from '@/config/footer-menu.json'
 
 const currentYear = new Date().getFullYear()
+const { contactInfo, social, copyright } = config.footer
+const copyrightYear =
+  copyright.startYear === currentYear ? `${currentYear}` : `${copyright.startYear}-${currentYear}`
 ---
 
 <footer class="bg-gray-800 text-white">
@@ -9,35 +13,41 @@ const currentYear = new Date().getFullYear()
     <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
       <div>
         <h3 class="mb-4 text-xl font-bold">お問い合わせ</h3>
-        <p>〒xxx-xxxx</p>
-        <p>東京都○○区○○町1-2-3</p>
-        <p>TEL: 03-xxxx-xxxx</p>
-        <p>Email: info@example.com</p>
+        <p>〒{contactInfo.postalCode}</p>
+        <p>{contactInfo.address}</p>
+        <p>TEL: {contactInfo.tel}</p>
+        <p>Email: {contactInfo.email}</p>
         <p class="mt-4">
-          <a href="/contact" class="text-white hover:text-gray-300">お問い合わせフォーム</a>
+          <a href={contactInfo.formLink.href} class="text-white hover:text-gray-300">
+            {contactInfo.formLink.label}
+          </a>
         </p>
       </div>
       <div>
         <h3 class="mb-4 text-xl font-bold">リンク</h3>
         <ul>
-          <li><a href="/staff" class="hover:text-gray-300">事務局員紹介</a></li>
-          <li><a href="/access" class="hover:text-gray-300">アクセス</a></li>
-          <li><a href="/privacy" class="hover:text-gray-300">プライバシーポリシー</a></li>
-          <li><a href="/sitemap" class="hover:text-gray-300">サイトマップ</a></li>
-          <li><a href="/member" class="hover:text-gray-300">会員専用</a></li>
+          {
+            footerMenu.links.map((link) => (
+              <li>
+                <a href={link.href} class="hover:text-gray-300">
+                  {link.label}
+                </a>
+              </li>
+            ))
+          }
         </ul>
       </div>
       <div>
         <h3 class="mb-4 text-xl font-bold">SNS</h3>
         <div class="flex space-x-4">
-          <a href="#" class="hover:text-gray-300">Twitter</a>
-          <a href="#" class="hover:text-gray-300">Facebook</a>
-          <a href="#" class="hover:text-gray-300">Instagram</a>
+          <a href={social.twitter} class="hover:text-gray-300">Twitter</a>
+          <a href={social.facebook} class="hover:text-gray-300">Facebook</a>
+          <a href={social.instagram} class="hover:text-gray-300">Instagram</a>
         </div>
       </div>
     </div>
     <div class="mt-8 text-center">
-      <p>&copy; {currentYear} {config.site.organization.name} All rights reserved.</p>
+      <p>&copy; {copyrightYear} {config.site.organization.name} All rights reserved.</p>
     </div>
   </div>
 </footer>
