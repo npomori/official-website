@@ -43,14 +43,30 @@ const copyrightYear =
           }
         </ul>
       </div>
-      <div>
-        <h3 class="mb-4 text-xl font-bold">SNS</h3>
-        <div class="flex space-x-4">
-          <a href={social.twitter} class="hover:text-gray-300">Twitter</a>
-          <a href={social.facebook} class="hover:text-gray-300">Facebook</a>
-          <a href={social.instagram} class="hover:text-gray-300">Instagram</a>
-        </div>
-      </div>
+      {
+        (social.twitter || social.facebook || social.instagram) && (
+          <div>
+            <h3 class="mb-4 text-xl font-bold">SNS</h3>
+            <div class="flex space-x-4">
+              {social.twitter && (
+                <a href={social.twitter} class="hover:text-gray-300">
+                  Twitter
+                </a>
+              )}
+              {social.facebook && (
+                <a href={social.facebook} class="hover:text-gray-300">
+                  Facebook
+                </a>
+              )}
+              {social.instagram && (
+                <a href={social.instagram} class="hover:text-gray-300">
+                  Instagram
+                </a>
+              )}
+            </div>
+          </div>
+        )
+      }
     </div>
     <div class="mt-8 text-center">
       <p>&copy; {copyrightYear} {config.site.organization.name} All rights reserved.</p>
