@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro'
+import JoinForm from '@/components/JoinForm'
 ---
 
 <Layout title="協会へ入会">
@@ -101,68 +102,9 @@ import Layout from '../layouts/Layout.astro'
       </div>
     </section>
 
-    <section id="form" class="bg-primary-50 rounded-lg p-8">
+    <section id="form" class="mb-12">
       <h2 class="mb-4 text-2xl font-bold">入会申し込みフォーム</h2>
-      <form class="space-y-6">
-        <div>
-          <label class="mb-2 block text-gray-700">会員種別</label>
-          <select class="w-full rounded-lg border p-2">
-            <option value="regular">正会員</option>
-            <option value="support">賛助会員</option>
-          </select>
-        </div>
-        <div>
-          <label class="mb-2 block text-gray-700">お名前</label>
-          <input type="text" class="w-full rounded-lg border p-2" required />
-        </div>
-        <div>
-          <label class="mb-2 block text-gray-700">フリガナ</label>
-          <input type="text" class="w-full rounded-lg border p-2" required />
-        </div>
-        <div>
-          <label class="mb-2 block text-gray-700">メールアドレス</label>
-          <input type="email" class="w-full rounded-lg border p-2" required />
-        </div>
-        <div>
-          <label class="mb-2 block text-gray-700">電話番号</label>
-          <input type="tel" class="w-full rounded-lg border p-2" required />
-        </div>
-        <div>
-          <label class="mb-2 block text-gray-700">住所</label>
-          <textarea class="w-full rounded-lg border p-2" rows="3" required></textarea>
-        </div>
-        <div>
-          <label class="mb-2 block text-gray-700">生年月日</label>
-          <input type="date" class="w-full rounded-lg border p-2" required />
-        </div>
-        <div>
-          <label class="mb-2 block text-gray-700">職業</label>
-          <input type="text" class="w-full rounded-lg border p-2" />
-        </div>
-        <div>
-          <label class="mb-2 block text-gray-700">森林ボランティア経験</label>
-          <textarea class="w-full rounded-lg border p-2" rows="3"></textarea>
-        </div>
-        <div>
-          <label class="mb-2 block text-gray-700">入会の動機</label>
-          <textarea class="w-full rounded-lg border p-2" rows="3" required></textarea>
-        </div>
-        <div class="flex items-center">
-          <input type="checkbox" class="mr-2" required />
-          <label class="text-gray-700">
-            <a href="/privacy" class="text-primary-600 hover:text-primary-700"
-              >プライバシーポリシー</a
-            >
-            に同意する
-          </label>
-        </div>
-        <button
-          type="submit"
-          class="bg-primary-600 hover:bg-primary-700 w-full rounded-lg px-6 py-3 text-white transition-colors"
-        >
-          申し込む
-        </button>
-      </form>
+      <JoinForm client:load />
     </section>
   </div>
 </Layout>
