@@ -68,7 +68,7 @@ beforeEach(() => {
 })
 
 const getContactHandler = async () => {
-  const mod = await import('@/pages/api/contact')
+  const mod = await import('@/pages/api/email/contact')
   return mod.POST
 }
 
@@ -82,7 +82,7 @@ const createMockRequest = (options: {
     method = 'POST',
     headers = {},
     body = {},
-    url = 'http://localhost:4321/api/contact'
+    url = 'http://localhost:4321/api/email/contact'
   } = options
 
   return new Request(url, {
@@ -109,7 +109,7 @@ const createMockContext = (request: Request) => ({
   generator: 'Astro',
   clientAddress: '127.0.0.1',
   isPrerendered: false,
-  routePattern: '/api/contact',
+  routePattern: '/api/email/contact',
   currentLocale: undefined,
   preferredLocale: undefined,
   preferredLocaleList: undefined,
@@ -117,7 +117,7 @@ const createMockContext = (request: Request) => ({
   callAction: vi.fn()
 })
 
-describe('POST /api/contact', () => {
+describe('POST /api/email/contact', () => {
   describe('機能の有効/無効チェック', () => {
     it('お問い合わせ機能が無効の場合、503エラーを返す', async () => {
       // 機能を無効化
@@ -512,7 +512,7 @@ describe('POST /api/contact', () => {
     it('予期しないエラーが発生した場合、500エラーを返す', async () => {
       // request.json() がエラーを投げる状況をシミュレート
       const handler = await getContactHandler()
-      const request = new Request('http://localhost:4321/api/contact', {
+      const request = new Request('http://localhost:4321/api/email/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

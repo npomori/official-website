@@ -1,5 +1,5 @@
 import DateRangePicker from '@/components/DateRangePicker'
-import type { ApiResponse, ValidationErrorResponse } from '@/types/api'
+import emailFetch from '@/fetch/email'
 import { useRef, useState, type FormEvent } from 'react'
 
 interface JoinFormData {
@@ -89,34 +89,55 @@ export default function JoinForm() {
     setFieldErrors({})
 
     try {
+      // birthDateのチェック
+      if (!formData.birthDate) {
+        setFieldErrors({ birthDate: '生年月日を入力してください' })
+        setSubmitStatus({
+          type: 'error',
+          message: '入力内容に誤りがあります。'
+        })
+        setIsSubmitting(false)
+        return
+      }
+
       // APIリクエスト用のデータを準備
-      const requestData = {
-        memberType: formData.memberType,
+      const birthDateString: string = formData.birthDate.toISOString().split('T')[0]!
+      const requestData: {
+        memberType: 'regular' | 'support'
+        name: string
+        furigana: string
+        email: string
+        tel: string
+        address: string
+        birthDate: string
+        occupation?: string
+        experience?: string
+        motivation: string
+        privacy: boolean
+      } = {
+        memberType: formData.memberType as 'regular' | 'support',
         name: formData.name,
         furigana: formData.furigana,
         email: formData.email,
         tel: formData.tel,
         address: formData.address,
-        birthDate: formData.birthDate ? formData.birthDate.toISOString().split('T')[0] : '',
-        occupation: formData.occupation,
-        experience: formData.experience,
+        birthDate: birthDateString,
         motivation: formData.motivation,
         privacy: formData.privacy
       }
 
+      // オプショナルフィールドを追加
+      if (formData.occupation) {
+        requestData.occupation = formData.occupation
+      }
+      if (formData.experience) {
+        requestData.experience = formData.experience
+      }
+
       // API呼び出し
-      const response = await fetch('/api/join', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(requestData)
-      })
+      const result = await emailFetch.sendJoinApplication(requestData)
 
-      const result: ApiResponse<{ message: string }> | ValidationErrorResponse =
-        await response.json()
-
-      if (response.ok && 'success' in result && result.success) {
+      if (result.success) {
         // 成功
         setSubmitStatus({
           type: 'success',
@@ -124,22 +145,21 @@ export default function JoinForm() {
             result.message || '入会申し込みを受け付けました。後日、必要書類を郵送いたします。'
         })
         setIsSubmitted(true)
-      } else if (response.status === 422 && 'errors' in result) {
-        // バリデーションエラー
-        setFieldErrors(result.errors)
-        setSubmitStatus({
-          type: 'error',
-          message: result.message || '入力内容に誤りがあります。'
-        })
       } else {
-        // その他のエラー
-        setSubmitStatus({
-          type: 'error',
-          message:
-            'message' in result
-              ? result.message
-              : '入会申し込みの送信に失敗しました。もう一度お試しください。'
-        })
+        // エラーの場合
+        if (result.errors) {
+          // バリデーションエラー
+          setFieldErrors(result.errors)
+          setSubmitStatus({
+            type: 'error',
+            message: result.message || '入力内容に誤りがあります。'
+          })
+        } else {
+          setSubmitStatus({
+            type: 'error',
+            message: result.message || '入会申し込みの送信に失敗しました。もう一度お試しください。'
+          })
+        }
       }
     } catch (error) {
       console.error('入会申し込みエラー:', error)

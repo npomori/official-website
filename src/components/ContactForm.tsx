@@ -1,6 +1,6 @@
 import config from '@/config/config.json'
 import contactSubjects from '@/config/contact-subject.json'
-import type { ApiResponse } from '@/types/api'
+import emailFetch from '@/fetch/email'
 import { useState, type FormEvent } from 'react'
 
 interface ContactFormData {
@@ -88,42 +88,34 @@ export default function ContactForm({ disabled = false }: ContactFormProps) {
     const trimmedData = {
       name: formData.name.trim(),
       email: formData.email.trim(),
-      memberType: formData.memberType,
+      memberType: formData.memberType as 'member' | 'non-member',
       subject: formData.subject.trim(),
       message: formData.message.trim(),
       privacy: formData.privacy
     }
 
     try {
-      const res = await fetch('/api/contact', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(trimmedData)
-      })
+      const result = await emailFetch.sendContact(trimmedData)
 
-      const data = await res.json()
-
-      if (res.ok) {
-        const response = data as ApiResponse<{ message: string }>
+      if (result.success) {
         setSubmitStatus({
           type: 'success',
-          message: response.data?.message || 'お問い合わせを送信しました'
+          message: result.data?.message || 'お問い合わせを送信しました'
         })
         setIsSubmitted(true)
       } else {
-        // バリデーションエラーの場合
-        if (res.status === 422 && data.errors) {
-          setFieldErrors(data.errors as Record<string, string>)
+        // エラーの場合
+        if (result.errors) {
+          // バリデーションエラー
+          setFieldErrors(result.errors)
           setSubmitStatus({
             type: 'error',
-            message: data.message || '入力内容に誤りがあります'
+            message: result.message || '入力内容に誤りがあります'
           })
         } else {
           setSubmitStatus({
             type: 'error',
-            message: data.message || 'お問い合わせの送信に失敗しました。'
+            message: result.message || 'お問い合わせの送信に失敗しました。'
           })
         }
       }
