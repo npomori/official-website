@@ -30,6 +30,19 @@ interface PasswordResetEmailData {
   expiresInMinutes: number
 }
 
+interface JoinEmailData {
+  memberType: 'regular' | 'support'
+  name: string
+  furigana: string
+  email: string
+  tel: string
+  address: string
+  birthDate: string
+  occupation: string
+  experience: string
+  motivation: string
+}
+
 /**
  * テンプレートファイルを読み込んで変数を置換
  */
@@ -171,5 +184,82 @@ export async function sendPasswordResetEmail(data: PasswordResetEmailData): Prom
     subject: 'パスワードリセットのご案内',
     text,
     html
+  })
+}
+
+/**
+ * 入会申し込みメールを送信
+ */
+export async function sendJoinEmail(data: JoinEmailData): Promise<void> {
+  const {
+    memberType,
+    name,
+    furigana,
+    email,
+    tel,
+    address,
+    birthDate,
+    occupation,
+    experience,
+    motivation
+  } = data
+
+  // 会員種別の日本語変換
+  const memberTypeText = memberType === 'regular' ? '正会員' : '賛助会員'
+
+  // テンプレート変数（管理者向け）
+  const adminVariables = {
+    memberType: memberTypeText,
+    name,
+    furigana,
+    email,
+    tel,
+    address,
+    birthDate,
+    occupation: occupation || '（未記入）',
+    experience: experience || '（未記入）',
+    experienceHtml: (experience || '（未記入）').replace(/\n/g, '<br>'),
+    motivation,
+    motivationHtml: motivation.replace(/\n/g, '<br>')
+  }
+
+  // テンプレート変数（申し込み者向け）
+  const userVariables = {
+    memberType: memberTypeText,
+    name,
+    furigana,
+    email,
+    tel,
+    address,
+    birthDate,
+    occupation: occupation || '（未記入）',
+    experience: experience || '（未記入）',
+    experienceHtml: (experience || '（未記入）').replace(/\n/g, '<br>'),
+    motivation,
+    motivationHtml: motivation.replace(/\n/g, '<br>')
+  }
+
+  // テンプレートから本文を生成（管理者向け）
+  const adminText = await renderTemplate('join-admin.txt', adminVariables)
+  const adminHtml = await renderTemplate('join-admin.html', adminVariables)
+
+  // 管理者にメールを送信
+  await sendEmail({
+    to: config.CONTACT_EMAIL,
+    subject: `【入会申し込み】${memberTypeText} - ${name}様より`,
+    text: adminText,
+    html: adminHtml
+  })
+
+  // テンプレートから本文を生成（申し込み者向け）
+  const userText = await renderTemplate('join-user.txt', userVariables)
+  const userHtml = await renderTemplate('join-user.html', userVariables)
+
+  // 申し込み者に自動返信メールを送信
+  await sendEmail({
+    to: email,
+    subject: '入会申し込みを受け付けました',
+    text: userText,
+    html: userHtml
   })
 }

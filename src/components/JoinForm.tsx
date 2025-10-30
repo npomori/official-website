@@ -1,4 +1,5 @@
 import DateRangePicker from '@/components/DateRangePicker'
+import type { ApiResponse, ValidationErrorResponse } from '@/types/api'
 import { useRef, useState, type FormEvent } from 'react'
 
 interface JoinFormData {
@@ -87,21 +88,64 @@ export default function JoinForm() {
     setSubmitStatus({ type: null, message: '' })
     setFieldErrors({})
 
-    // TODO: 実際のAPI実装
-    // 仮の送信処理
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      // APIリクエスト用のデータを準備
+      const requestData = {
+        memberType: formData.memberType,
+        name: formData.name,
+        furigana: formData.furigana,
+        email: formData.email,
+        tel: formData.tel,
+        address: formData.address,
+        birthDate: formData.birthDate ? formData.birthDate.toISOString().split('T')[0] : '',
+        occupation: formData.occupation,
+        experience: formData.experience,
+        motivation: formData.motivation,
+        privacy: formData.privacy
+      }
 
-      setSubmitStatus({
-        type: 'success',
-        message: '入会申し込みを受け付けました。後日、必要書類を郵送いたします。'
+      // API呼び出し
+      const response = await fetch('/api/join', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestData)
       })
-      setIsSubmitted(true)
+
+      const result: ApiResponse<{ message: string }> | ValidationErrorResponse =
+        await response.json()
+
+      if (response.ok && 'success' in result && result.success) {
+        // 成功
+        setSubmitStatus({
+          type: 'success',
+          message:
+            result.message || '入会申し込みを受け付けました。後日、必要書類を郵送いたします。'
+        })
+        setIsSubmitted(true)
+      } else if (response.status === 422 && 'errors' in result) {
+        // バリデーションエラー
+        setFieldErrors(result.errors)
+        setSubmitStatus({
+          type: 'error',
+          message: result.message || '入力内容に誤りがあります。'
+        })
+      } else {
+        // その他のエラー
+        setSubmitStatus({
+          type: 'error',
+          message:
+            'message' in result
+              ? result.message
+              : '入会申し込みの送信に失敗しました。もう一度お試しください。'
+        })
+      }
     } catch (error) {
       console.error('入会申し込みエラー:', error)
       setSubmitStatus({
         type: 'error',
-        message: '入会申し込みの送信に失敗しました。もう一度お試しください。'
+        message: 'ネットワークエラーが発生しました。もう一度お試しください。'
       })
     } finally {
       setIsSubmitting(false)

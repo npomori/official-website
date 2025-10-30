@@ -37,7 +37,7 @@
     "@mdx-js/react": "^3.1.1",
     "@nanostores/react": "^1.0.0",
     "@prisma/client": "^6.18.0",
-    "astro": "^5.15.2",
+    "astro": "^5.15.3",
     "astro-icon": "^1.1.5",
     "bcryptjs": "^3.0.2",
     "cookie-signature": "^1.2.2",

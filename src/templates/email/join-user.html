@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>入会申し込み受付完了</title>
+</head>
+<body style="font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif; line-height: 1.8; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+    <h1 style="color: #2d5016; margin-top: 0;">入会申し込み受付完了</h1>
+  </div>
+
+  <p>{{name}} 様</p>
+
+  <p>この度は「奈良・人と自然の会」への入会申し込みをいただき、誠にありがとうございます。</p>
+
+  <p>以下の内容で入会申し込みを受け付けました。</p>
+
+  <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+    <h2 style="color: #2d5016; font-size: 18px; margin-top: 0; border-bottom: 2px solid #2d5016; padding-bottom: 10px;">入会申し込み内容</h2>
+    
+    <table style="width: 100%; border-collapse: collapse;">
+      <tr>
+        <td style="padding: 8px 0; font-weight: bold; width: 150px;">会員種別</td>
+        <td style="padding: 8px 0;">{{memberType}}</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 0; font-weight: bold;">お名前</td>
+        <td style="padding: 8px 0;">{{name}}（{{furigana}}）</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 0; font-weight: bold;">メールアドレス</td>
+        <td style="padding: 8px 0;">{{email}}</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 0; font-weight: bold;">電話番号</td>
+        <td style="padding: 8px 0;">{{tel}}</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 0; font-weight: bold;">住所</td>
+        <td style="padding: 8px 0;">{{address}}</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 0; font-weight: bold;">生年月日</td>
+        <td style="padding: 8px 0;">{{birthDate}}</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 0; font-weight: bold;">職業</td>
+        <td style="padding: 8px 0;">{{occupation}}</td>
+      </tr>
+    </table>
+
+    <div style="margin-top: 20px;">
+      <h3 style="color: #2d5016; font-size: 16px; margin-bottom: 10px;">森林ボランティア経験</h3>
+      <div style="background-color: #fff; padding: 15px; border-radius: 4px;">
+        {{experienceHtml}}
+      </div>
+    </div>
+
+    <div style="margin-top: 20px;">
+      <h3 style="color: #2d5016; font-size: 16px; margin-bottom: 10px;">入会の動機</h3>
+      <div style="background-color: #fff; padding: 15px; border-radius: 4px;">
+        {{motivationHtml}}
+      </div>
+    </div>
+  </div>
+
+  <div style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0;">
+    <p style="margin: 0;"><strong>今後の手続きについて</strong></p>
+    <p style="margin: 10px 0 0 0;">後日、必要書類を郵送させていただきます。書類が届きましたら、必要事項をご記入の上、ご返送ください。</p>
+  </div>
+
+  <p>ご不明な点がございましたら、お気軽にお問い合わせください。</p>
+
+  <p>今後とも、奈良・人と自然の会をよろしくお願いいたします。</p>
+
+  <div style="margin-top: 40px; padding-top: 20px; border-top: 2px solid #e9ecef; text-align: center; color: #6c757d; font-size: 14px;">
+    <p style="margin: 5px 0;"><strong>奈良・人と自然の会</strong></p>
+    <p style="margin: 5px 0;">Email: info@nara-hitotoshizen.org</p>
+  </div>
+</body>
+</html>
