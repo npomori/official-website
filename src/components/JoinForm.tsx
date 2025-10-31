@@ -190,6 +190,9 @@ export default function JoinForm() {
         <div>
           <label htmlFor="memberType" className="mb-1 block text-base font-medium text-gray-700">
             会員種別
+            <span className="ml-2 inline-block -translate-y-0.5 rounded bg-red-600 px-2 py-0.5 align-baseline text-sm text-white">
+              必須
+            </span>
           </label>
           <select
             id="memberType"
@@ -213,6 +216,9 @@ export default function JoinForm() {
         <div>
           <label htmlFor="name" className="mb-1 block text-base font-medium text-gray-700">
             お名前
+            <span className="ml-2 inline-block -translate-y-0.5 rounded bg-red-600 px-2 py-0.5 align-baseline text-sm text-white">
+              必須
+            </span>
           </label>
           <input
             type="text"
@@ -231,6 +237,9 @@ export default function JoinForm() {
         <div>
           <label htmlFor="furigana" className="mb-1 block text-base font-medium text-gray-700">
             フリガナ
+            <span className="ml-2 inline-block -translate-y-0.5 rounded bg-red-600 px-2 py-0.5 align-baseline text-sm text-white">
+              必須
+            </span>
           </label>
           <input
             type="text"
@@ -251,6 +260,9 @@ export default function JoinForm() {
         <div>
           <label htmlFor="email" className="mb-1 block text-base font-medium text-gray-700">
             メールアドレス
+            <span className="ml-2 inline-block -translate-y-0.5 rounded bg-red-600 px-2 py-0.5 align-baseline text-sm text-white">
+              必須
+            </span>
           </label>
           <input
             type="email"
@@ -269,6 +281,9 @@ export default function JoinForm() {
         <div>
           <label htmlFor="tel" className="mb-1 block text-base font-medium text-gray-700">
             電話番号
+            <span className="ml-2 inline-block -translate-y-0.5 rounded bg-red-600 px-2 py-0.5 align-baseline text-sm text-white">
+              必須
+            </span>
           </label>
           <input
             type="tel"
@@ -287,6 +302,9 @@ export default function JoinForm() {
         <div>
           <label htmlFor="address" className="mb-1 block text-base font-medium text-gray-700">
             住所
+            <span className="ml-2 inline-block -translate-y-0.5 rounded bg-red-600 px-2 py-0.5 align-baseline text-sm text-white">
+              必須
+            </span>
           </label>
           <textarea
             id="address"
@@ -305,7 +323,12 @@ export default function JoinForm() {
         </div>
 
         <div>
-          <label className="mb-1 block text-base font-medium text-gray-700">生年月日</label>
+          <label className="mb-1 block text-base font-medium text-gray-700">
+            生年月日
+            <span className="ml-2 inline-block -translate-y-0.5 rounded bg-red-600 px-2 py-0.5 align-baseline text-sm text-white">
+              必須
+            </span>
+          </label>
           <DateRangePicker
             ref={datePickerRef}
             startDate={formData.birthDate}
@@ -361,6 +384,9 @@ export default function JoinForm() {
         <div>
           <label htmlFor="motivation" className="mb-1 block text-base font-medium text-gray-700">
             入会の動機
+            <span className="ml-2 inline-block -translate-y-0.5 rounded bg-red-600 px-2 py-0.5 align-baseline text-sm text-white">
+              必須
+            </span>
           </label>
           <textarea
             id="motivation"
@@ -398,6 +424,9 @@ export default function JoinForm() {
               プライバシーポリシー
             </a>
             に同意する
+            <span className="ml-2 inline-block -translate-y-0.5 rounded bg-red-600 px-2 py-0.5 align-baseline text-sm text-white">
+              必須
+            </span>
           </label>
         </div>
         {fieldErrors.privacy && <p className="mt-1 text-sm text-red-600">{fieldErrors.privacy}</p>}
