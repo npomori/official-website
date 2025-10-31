@@ -148,6 +148,9 @@ export default function ContactForm({ disabled = false }: ContactFormProps) {
         <div>
           <label htmlFor="name" className="mb-1 block text-base font-medium text-gray-700">
             お名前
+            <span className="ml-2 inline-block -translate-y-0.5 rounded bg-red-600 px-2 py-0.5 align-baseline text-xs text-white">
+              必須
+            </span>
           </label>
           <input
             type="text"
@@ -167,6 +170,9 @@ export default function ContactForm({ disabled = false }: ContactFormProps) {
         <div>
           <label htmlFor="email" className="mb-1 block text-base font-medium text-gray-700">
             メールアドレス
+            <span className="ml-2 inline-block -translate-y-0.5 rounded bg-red-600 px-2 py-0.5 align-baseline text-xs text-white">
+              必須
+            </span>
           </label>
           <input
             type="email"
@@ -184,7 +190,12 @@ export default function ContactForm({ disabled = false }: ContactFormProps) {
         </div>
 
         <div>
-          <label className="mb-2 block text-base font-medium text-gray-700">会員種別</label>
+          <label className="mb-2 block text-base font-medium text-gray-700">
+            会員種別
+            <span className="ml-2 inline-block -translate-y-0.5 rounded bg-red-600 px-2 py-0.5 align-baseline text-xs text-white">
+              必須
+            </span>
+          </label>
           <div className="flex gap-6">
             <label className="flex items-center">
               <input
@@ -223,6 +234,9 @@ export default function ContactForm({ disabled = false }: ContactFormProps) {
         <div>
           <label htmlFor="subject" className="mb-1 block text-base font-medium text-gray-700">
             件名
+            <span className="ml-2 inline-block -translate-y-0.5 rounded bg-red-600 px-2 py-0.5 align-baseline text-xs text-white">
+              必須
+            </span>
           </label>
           <select
             id="subject"
@@ -249,6 +263,9 @@ export default function ContactForm({ disabled = false }: ContactFormProps) {
         <div>
           <label htmlFor="message" className="mb-1 block text-base font-medium text-gray-700">
             お問い合わせ内容
+            <span className="ml-2 inline-block -translate-y-0.5 rounded bg-red-600 px-2 py-0.5 align-baseline text-xs text-white">
+              必須
+            </span>
           </label>
           <textarea
             id="message"
@@ -287,6 +304,9 @@ export default function ContactForm({ disabled = false }: ContactFormProps) {
               プライバシーポリシー
             </a>
             に同意する
+            <span className="ml-2 inline-block -translate-y-0.5 rounded bg-red-600 px-2 py-0.5 align-baseline text-xs text-white">
+              必須
+            </span>
           </label>
         </div>
         {fieldErrors.privacy && <p className="mt-1 text-sm text-red-600">{fieldErrors.privacy}</p>}
