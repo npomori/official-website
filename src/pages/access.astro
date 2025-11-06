@@ -18,7 +18,16 @@ const { contactInfo } = footer
             <h3 class="mb-3 text-xl font-bold">住所</h3>
             <p class="text-gray-700">
               〒{contactInfo.postalCode}<br />
-              {contactInfo.address}
+              {
+                Array.isArray(contactInfo.address)
+                  ? contactInfo.address.map((line: string, index: number) => (
+                      <>
+                        {line}
+                        {index < contactInfo.address.length - 1 && <br />}
+                      </>
+                    ))
+                  : contactInfo.address
+              }
             </p>
           </div>
           <div>
