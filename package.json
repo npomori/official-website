@@ -53,6 +53,7 @@
     "react-hook-form": "^7.66.0",
     "react-leaflet": "^5.0.0",
     "react-markdown": "^10.1.0",
+    "react-number-format": "^5.4.4",
     "rehype-raw": "^7.0.0",
     "rehype-sanitize": "^6.0.0",
     "remark-gfm": "^4.0.1",

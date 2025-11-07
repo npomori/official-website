@@ -1,6 +1,6 @@
-import DateRangePicker from '@/components/DateRangePicker'
 import emailFetch from '@/fetch/email'
-import { useRef, useState, type FormEvent } from 'react'
+import { useState, type FormEvent } from 'react'
+import { PatternFormat } from 'react-number-format'
 
 interface JoinFormData {
   memberType: 'regular' | 'support' | ''
@@ -9,7 +9,7 @@ interface JoinFormData {
   email: string
   tel: string
   address: string
-  birthDate: Date | null
+  birthDate: string
   occupation: string
   experience: string
   motivation: string
@@ -23,7 +23,7 @@ const initialFormData: JoinFormData = {
   email: '',
   tel: '',
   address: '',
-  birthDate: null,
+  birthDate: '',
   occupation: '',
   experience: '',
   motivation: '',
@@ -39,7 +39,6 @@ export default function JoinForm() {
   }>({ type: null, message: '' })
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const [isSubmitted, setIsSubmitted] = useState(false)
-  const datePickerRef = useRef<HTMLDivElement>(null)
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -69,18 +68,6 @@ export default function JoinForm() {
     }
   }
 
-  const handleBirthDateChange = (startDate: Date | null) => {
-    setFormData((prev) => ({ ...prev, birthDate: startDate }))
-    // フィールドのエラーをクリア
-    if (fieldErrors.birthDate) {
-      setFieldErrors((prev) => {
-        const newErrors = { ...prev }
-        delete newErrors.birthDate
-        return newErrors
-      })
-    }
-  }
-
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
@@ -100,8 +87,20 @@ export default function JoinForm() {
         return
       }
 
-      // APIリクエスト用のデータを準備
-      const birthDateString: string = formData.birthDate.toISOString().split('T')[0]!
+      // 日付の形式を検証（YYYY/MM/DD形式を想定）
+      const birthDateMatch = formData.birthDate.match(/^(\d{4})\/(\d{2})\/(\d{2})$/)
+      if (!birthDateMatch) {
+        setFieldErrors({ birthDate: '生年月日を正しい形式で入力してください（例: 1990/01/01）' })
+        setSubmitStatus({
+          type: 'error',
+          message: '入力内容に誤りがあります。'
+        })
+        setIsSubmitting(false)
+        return
+      }
+
+      // APIリクエスト用のデータを準備（YYYY-MM-DD形式に変換）
+      const birthDateString: string = formData.birthDate.replace(/\//g, '-')
       const requestData: {
         memberType: 'regular' | 'support'
         name: string
@@ -329,14 +328,26 @@ export default function JoinForm() {
               必須
             </span>
           </label>
-          <DateRangePicker
-            ref={datePickerRef}
-            startDate={formData.birthDate}
-            endDate={formData.birthDate}
-            onChange={handleBirthDateChange}
-            isRangeMode={false}
-            placeholder="生年月日を選択"
-            showWeekday={false}
+          <PatternFormat
+            format="####/##/##"
+            placeholder="例: 1990/01/01"
+            mask="_"
+            value={formData.birthDate}
+            onValueChange={(values) => {
+              setFormData((prev) => ({ ...prev, birthDate: values.value }))
+              // フィールドのエラーをクリア
+              if (fieldErrors.birthDate) {
+                setFieldErrors((prev) => {
+                  const newErrors = { ...prev }
+                  delete newErrors.birthDate
+                  return newErrors
+                })
+              }
+            }}
+            className={`focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border bg-gray-50 px-3 py-2 focus:outline-none ${
+              fieldErrors.birthDate ? 'border-red-500' : 'border-gray-300'
+            }`}
+            disabled={isSubmitted}
           />
           {fieldErrors.birthDate && (
             <p className="mt-1 text-sm text-red-600">{fieldErrors.birthDate}</p>
