@@ -45,7 +45,7 @@ const currentPage = propCurrentPage || Astro.url.pathname
         </header>
       )
     }
-    <main class="container mx-auto mt-16 px-4 py-8">
+    <main class={`container mx-auto px-4 py-8 ${isHome ? 'mt-4' : 'mt-16'}`}>
       <slot />
     </main>
     <Footer />
