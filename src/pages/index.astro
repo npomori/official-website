@@ -2,6 +2,31 @@
 import Layout from '@/layouts/Layout.astro'
 import UpcomingEvents from '@/components/home/UpcomingEvents'
 import NewsSection from '@/components/home/NewsSection'
+import RecruitmentSection from '@/components/home/RecruitmentSection'
+
+// 参加者募集中のイベントデータ
+const recruitmentEvents = [
+  {
+    slug: 'spring-tree-planting-2024',
+    data: {
+      title: '春の植樹活動ボランティア募集',
+      description:
+        '近畿圏内の森林で春の植樹活動を行います。初心者の方も大歓迎!道具はこちらで用意しますので、動きやすい服装と軍手をお持ちください。みんなで協力して、未来の森を育てましょう。',
+      date: new Date('2024-04-15'),
+      tags: ['植樹', '初心者歓迎', '春', 'ボランティア']
+    }
+  },
+  {
+    slug: 'forest-maintenance-workshop',
+    data: {
+      title: '森林整備技術講習会',
+      description:
+        '安全な森林整備作業の基本から応用まで学べる講習会です。チェーンソーの使い方、下草刈り、枝打ちなどの実践的な技術を習得できます。経験豊富な指導員が丁寧に指導します。',
+      date: new Date('2024-04-22'),
+      tags: ['講習会', '技術習得', '森林整備', '実践']
+    }
+  }
+]
 
 // 最新のブログ記事データ
 const latestPosts = [
@@ -42,6 +67,9 @@ const latestPosts = [
 
       <NewsSection client:load />
     </section>
+
+    <!-- 参加者募集セクション -->
+    <RecruitmentSection events={recruitmentEvents} client:load />
 
     <!-- 主な事業セクション -->
     <section class="mb-16">
@@ -127,7 +155,7 @@ const latestPosts = [
     <!-- 最新のブログ記事セクション -->
     <section class="mb-16">
       <div class="mb-6 flex items-center justify-between">
-        <h2 class="text-2xl font-bold">最新の活動レポート</h2>
+        <h2 class="text-3xl font-bold">最新の活動レポート</h2>
         <a href="/blog" class="text-primary-600 hover:text-primary-800 font-semibold">
           すべてのレポートを見る <i class="fas fa-arrow-right ml-1"></i>
         </a>
@@ -169,7 +197,7 @@ const latestPosts = [
 
     <!-- 支援・募集セクション -->
     <section class="mb-16">
-      <h2 class="mb-8 text-center text-3xl font-bold">募集</h2>
+      <h2 class="mb-8 text-center text-3xl font-bold">支援・募集</h2>
       <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
         <div class="rounded-lg bg-white p-6 text-center shadow-lg">
           <div class="mb-4 flex justify-center">
