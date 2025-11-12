@@ -44,6 +44,14 @@ class AuthFetch extends BaseApiFetch {
       'POST'
     )
   }
+
+  async verifyUser(token: string, password: string) {
+    return this.requestWithJson<AuthResponse>(
+      `${config.api.rootUrl}/auth/verify`,
+      { token, password },
+      'POST'
+    )
+  }
 }
 
 export default new AuthFetch()

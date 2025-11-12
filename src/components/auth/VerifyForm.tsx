@@ -1,5 +1,6 @@
 import Alert from '@/components/base/Alert'
 import Button from '@/components/base/Button'
+import AuthFetch from '@/fetch/auth'
 import { generate } from 'generate-password-ts'
 import { useState, type FC } from 'react'
 
@@ -39,12 +40,7 @@ const VerifyForm: FC<VerifyFormProps> = ({ token }) => {
 
     setIsSubmitting(true)
     try {
-      const res = await fetch('/api/auth/verify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token, password })
-      })
-      const result = await res.json()
+      const result = await AuthFetch.verifyUser(token, password)
 
       if (result.success) {
         setSuccess(true)
