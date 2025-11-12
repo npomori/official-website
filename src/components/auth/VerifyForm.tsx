@@ -123,7 +123,7 @@ const VerifyForm: FC<VerifyFormProps> = ({ token }) => {
                   id="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="focus:border-primary-500 focus:ring-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-base text-gray-900"
+                  className="focus:border-primary-500 focus:ring-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-base text-gray-900 [&::-ms-clear]:hidden [&::-ms-reveal]:hidden"
                   required
                   minLength={8}
                   disabled={isSubmitting}
@@ -174,7 +174,7 @@ const VerifyForm: FC<VerifyFormProps> = ({ token }) => {
                   id="confirmPassword"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="focus:border-primary-500 focus:ring-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-base text-gray-900"
+                  className="focus:border-primary-500 focus:ring-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-base text-gray-900 [&::-ms-clear]:hidden [&::-ms-reveal]:hidden"
                   required
                   minLength={8}
                   disabled={isSubmitting}

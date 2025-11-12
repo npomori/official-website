@@ -182,7 +182,7 @@ const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ token }) => {
               id="newPassword"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              className="focus:border-primary-500 focus:ring-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-base text-gray-900"
+              className="focus:border-primary-500 focus:ring-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-base text-gray-900 [&::-ms-clear]:hidden [&::-ms-reveal]:hidden"
               required
               disabled={isSubmitting}
               minLength={8}
@@ -234,7 +234,7 @@ const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ token }) => {
               id="confirmPassword"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="focus:border-primary-500 focus:ring-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-base text-gray-900"
+              className="focus:border-primary-500 focus:ring-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-base text-gray-900 [&::-ms-clear]:hidden [&::-ms-reveal]:hidden"
               required
               disabled={isSubmitting}
               minLength={8}

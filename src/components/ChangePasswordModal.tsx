@@ -84,7 +84,7 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ userId }) => 
       setTimeout(() => {
         handleClose()
       }, 2000)
-    } catch (err) {
+    } catch {
       setError('パスワードの更新に失敗しました')
     }
   }
@@ -141,7 +141,7 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ userId }) => 
                   id="currentPassword"
                   value={formData.currentPassword}
                   onChange={(e) => setFormData({ ...formData, currentPassword: e.target.value })}
-                  className="focus:border-primary-500 focus:ring-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900"
+                  className="focus:border-primary-500 focus:ring-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 [&::-ms-clear]:hidden [&::-ms-reveal]:hidden"
                   required
                 />
                 <button
@@ -192,7 +192,7 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ userId }) => 
                   id="newPassword"
                   value={formData.newPassword}
                   onChange={(e) => setFormData({ ...formData, newPassword: e.target.value })}
-                  className="focus:border-primary-500 focus:ring-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900"
+                  className="focus:border-primary-500 focus:ring-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 [&::-ms-clear]:hidden [&::-ms-reveal]:hidden"
                   required
                   minLength={8}
                 />
@@ -245,7 +245,7 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ userId }) => 
                   id="confirmPassword"
                   value={formData.confirmPassword}
                   onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                  className="focus:border-primary-500 focus:ring-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900"
+                  className="focus:border-primary-500 focus:ring-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 [&::-ms-clear]:hidden [&::-ms-reveal]:hidden"
                   required
                 />
                 <button
