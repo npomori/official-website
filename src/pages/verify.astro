@@ -1,0 +1,13 @@
+---
+import Layout from '@/layouts/FullLayout.astro'
+import VerifyForm from '@/components/auth/VerifyForm'
+
+// URLパラメータからトークンを取得
+const token = Astro.url.searchParams.get('token') || ''
+---
+
+<Layout title="ユーザ認証">
+  <div class="w-full max-w-md">
+    <VerifyForm client:only="react" token={token} />
+  </div>
+</Layout>

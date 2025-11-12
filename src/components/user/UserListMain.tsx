@@ -9,9 +9,17 @@ type UserListProps = {
   users: IUser[]
   onEdit: (user: IUser) => void
   onDelete: (user: IUser) => void
+  onResendVerification?: (user: IUser) => void
+  resendingUserId?: number | null
 }
 
-const UserList: FC<UserListProps> = ({ users, onEdit, onDelete }) => {
+const UserList: FC<UserListProps> = ({
+  users,
+  onEdit,
+  onDelete,
+  onResendVerification,
+  resendingUserId
+}) => {
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 10
   const totalPages = Math.ceil(users.length / itemsPerPage)
@@ -122,6 +130,19 @@ const UserList: FC<UserListProps> = ({ users, onEdit, onDelete }) => {
                       >
                         削除
                       </Button>
+                      {!user.isEnabled && onResendVerification && (
+                        <Button
+                          type="button"
+                          onClick={() => onResendVerification(user)}
+                          variant="warning"
+                          size="md"
+                          icon="mdi:email-sync-outline"
+                          title="認証メールを再送信"
+                          disabled={resendingUserId === user.id}
+                        >
+                          {resendingUserId === user.id ? '送信中...' : '再送'}
+                        </Button>
+                      )}
                     </td>
                   </tr>
                 ))}

@@ -18,6 +18,8 @@ model User {
   rememberMeTokenExpiry DateTime?
   passwordResetToken     String?   @db.VarChar(255)
   passwordResetExpiresAt DateTime?
+  verificationToken      String?   @unique @db.VarChar(255)
+  verificationExpires    DateTime?
   role                  String
   isGuest               Boolean   @default(false)
   isEnabled             Boolean   @default(true)

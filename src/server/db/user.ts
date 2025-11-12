@@ -380,5 +380,64 @@ class UserDB extends BaseDB {
       return false
     }
   }
+
+  /**
+   * ユーザ認証トークンを設定
+   * @returns 成功時true、失敗時false
+   */
+  async setVerificationToken(userId: number, token: string, expiresAt: Date): Promise<boolean> {
+    try {
+      await BaseDB.prisma.user.update({
+        where: { id: userId },
+        data: {
+          verificationToken: token,
+          verificationExpires: expiresAt
+        }
+      })
+      return true
+    } catch (err) {
+      console.error(err)
+      return false
+    }
+  }
+
+  /**
+   * ユーザ認証トークンでユーザーを検索
+   */
+  async getUserByVerificationToken(token: string): Promise<User | null> {
+    try {
+      const user = await BaseDB.prisma.user.findUnique({
+        where: {
+          verificationToken: token
+        }
+      })
+      return user
+    } catch (err) {
+      console.error(err)
+      return null
+    }
+  }
+
+  /**
+   * パスワードを設定してユーザを有効化、認証トークンを削除
+   * @returns 成功時true、失敗時false
+   */
+  async activateUserWithPassword(userId: number, hashedPassword: string): Promise<boolean> {
+    try {
+      await BaseDB.prisma.user.update({
+        where: { id: userId },
+        data: {
+          password: hashedPassword,
+          isEnabled: true,
+          verificationToken: null,
+          verificationExpires: null
+        }
+      })
+      return true
+    } catch (err) {
+      console.error(err)
+      return false
+    }
+  }
 }
 export default new UserDB()

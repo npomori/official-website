@@ -17,6 +17,7 @@ const UserListPanel: FC = () => {
   const [showEditModal, setShowEditModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [selectedUser, setSelectedUser] = useState<IUser | null>(null)
+  const [resendingUserId, setResendingUserId] = useState<number | null>(null)
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -34,11 +35,32 @@ const UserListPanel: FC = () => {
         setLoading(false)
       }
     }
-    fetchUsers()
+    void fetchUsers()
   }, [])
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value)
+  }
+
+  const handleResendVerification = async (user: IUser) => {
+    if (!confirm(`${user.name} さんに認証メールを再送信しますか？`)) {
+      return
+    }
+
+    setResendingUserId(user.id)
+    try {
+      const result = await AdminUserFetch.resendVerificationEmail(user.id)
+      if (result.success) {
+        alert(result.message || '認証メールを再送信しました')
+      } else {
+        alert(result.message || '認証メールの再送信に失敗しました')
+      }
+    } catch (err) {
+      alert('通信エラーが発生しました')
+      console.error('Resend verification email error:', err)
+    } finally {
+      setResendingUserId(null)
+    }
   }
 
   const filteredUsers = users.filter(
@@ -106,6 +128,8 @@ const UserListPanel: FC = () => {
           setSelectedUser(user)
           setShowDeleteModal(true)
         }}
+        onResendVerification={handleResendVerification}
+        resendingUserId={resendingUserId}
       />
 
       {showAddModal && (

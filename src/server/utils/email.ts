@@ -43,6 +43,13 @@ interface JoinEmailData {
   motivation: string
 }
 
+interface UserVerificationEmailData {
+  name: string
+  email: string
+  verificationToken: string
+  expiresInHours: number
+}
+
 /**
  * テンプレートファイルを読み込んで変数を置換
  */
@@ -261,5 +268,30 @@ export async function sendJoinEmail(data: JoinEmailData): Promise<void> {
     subject: '入会申し込みを受け付けました',
     text: userText,
     html: userHtml
+  })
+}
+
+/**
+ * ユーザ認証メールを送信
+ */
+export async function sendUserVerificationEmail(data: UserVerificationEmailData): Promise<void> {
+  const { name, email, verificationToken, expiresInHours } = data
+
+  const verifyUrl = `${config.SITE_URL}/verify?token=${verificationToken}`
+
+  const variables = {
+    name,
+    verifyUrl,
+    expiresIn: String(expiresInHours)
+  }
+
+  const text = await renderTemplate('user-verification.txt', variables)
+  const html = await renderTemplate('user-verification.html', variables)
+
+  await sendEmail({
+    to: email,
+    subject: 'ユーザ登録の確認',
+    text,
+    html
   })
 }

@@ -5,9 +5,10 @@ import { BaseApiFetch } from '../base'
 export interface UserAdminRequest {
   email: string
   name: string
-  password: string | null
+  password?: string | null
   role: UserRole
-  isEnabled: boolean
+  isEnabled?: boolean
+  requireEmailVerification?: boolean
 }
 
 class AdminUserFetch extends BaseApiFetch {
@@ -27,6 +28,15 @@ class AdminUserFetch extends BaseApiFetch {
     return this.request<{ message: string }>(`${config.api.adminUrl}/user/${id}`, {
       method: 'DELETE'
     })
+  }
+
+  async resendVerificationEmail(id: number) {
+    return this.request<{ message: string }>(
+      `${config.api.adminUrl}/user/${id}/resend-verification`,
+      {
+        method: 'POST'
+      }
+    )
   }
 }
 
