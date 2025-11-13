@@ -1,7 +1,7 @@
 {
   "name": "official-website",
   "type": "module",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "Node.js based website for a non-profit organization.",
   "license": "MIT",
   "scripts": {
@@ -37,7 +37,7 @@
     "@mdx-js/react": "^3.1.1",
     "@nanostores/react": "^1.0.0",
     "@prisma/client": "^6.19.0",
-    "astro": "^5.15.5",
+    "astro": "^5.15.6",
     "astro-icon": "^1.1.5",
     "bcryptjs": "^3.0.3",
     "cookie-signature": "^1.2.2",
