@@ -16,7 +16,7 @@ model User {
   biography             String?   @db.Text
   rememberMeToken       String?   @unique
   rememberMeTokenExpiry DateTime?
-  passwordResetToken     String?   @db.VarChar(255)
+  passwordResetToken     String?   @unique @db.VarChar(255)
   passwordResetExpiresAt DateTime?
   verificationToken      String?   @unique @db.VarChar(255)
   verificationExpires    DateTime?

@@ -23,7 +23,7 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
       )
     }
 
-    const result = await UserDB.deleteUser(locals.user.id, id)
+    const result = await UserDB.deleteUser(locals.user!.id, id)
     if (result) {
       return new Response(
         JSON.stringify({
@@ -144,7 +144,7 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
     // パスワードが指定されている場合は更新
     if (body.password) {
       const hashedPassword = await hash(body.password)
-      const passwordUpdated = await UserDB.updatePassword(locals.user.id, id, hashedPassword)
+      const passwordUpdated = await UserDB.updatePassword(locals.user!.id, id, hashedPassword)
       if (!passwordUpdated) {
         return new Response(
           JSON.stringify({
@@ -162,7 +162,7 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
     }
 
     // パスワード以外のユーザ情報の更新
-    const user = await UserDB.updateUser(locals.user.id, id, {
+    const user = await UserDB.updateUser(locals.user!.id, id, {
       name: body.name,
       email: body.email,
       role: body.role,
