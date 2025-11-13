@@ -13,7 +13,8 @@ const toNumber = (value: unknown, fallback: number): number => {
 // サーバ専用の定義値をここに設定する
 const config = {
   // アクセス制御用
-  PUBLIC_ROUTES: ['/', '/api/auth/login', '/api/auth/logout'], // アクセス制限しないURL
+  //PUBLIC_ROUTES: ['/', '/api/auth/login', '/api/auth/logout'], // アクセス制限しないURL
+  PUBLIC_ROUTES: ['/', '/api/auth'], // アクセス制限しないURL
   PROTECTED_ROUTES: ['/admin', '/editor', '/api/admin', '/api/member'], // ログインが必要なURL
   EDITOR_ENABLED_ROUTES: [
     '/api/admin/event',
