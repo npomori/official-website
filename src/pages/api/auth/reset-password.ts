@@ -4,7 +4,7 @@
  */
 import { authRateLimiter } from '@/middleware/rate-limit'
 import { UserDB } from '@/server/db'
-import { hash } from '@/server/utils/password'
+import { hash, validatePasswordStrength } from '@/server/utils/password'
 import Session from '@/server/utils/session'
 import type { ApiResponse } from '@/types/api'
 import type { APIRoute } from 'astro'
@@ -13,36 +13,6 @@ export const prerender = false
 
 // レート制限: 5分間に5回まで
 export const onRequest = authRateLimiter
-
-/**
- * パスワード強度検証
- */
-function validatePasswordStrength(password: string): {
-  valid: boolean
-  message?: string
-} {
-  if (password.length < 8) {
-    return { valid: false, message: 'パスワードは8文字以上である必要があります' }
-  }
-
-  if (!/[A-Z]/.test(password)) {
-    return { valid: false, message: 'パスワードには大文字を含める必要があります' }
-  }
-
-  if (!/[a-z]/.test(password)) {
-    return { valid: false, message: 'パスワードには小文字を含める必要があります' }
-  }
-
-  if (!/[0-9]/.test(password)) {
-    return { valid: false, message: 'パスワードには数字を含める必要があります' }
-  }
-
-  if (!/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password)) {
-    return { valid: false, message: 'パスワードには記号を含める必要があります' }
-  }
-
-  return { valid: true }
-}
 
 interface ResetPasswordRequest {
   token: string
