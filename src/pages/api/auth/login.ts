@@ -1,3 +1,4 @@
+import { authRateLimiter } from '@/middleware/rate-limit'
 import { UserDB } from '@/server/db'
 import Auth from '@/server/utils/auth'
 import { validateCsrfForPost } from '@/server/utils/csrf'
@@ -6,6 +7,11 @@ import Session from '@/server/utils/session'
 import type { UserSessionData } from '@/types/user'
 import { convertToUserSessionData } from '@/types/user'
 import type { APIRoute } from 'astro'
+
+export const prerender = false
+
+// レート制限: 5分間に5回まで
+export const onRequest = authRateLimiter
 
 export const POST: APIRoute = async (context) => {
   const { request } = context

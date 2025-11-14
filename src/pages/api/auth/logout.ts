@@ -2,6 +2,8 @@ import Auth from '@/server/utils/auth'
 import Session from '@/server/utils/session'
 import type { APIRoute } from 'astro'
 
+export const prerender = false
+
 export const POST: APIRoute = async (context) => {
   try {
     // セッション削除

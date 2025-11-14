@@ -2,11 +2,17 @@
  * パスワードリセット申請 API
  * POST /api/auth/forgot-password
  */
+import { passwordResetRateLimiter } from '@/middleware/rate-limit'
 import { UserDB } from '@/server/db'
 import { sendPasswordResetEmail } from '@/server/utils/email'
 import type { ApiResponse } from '@/types/api'
 import type { APIRoute } from 'astro'
 import crypto from 'node:crypto'
+
+export const prerender = false
+
+// レート制限: 1時間に3回まで
+export const onRequest = passwordResetRateLimiter
 
 interface ForgotPasswordRequest {
   email: string

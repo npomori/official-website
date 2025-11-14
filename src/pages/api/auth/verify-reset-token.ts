@@ -2,9 +2,15 @@
  * パスワードリセットトークン検証 API
  * GET /api/auth/verify-reset-token?token=xxx
  */
+import { tokenVerificationRateLimiter } from '@/middleware/rate-limit'
 import { UserDB } from '@/server/db'
 import type { ApiResponse } from '@/types/api'
 import type { APIRoute } from 'astro'
+
+export const prerender = false
+
+// レート制限: 1分間に10回まで（トークン列挙攻撃を防ぐ）
+export const onRequest = tokenVerificationRateLimiter
 
 export const GET: APIRoute = async ({ url }) => {
   try {

@@ -2,10 +2,16 @@
  * ユーザ認証実行 API
  * POST /api/auth/verify
  */
+import { authRateLimiter } from '@/middleware/rate-limit'
 import { UserDB } from '@/server/db'
 import { hash } from '@/server/utils/password'
 import type { ApiResponse } from '@/types/api'
 import type { APIRoute } from 'astro'
+
+export const prerender = false
+
+// レート制限: 5分間に5回まで
+export const onRequest = authRateLimiter
 
 interface VerifyRequest {
   token: string

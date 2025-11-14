@@ -49,6 +49,45 @@ const config = {
   CONTACT_EMAIL: import.meta.env.CONTACT_EMAIL || 'info@example.com', // お問い合わせ送信先メールアドレス
 
   // サイトURL
-  SITE_URL: import.meta.env.SITE_URL || 'http://localhost:3000'
+  SITE_URL: import.meta.env.SITE_URL || 'http://localhost:3000',
+
+  // レート制限設定
+  RATE_LIMIT: {
+    // 認証API（ログイン、パスワードリセット実行、ユーザ認証）
+    AUTH: {
+      MAX_REQUESTS: toNumber(import.meta.env.RATE_LIMIT_AUTH_MAX_REQUESTS, 5),
+      WINDOW_MS: toNumber(import.meta.env.RATE_LIMIT_AUTH_WINDOW_MS, 5 * 60 * 1000) // 5分
+    },
+    // パスワードリセット申請
+    PASSWORD_RESET: {
+      MAX_REQUESTS: toNumber(import.meta.env.RATE_LIMIT_PASSWORD_RESET_MAX_REQUESTS, 3),
+      WINDOW_MS: toNumber(import.meta.env.RATE_LIMIT_PASSWORD_RESET_WINDOW_MS, 60 * 60 * 1000) // 1時間
+    },
+    // メール送信
+    EMAIL: {
+      MAX_REQUESTS: toNumber(import.meta.env.RATE_LIMIT_EMAIL_MAX_REQUESTS, 1),
+      WINDOW_MS: toNumber(import.meta.env.RATE_LIMIT_EMAIL_WINDOW_MS, 15 * 60 * 1000) // 15分
+    },
+    // 一般API
+    GENERAL: {
+      MAX_REQUESTS: toNumber(import.meta.env.RATE_LIMIT_GENERAL_MAX_REQUESTS, 30),
+      WINDOW_MS: toNumber(import.meta.env.RATE_LIMIT_GENERAL_WINDOW_MS, 60 * 1000) // 1分
+    },
+    // お問い合わせフォーム
+    CONTACT: {
+      MAX_REQUESTS: toNumber(import.meta.env.RATE_LIMIT_CONTACT_MAX_REQUESTS, 5),
+      WINDOW_MS: toNumber(import.meta.env.RATE_LIMIT_CONTACT_WINDOW_MS, 60 * 60 * 1000) // 1時間
+    },
+    // 入会申し込み
+    JOIN: {
+      MAX_REQUESTS: toNumber(import.meta.env.RATE_LIMIT_JOIN_MAX_REQUESTS, 3),
+      WINDOW_MS: toNumber(import.meta.env.RATE_LIMIT_JOIN_WINDOW_MS, 24 * 60 * 60 * 1000) // 1日
+    },
+    // トークン検証
+    TOKEN_VERIFICATION: {
+      MAX_REQUESTS: toNumber(import.meta.env.RATE_LIMIT_TOKEN_VERIFICATION_MAX_REQUESTS, 10),
+      WINDOW_MS: toNumber(import.meta.env.RATE_LIMIT_TOKEN_VERIFICATION_WINDOW_MS, 60 * 1000) // 1分
+    }
+  }
 }
 export default config
