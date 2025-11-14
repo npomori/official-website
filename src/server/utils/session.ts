@@ -109,6 +109,24 @@ class Session {
 
     return userId
   }
+
+  /**
+   * 特定のユーザーの全セッションを削除
+   * パスワード変更時などに使用
+   * @param userId ユーザーID
+   * @param context APIコンテキスト
+   * @returns 削除されたセッション数
+   */
+  async deleteUserSessions(userId: number, context: APIContext): Promise<number> {
+    try {
+      // RedisSessionのdestroyByUserIdメソッドを使用
+      const deletedCount = await context.locals.session.destroyByUserId(userId)
+      return deletedCount
+    } catch (err) {
+      console.error('ユーザーセッション削除エラー:', err)
+      return 0
+    }
+  }
 }
 
 function _sign(value: string, secret: string) {

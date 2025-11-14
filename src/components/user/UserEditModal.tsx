@@ -44,7 +44,8 @@ const UserEditModal: FC<UserEditModalProps> = ({ open, user, onClose, onUserUpda
   function generatePassword(): string {
     return generate({
       length: 10,
-      numbers: true
+      numbers: true,
+      symbols: true
     })
   }
 

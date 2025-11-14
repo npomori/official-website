@@ -48,6 +48,13 @@ export const csrf: MiddlewareHandler = async (context, next) => {
   const method = request.method.toUpperCase()
   const pathname = url.pathname
 
+  // 開発環境ではCSRF検証をスキップ
+  if (import.meta.env.DEV) {
+    const csrfToken = generateCsrfToken()
+    context.locals.csrfToken = csrfToken
+    return next()
+  }
+
   // GET, HEAD, OPTIONS は常に許可（トークン生成のみ）
   if (['GET', 'HEAD', 'OPTIONS'].includes(method)) {
     let csrfToken = cookies.get(CSRF_COOKIE_NAME)?.value

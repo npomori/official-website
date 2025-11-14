@@ -24,7 +24,8 @@ const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ token }) => {
   function generatePassword(): string {
     return generate({
       length: 10,
-      numbers: true
+      numbers: true,
+      symbols: true
     })
   }
 

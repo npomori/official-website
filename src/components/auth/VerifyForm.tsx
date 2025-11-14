@@ -21,7 +21,8 @@ const VerifyForm: FC<VerifyFormProps> = ({ token }) => {
   function generatePassword(): string {
     return generate({
       length: 10,
-      numbers: true
+      numbers: true,
+      symbols: true
     })
   }
 

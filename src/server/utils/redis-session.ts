@@ -90,6 +90,37 @@ class RedisSession {
     })
   }
 
+  /**
+   * 特定のユーザーIDに紐づくすべてのセッションを削除
+   * @param userId ユーザーID
+   * @returns 削除されたセッション数
+   */
+  async destroyByUserId(userId: number): Promise<number> {
+    const keys: string[] = await this.client.keys(this.prefix + '*')
+    if (!keys || keys.length === 0) return 0
+
+    let deletedCount = 0
+
+    for (const key of keys) {
+      const data = await this.client.get(key)
+      if (!data) continue
+
+      try {
+        const session = this.serializer.parse(data)
+        // セッションデータからユーザーIDを確認
+        if (session?.user?.id === userId) {
+          await this.client.del(key)
+          deletedCount++
+        }
+      } catch (err) {
+        console.error('セッション解析エラー:', err)
+        continue
+      }
+    }
+
+    return deletedCount
+  }
+
   _getTTL(sess?: any) {
     let ttl
     if (sess && sess.cookie && sess.cookie.expires) {
