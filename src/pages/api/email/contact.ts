@@ -1,6 +1,5 @@
 import config from '@/config/config.json'
 import { ContactFormSchema } from '@/schemas/contact'
-import { validateCsrfForPost } from '@/server/utils/csrf'
 import { sendContactEmail } from '@/server/utils/email'
 import type { ApiResponse, ValidationErrorResponse } from '@/types/api'
 import type { APIRoute } from 'astro'
@@ -20,20 +19,6 @@ export const POST: APIRoute = async (context) => {
     }
     return new Response(JSON.stringify(response), {
       status: 503,
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-  }
-
-  // CSRF対策: Origin/Refererヘッダーの検証
-  if (!validateCsrfForPost(request)) {
-    const response: ApiResponse<null> = {
-      success: false,
-      message: '不正なリクエストです'
-    }
-    return new Response(JSON.stringify(response), {
-      status: 403,
       headers: {
         'Content-Type': 'application/json'
       }

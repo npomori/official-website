@@ -1,7 +1,6 @@
 import { authRateLimiter } from '@/middleware/rate-limit'
 import { UserDB } from '@/server/db'
 import Auth from '@/server/utils/auth'
-import { validateCsrfForPost } from '@/server/utils/csrf'
 import { verify } from '@/server/utils/password'
 import Session from '@/server/utils/session'
 import type { UserSessionData } from '@/types/user'
@@ -15,22 +14,6 @@ export const onRequest = authRateLimiter
 
 export const POST: APIRoute = async (context) => {
   const { request } = context
-
-  // CSRF対策: Origin/Refererヘッダーの検証
-  if (!validateCsrfForPost(request)) {
-    return new Response(
-      JSON.stringify({
-        success: false,
-        message: '不正なリクエストです'
-      }),
-      {
-        status: 403,
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }
-    )
-  }
 
   // ヘッダチェック
   if (request.headers.get('Content-Type') !== 'application/json') {

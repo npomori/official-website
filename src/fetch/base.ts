@@ -1,10 +1,40 @@
 import type { ApiResponse, ValidationErrorResponse } from '@/types/api'
 import { getErrorMessage } from '@/types/api'
 
+/**
+ * Cookie から CSRF トークンを取得
+ */
+function getCsrfToken(): string | null {
+  if (typeof document === 'undefined') return null
+
+  const cookies = document.cookie.split(';')
+  for (const cookie of cookies) {
+    const [name, value] = cookie.trim().split('=')
+    if (name === '__csrf_token') {
+      return decodeURIComponent(value)
+    }
+  }
+  return null
+}
+
 export abstract class BaseApiFetch {
   protected async request<T>(url: string, options?: RequestInit): Promise<ApiResponse<T>> {
     try {
-      const response = await fetch(url, options)
+      const headers = new Headers(options?.headers)
+      const method = options?.method?.toUpperCase() || 'GET'
+
+      // POST, PUT, DELETE, PATCH の場合のみCSRFトークンを追加
+      if (!['GET', 'HEAD', 'OPTIONS'].includes(method)) {
+        const csrfToken = getCsrfToken()
+        if (csrfToken) {
+          headers.set('x-csrf-token', csrfToken)
+        }
+      }
+
+      const response = await fetch(url, {
+        ...options,
+        headers
+      })
       const data = await response.json()
 
       if (!response.ok) {
