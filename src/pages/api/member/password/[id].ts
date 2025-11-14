@@ -1,5 +1,5 @@
 import { UserDB } from '@/server/db'
-import { hash, verify } from '@/server/utils/password'
+import { hash, validatePasswordStrength, verify } from '@/server/utils/password'
 import type { APIRoute } from 'astro'
 
 export const PUT: APIRoute = async ({ params, request, locals }) => {
@@ -61,9 +61,26 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
       )
     }
 
+    // 新しいパスワードの強度チェック
+    const validation = validatePasswordStrength(newPassword)
+    if (!validation.valid) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: validation.message || 'パスワードの形式が不正です'
+        }),
+        {
+          status: 422,
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      )
+    }
+
     // 新しいパスワードをハッシュ化して更新
     const hashed = await hash(newPassword)
-    const updated = await UserDB.updatePassword(locals.user.id, userId, hashed)
+    const updated = await UserDB.updatePassword(user.id, userId, hashed)
     if (!updated) {
       return new Response(
         JSON.stringify({

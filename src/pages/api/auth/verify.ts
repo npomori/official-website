@@ -4,7 +4,7 @@
  */
 import { authRateLimiter } from '@/middleware/rate-limit'
 import { UserDB } from '@/server/db'
-import { hash } from '@/server/utils/password'
+import { hash, validatePasswordStrength } from '@/server/utils/password'
 import type { ApiResponse } from '@/types/api'
 import type { APIRoute } from 'astro'
 
@@ -34,13 +34,14 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     // パスワードの強度チェック
-    if (password.length < 8) {
+    const validation = validatePasswordStrength(password)
+    if (!validation.valid) {
       return new Response(
         JSON.stringify({
           success: false,
-          message: 'パスワードは8文字以上で入力してください'
+          message: validation.message || 'パスワードの形式が不正です'
         } satisfies ApiResponse<never>),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
+        { status: 422, headers: { 'Content-Type': 'application/json' } }
       )
     }
 
