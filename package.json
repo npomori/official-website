@@ -19,12 +19,12 @@
     "db:migrate": "prisma migrate dev",
     "db:studio": "prisma studio",
     "db:reset": "prisma migrate reset",
-    "db:seed": "node prisma/seeds/users.mjs",
-    "db:seed:records": "node prisma/seeds/records.mjs",
-    "db:seed:news": "node prisma/seeds/news.mjs",
-    "db:seed:events": "node prisma/seeds/events.mjs",
-    "db:seed:articles": "node prisma/seeds/articles.mjs",
-    "db:seed:articles:additional": "node prisma/seeds/articles-additional.mjs"
+    "db:seed": "tsx prisma/seeds/users.ts",
+    "db:seed:records": "tsx prisma/seeds/records.ts",
+    "db:seed:news": "tsx prisma/seeds/news.ts",
+    "db:seed:events": "tsx prisma/seeds/events.ts",
+    "db:seed:articles": "tsx prisma/seeds/articles.ts",
+    "db:seed:articles:additional": "tsx prisma/seeds/articles-additional.ts"
   },
   "dependencies": {
     "@astrojs/node": "^9.5.1",
@@ -80,6 +80,7 @@
     "@vitejs/plugin-react": "^5.1.1",
     "@vitest/coverage-v8": "4.0.13",
     "astro-eslint-parser": "^1.2.2",
+    "dotenv": "^17.2.3",
     "eslint": "^9.39.1",
     "eslint-plugin-astro": "^1.5.0",
     "globals": "^16.5.0",

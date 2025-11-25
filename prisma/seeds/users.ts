@@ -1,7 +1,7 @@
-import { PrismaClient } from '@prisma/client'
-const prisma = new PrismaClient()
+import type { PrismaClient } from '../../src/generated/prisma/client'
+import { runSeed } from './_common'
 
-async function main() {
+async function seedUsers(prisma: PrismaClient): Promise<void> {
   await prisma.user.createMany({
     data: [
       {
@@ -21,11 +21,4 @@ async function main() {
   })
 }
 
-main()
-  .catch((e) => {
-    console.error(e)
-    process.exit(1)
-  })
-  .finally(async () => {
-    await prisma.$disconnect()
-  })
+runSeed('Users', seedUsers)
