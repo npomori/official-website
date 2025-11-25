@@ -1,5 +1,5 @@
+import type { User } from '@/generated/prisma/client'
 import { Activity } from '@/server/utils/activity'
-import type { User } from '@prisma/client'
 import BaseDB from './base'
 
 class UserDB extends BaseDB {

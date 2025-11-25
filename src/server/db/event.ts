@@ -1,5 +1,5 @@
+import type { Event } from '@/generated/prisma/client'
 import { Activity } from '@/server/utils/activity'
-import type { Event } from '@prisma/client'
 import BaseDB from './base'
 
 interface AddEventData {

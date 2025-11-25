@@ -1,5 +1,5 @@
+import type { Prisma } from '@/generated/prisma/client'
 import type { CreateNewsData, News, NewsAttachment, PublicNews, UpdateNewsData } from '@/types/news'
-import type { Prisma } from '@prisma/client'
 import BaseDB from './base'
 
 class NewsDB extends BaseDB {

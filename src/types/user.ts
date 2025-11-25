@@ -1,4 +1,4 @@
-import type { User } from '@prisma/client'
+import type { User } from '@/generated/prisma/client'
 
 export type UserRole = 'ADMIN' | 'MODERATOR' | 'EDITOR' | 'MEMBER'
 

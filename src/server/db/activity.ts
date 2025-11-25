@@ -1,5 +1,5 @@
+import type { Activity } from '@/generated/prisma/client'
 import type { ActivityLog } from '@/types/activity'
-import type { Activity } from '@prisma/client'
 import BaseDB from './base'
 
 class ActivityDB extends BaseDB {

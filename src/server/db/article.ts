@@ -1,13 +1,8 @@
+import type { Prisma } from '@/generated/prisma/client'
 import type { CreateArticleData, UpdateArticleData } from '@/types/article'
-import { PrismaClient, type Prisma } from '@prisma/client'
+import BaseDB from './base'
 
-class ArticleDB {
-  private prisma: PrismaClient
-
-  constructor() {
-    this.prisma = new PrismaClient()
-  }
-
+class ArticleDB extends BaseDB {
   // 記事一覧を取得（ページネーション対応）
   async getArticlesWithPagination(
     page: number,
@@ -41,7 +36,7 @@ class ArticleDB {
 
     // 記事一覧を取得
     const [articles, totalCount] = await Promise.all([
-      this.prisma.article.findMany({
+      BaseDB.prisma.article.findMany({
         where,
         include: {
           creator: {
@@ -55,7 +50,7 @@ class ArticleDB {
         skip,
         take: limit
       }),
-      this.prisma.article.count({ where })
+      BaseDB.prisma.article.count({ where })
     ])
 
     return { articles, totalCount }
@@ -63,7 +58,7 @@ class ArticleDB {
 
   // 記事詳細を取得
   async getArticleById(id: number, isLoggedIn: boolean = false) {
-    const article = await this.prisma.article.findFirst({
+    const article = await BaseDB.prisma.article.findFirst({
       where: {
         id,
         status: 'published',
@@ -81,7 +76,7 @@ class ArticleDB {
 
     if (article) {
       // 閲覧回数を増加
-      await this.prisma.article.update({
+      await BaseDB.prisma.article.update({
         where: { id },
         data: { viewCount: { increment: 1 } }
       })
@@ -92,7 +87,7 @@ class ArticleDB {
 
   // 管理用: ステータスに関わらずIDで取得
   async getArticleByIdAdmin(id: number) {
-    return await this.prisma.article.findUnique({
+    return await BaseDB.prisma.article.findUnique({
       where: { id },
       include: {
         creator: {
@@ -104,7 +99,7 @@ class ArticleDB {
 
   // 記事を作成
   async createArticle(data: CreateArticleData) {
-    return await this.prisma.article.create({
+    return await BaseDB.prisma.article.create({
       data: {
         title: data.title,
         content: data.content,
@@ -133,7 +128,7 @@ class ArticleDB {
 
   // 記事を更新
   async updateArticle(id: number, data: UpdateArticleData) {
-    return await this.prisma.article.update({
+    return await BaseDB.prisma.article.update({
       where: { id },
       data: {
         ...(data.title !== undefined && { title: data.title }),
@@ -166,14 +161,14 @@ class ArticleDB {
 
   // 記事を削除
   async deleteArticle(id: number) {
-    return await this.prisma.article.delete({
+    return await BaseDB.prisma.article.delete({
       where: { id }
     })
   }
 
   // カテゴリー一覧を取得
   async getCategories() {
-    const categories = await this.prisma.article.findMany({
+    const categories = await BaseDB.prisma.article.findMany({
       where: {
         status: 'published',
         category: { not: null }
@@ -189,7 +184,7 @@ class ArticleDB {
 
   // タグ一覧を取得
   async getTags() {
-    const articles = await this.prisma.article.findMany({
+    const articles = await BaseDB.prisma.article.findMany({
       where: {
         status: 'published'
         // Prisma JSON not null filter: use { not: Prisma.JsonNull }
@@ -227,7 +222,7 @@ class ArticleDB {
       Object.assign(where, { OR: [{ category: category }, { tags: { array_contains: tags } }] })
     }
 
-    return await this.prisma.article.findMany({
+    return await BaseDB.prisma.article.findMany({
       where,
       include: {
         creator: {
@@ -244,7 +239,7 @@ class ArticleDB {
 
   // 人気記事を取得
   async getPopularArticles(limit: number = 5) {
-    return await this.prisma.article.findMany({
+    return await BaseDB.prisma.article.findMany({
       where: {
         status: 'published'
       },
@@ -263,7 +258,7 @@ class ArticleDB {
 
   // 最新記事を取得
   async getLatestArticles(limit: number = 5) {
-    return await this.prisma.article.findMany({
+    return await BaseDB.prisma.article.findMany({
       where: {
         status: 'published'
       },

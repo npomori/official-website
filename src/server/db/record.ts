@@ -1,4 +1,4 @@
-import type { Record } from '@prisma/client'
+import type { Record } from '@/generated/prisma/client'
 import BaseDB from './base'
 
 class RecordDB extends BaseDB {
