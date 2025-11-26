@@ -8,12 +8,18 @@ function getCsrfToken(): string | null {
   if (typeof document === 'undefined') return null
 
   const cookies = document.cookie.split(';')
+  console.log('[BaseApiFetch] 全Cookie:', cookies)
+  
   for (const cookie of cookies) {
     const [name, value] = cookie.trim().split('=')
     if (name === '__csrf_token') {
-      return decodeURIComponent(value)
+      const token = decodeURIComponent(value)
+      console.log('[BaseApiFetch] CSRFトークン取得:', token.substring(0, 8) + '...')
+      return token
     }
   }
+  
+  console.warn('[BaseApiFetch] CSRFトークンが見つかりません')
   return null
 }
 
@@ -26,8 +32,17 @@ export abstract class BaseApiFetch {
       // POST, PUT, DELETE, PATCH の場合のみCSRFトークンを追加
       if (!['GET', 'HEAD', 'OPTIONS'].includes(method)) {
         const csrfToken = getCsrfToken()
+        console.log('[BaseApiFetch] CSRFトークン送信:', {
+          method,
+          url,
+          hasToken: !!csrfToken,
+          tokenPreview: csrfToken?.substring(0, 8) + '...'
+        })
+        
         if (csrfToken) {
           headers.set('x-csrf-token', csrfToken)
+        } else {
+          console.error('[BaseApiFetch] CSRFトークンが取得できません！')
         }
       }
 
