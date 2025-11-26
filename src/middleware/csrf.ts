@@ -75,17 +75,30 @@ export const csrf: MiddlewareHandler = async (context, next) => {
 
     if (!csrfToken) {
       csrfToken = generateCsrfToken()
+
+      // プロトコルの判定（Nginxプロキシ環境対応）
+      const forwardedProto = request.headers.get('x-forwarded-proto')
+      const isHttps = forwardedProto === 'https' || url.protocol === 'https:'
+
+      // Cookie設定
+      // sameSite: 'lax' は同一サイト内でのPOSTでも送信される
+      // secure: HTTPS環境でのみtrue（HTTPでは動作しない）
       cookies.set(CSRF_COOKIE_NAME, csrfToken, {
         httpOnly: false, // JavaScriptからアクセス可能にする
-        secure: import.meta.env.PROD,
-        sameSite: 'lax',
+        secure: isHttps, // HTTPSの場合のみtrue
+        sameSite: isHttps ? 'none' : 'lax', // HTTPSならnone、HTTPならlax
         path: '/',
         maxAge: 60 * 60 * 24 // 24時間
       })
+
       console.log('[CSRF] 新規トークン発行:', {
         token: csrfToken.substring(0, 8) + '...',
-        secure: import.meta.env.PROD,
-        sameSite: 'lax'
+        protocol: url.protocol,
+        forwardedProto,
+        isHttps,
+        secure: isHttps,
+        sameSite: isHttps ? 'none' : 'lax',
+        host: request.headers.get('host')
       })
     } else {
       console.log('[CSRF] 既存トークン使用:', csrfToken.substring(0, 8) + '...')

@@ -9,17 +9,24 @@ function getCsrfToken(): string | null {
 
   const cookies = document.cookie.split(';')
   console.log('[BaseApiFetch] 全Cookie:', cookies)
-  
+  console.log('[BaseApiFetch] Cookie文字列:', document.cookie)
+  console.log('[BaseApiFetch] プロトコル:', window.location.protocol)
+  console.log('[BaseApiFetch] ホスト:', window.location.host)
+
   for (const cookie of cookies) {
     const [name, value] = cookie.trim().split('=')
+    console.log('[BaseApiFetch] Cookie解析:', { name, value: value?.substring(0, 8) })
+
     if (name === '__csrf_token') {
       const token = decodeURIComponent(value)
-      console.log('[BaseApiFetch] CSRFトークン取得:', token.substring(0, 8) + '...')
+      console.log('[BaseApiFetch] CSRFトークン取得成功:', token.substring(0, 8) + '...')
       return token
     }
   }
-  
-  console.warn('[BaseApiFetch] CSRFトークンが見つかりません')
+
+  console.error(
+    '[BaseApiFetch] CSRFトークンが見つかりません - ブラウザのApplicationタブでCookieを確認してください'
+  )
   return null
 }
 
@@ -38,7 +45,7 @@ export abstract class BaseApiFetch {
           hasToken: !!csrfToken,
           tokenPreview: csrfToken?.substring(0, 8) + '...'
         })
-        
+
         if (csrfToken) {
           headers.set('x-csrf-token', csrfToken)
         } else {
