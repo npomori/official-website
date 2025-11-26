@@ -62,7 +62,8 @@ export const csrf: MiddlewareHandler = async (context, next) => {
     if (!csrfToken) {
       csrfToken = generateCsrfToken()
       cookies.set(CSRF_COOKIE_NAME, csrfToken, {
-        httpOnly: true,
+        //httpOnly: true,
+        httpOnly: false, // 問題があると思われるためテスト的に一時的に変更
         secure: import.meta.env.PROD,
         sameSite: 'lax',
         path: '/',
