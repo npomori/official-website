@@ -11,6 +11,9 @@
       "name": "NPO法人 仮想森林ボランティア協会",
       "url": "https://www.example.com"
     },
+    "email": {
+      "fromName": "仮想森林ボランティア協会"
+    },
     "comments": {
       "enabled": true
     },

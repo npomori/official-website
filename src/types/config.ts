@@ -10,6 +10,9 @@ interface SiteConfig {
     name: string
     url: string
   }
+  email: {
+    fromName: string
+  }
   head: {
     defaultDescription: string
   }

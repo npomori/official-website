@@ -1,12 +1,26 @@
 /**
  * メール送信ユーティリティ
  */
+import clientConfig from '@/config/config.json'
 import contactSubjects from '@/config/contact-subject.json'
 import config from '@/server/config'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import type { Transporter } from 'nodemailer'
 import nodemailer from 'nodemailer'
+
+/**
+ * MAIL_FROMを「名前 <メールアドレス>」形式で生成
+ */
+function formatMailFrom(): string {
+  const mailAddress = config.MAIL_FROM
+  const fromName = clientConfig.site.email?.fromName
+
+  if (fromName) {
+    return `${fromName} <${mailAddress}>`
+  }
+  return mailAddress
+}
 
 interface EmailOptions {
   to: string
@@ -99,7 +113,7 @@ export async function sendEmail(options: EmailOptions): Promise<void> {
     })
 
     const info = await transporter.sendMail({
-      from: config.MAIL_FROM,
+      from: formatMailFrom(),
       to: options.to,
       subject: options.subject,
       text: options.text,
