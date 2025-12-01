@@ -79,14 +79,7 @@ const otherLocations = getOtherLocations()
                     </svg>
                   </button>
                 </div>
-                <p class="mb-4 text-gray-700">{location.description}</p>
-                {location.activities && location.activities.length > 0 && (
-                  <div class="mb-4 text-base text-gray-600">
-                    {location.activities.map((activity) => (
-                      <p>• {activity}</p>
-                    ))}
-                  </div>
-                )}
+                {location.activities && <p class="mb-4 text-gray-700">{location.activities}</p>}
                 {location.hasDetail && (
                   <div class="mt-4 flex justify-end">
                     <a
@@ -123,14 +116,7 @@ const otherLocations = getOtherLocations()
                   class="mb-4 h-48 w-full rounded-lg object-cover"
                 />
                 <h3 class="mb-3 text-xl font-bold">{location.name}</h3>
-                <p class="mb-4 text-gray-700">{location.description}</p>
-                {location.activities && location.activities.length > 0 && (
-                  <div class="mb-4 text-base text-gray-600">
-                    {location.activities.map((activity) => (
-                      <p>• {activity}</p>
-                    ))}
-                  </div>
-                )}
+                <p class="mb-4 text-gray-700">{location.activities}</p>
                 {location.hasDetail && (
                   <div class="mt-4 flex justify-end">
                     <a

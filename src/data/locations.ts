@@ -1,22 +1,34 @@
 import locationsData from './locations.json'
 
+export interface MeetingPoint {
+  address: string
+  time: string
+  mapUrl?: string
+  additionalInfo?: string
+}
+
 export interface DetailInfo {
-  history: string
   access: string
   facilities: string
   schedule: string
   requirements: string
   contact: string
   gallery: string[]
+  activityDetails?: string
+  fieldCharacteristics?: string
+  meetingPoint?: MeetingPoint
+  participationFee?: string
+  upcomingDates?: string[]
+  notes?: string
+  other?: string
 }
 
 export interface LocationData {
   id: string
   name: string
   position: [number, number]
-  description: string
   type: 'regular' | 'activity'
-  activities?: string[]
+  activities?: string
   image?: string
   address?: string
   hasDetail?: boolean

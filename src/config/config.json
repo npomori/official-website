@@ -77,6 +77,19 @@
         "height": 1920
       },
       "quality": 85
+    },
+    "location": {
+      "enabled": true,
+      "url": "/uploads/locations",
+      "directory": "public/uploads/locations",
+      "maxFiles": 20,
+      "maxFileSize": 10485760,
+      "allowedTypes": ["image/jpeg", "image/png", "image/gif", "image/webp"],
+      "maxSize": {
+        "width": 1920,
+        "height": 1920
+      },
+      "quality": 85
     }
   },
   "api": {

@@ -1,0 +1,12 @@
+---
+import Layout from '@/layouts/Layout.astro'
+import LocationDetail from '@/components/location/LocationDetail.tsx'
+
+// URLパラメータから活動地IDを取得
+const { id } = Astro.params
+---
+
+<Layout title="活動地詳細">
+  <!-- React コンポーネント -->
+  <LocationDetail client:load locationId={id} />
+</Layout>

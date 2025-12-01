@@ -122,19 +122,11 @@ const KinkiMap: React.FC<KinkiMapProps> = ({ locations }) => {
               <Popup>
                 <div className="p-2">
                   <h3 className="mb-2 text-lg font-bold text-gray-800">{location.name}</h3>
-                  <p className="text-sm text-gray-600">{location.description}</p>
+                  {location.activities && (
+                    <p className="text-sm text-gray-600">{location.activities}</p>
+                  )}
                   {location.address && (
                     <p className="mt-1 text-xs text-gray-500">{location.address}</p>
-                  )}
-                  {location.activities && location.activities.length > 0 && (
-                    <div className="mt-2">
-                      <p className="mb-1 text-xs font-semibold text-gray-700">主な活動:</p>
-                      <ul className="text-xs text-gray-600">
-                        {location.activities.map((activity, idx) => (
-                          <li key={idx}>• {activity}</li>
-                        ))}
-                      </ul>
-                    </div>
                   )}
                   <span
                     className={`mt-2 inline-block rounded px-2 py-1 text-xs ${

@@ -137,6 +137,7 @@ export const getRecordUploadConfig = () => config.upload.record
 export const getAvatarUploadConfig = () => config.upload.avatar
 export const getNewsUploadConfig = () => config.upload.news
 export const getArticleUploadConfig = () => config.upload.article
+export const getLocationUploadConfig = () => config.upload.location
 export const getSiteConfig = () => config.site
 export const getConfig = () => config
 export const getArticleContentConfig = () => config.content.article
