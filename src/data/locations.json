@@ -39,6 +39,18 @@
         "https://images.unsplash.com/photo-1448375240586-882707db888b?w=400&auto=format&fit=crop&q=60",
         "https://images.unsplash.com/photo-1440342359743-84fcb8c21f21?w=400&auto=format&fit=crop&q=60",
         "https://images.unsplash.com/photo-1475483768296-6163e08872a1?w=400&auto=format&fit=crop&q=60"
+      ],
+      "attachments": [
+        {
+          "name": "活動地マップ.pdf",
+          "url": "/uploads/locations/minoh-map.pdf",
+          "size": "1.2MB"
+        },
+        {
+          "name": "持ち物リスト.pdf",
+          "url": "/uploads/locations/minoh-checklist.pdf",
+          "size": "256KB"
+        }
       ]
     }
   },

@@ -21,6 +21,11 @@ export interface DetailInfo {
   upcomingDates?: string[]
   notes?: string
   other?: string
+  attachments?: Array<{
+    name: string
+    url: string
+    size?: string
+  }>
 }
 
 export interface LocationData {

@@ -237,6 +237,31 @@ const LocationDetail: React.FC<LocationDetailProps> = ({ locationId }) => {
                 </div>
               </div>
             </div>
+
+            {/* 添付ファイル */}
+            {detailInfo.attachments && detailInfo.attachments.length > 0 && (
+              <div className="mt-6 border-t pt-6">
+                <h3 className="mb-3 text-lg font-semibold">添付ファイル</h3>
+                <div className="flex flex-wrap gap-2">
+                  {detailInfo.attachments.map((file, index) => (
+                    <a
+                      key={index}
+                      href={file.url}
+                      className="inline-flex items-center rounded-lg bg-blue-50 px-3 py-2 text-sm text-blue-700 transition-colors hover:bg-blue-100"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      download
+                    >
+                      <i className="fas fa-file-alt mr-2"></i>
+                      {file.name}
+                      {file.size && (
+                        <span className="ml-2 text-xs text-gray-500">({file.size})</span>
+                      )}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </section>
       )}
