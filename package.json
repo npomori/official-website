@@ -24,7 +24,8 @@
     "db:seed:news": "tsx prisma/seeds/news.ts",
     "db:seed:events": "tsx prisma/seeds/events.ts",
     "db:seed:articles": "tsx prisma/seeds/articles.ts",
-    "db:seed:articles:additional": "tsx prisma/seeds/articles-additional.ts"
+    "db:seed:articles:additional": "tsx prisma/seeds/articles-additional.ts",
+    "db:seed:locations": "tsx prisma/seeds/locations.ts"
   },
   "dependencies": {
     "@astrojs/node": "^9.5.1",
