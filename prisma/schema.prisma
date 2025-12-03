@@ -35,6 +35,7 @@ model User {
   Records               Record[]
   News                  News[]
   Articles              Article[]
+  Locations             Location[]
 }
 
 model Event {
@@ -134,4 +135,47 @@ model Article {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   creator     User     @relation(fields: [creatorId], references: [id])
+}
+
+model Location {
+  id                       String   @id // 活動地ID（例: "minoh", "kongosan"）
+  name                     String   // 活動地名
+  position                 Json     // 位置情報 [latitude, longitude]
+  type                     String   // 活動地タイプ（regular: 定例活動地, activity: その他の活動）
+  activities               String?  @db.Text // 活動内容の概要
+  image                    String?  // メイン画像URL
+  address                  String?  // 住所
+  hasDetail                Boolean  @default(false) // 詳細情報の有無
+  
+  // 詳細情報（hasDetail=true の場合に使用）
+  activityDetails          String?  @db.Text // 活動内容の詳細説明
+  fieldCharacteristics     String?  @db.Text // フィールドの特徴
+  access                   String?  @db.Text // アクセス方法
+  facilities               String?  @db.Text // 施設情報
+  schedule                 String?  // 活動スケジュール
+  requirements             String?  @db.Text // 持ち物・服装
+  participationFee         String?  // 参加費
+  contact                  String?  // 連絡先
+  notes                    String?  @db.Text // 注意事項
+  other                    String?  @db.Text // その他の情報
+  
+  // 集合場所情報
+  meetingAddress           String?  @db.Text // 集合場所の住所
+  meetingTime              String?  // 集合時間
+  meetingMapUrl            String?  @db.Text // Google Maps埋め込みURL
+  meetingAdditionalInfo    String?  @db.Text // 集合場所の補足情報
+  
+  // メディア・添付ファイル
+  images                   Json?    // 画像ギャラリー（URL配列）
+  attachments              Json?    // 添付ファイル（PDF等、JSON配列として保存）
+  upcomingDates            Json?    // 今後の活動予定日（日付文字列の配列）
+  
+  // 状態管理
+  status                   String   @default("published") // 状態（draft: 下書き、published: 公開、archived: アーカイブ）
+  
+  // 作成者・タイムスタンプ
+  creatorId                Int      // 作成者
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
+  creator                  User     @relation(fields: [creatorId], references: [id])
 }
