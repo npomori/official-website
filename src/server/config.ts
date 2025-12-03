@@ -20,7 +20,8 @@ const config = {
     '/api/admin/event',
     '/api/admin/record',
     '/api/admin/news',
-    '/api/admin/article'
+    '/api/admin/article',
+    '/api/admin/location'
   ], // EDITORロールがアクセスできるURL
 
   SESSION_COOKIE_NAME: import.meta.env.SESSION_COOKIE_NAME || '__session', // クッキー作成用シークレットコード

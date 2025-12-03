@@ -3,6 +3,7 @@ import ContentNotFound from '@/components/ContentNotFound'
 import { findLocationById, type LocationData } from '@/data/locations'
 import { getLocationUploadConfig } from '@/types/config'
 import React, { useEffect, useState } from 'react'
+import LocationModalLink from './LocationModalLink'
 
 interface LocationDetailProps {
   locationId?: string | undefined
@@ -105,6 +106,7 @@ const LocationDetail: React.FC<LocationDetailProps> = ({ locationId }) => {
             </svg>
             活動地一覧に戻る
           </button>
+          <LocationModalLink />
         </div>
       </div>
 

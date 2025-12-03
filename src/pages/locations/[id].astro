@@ -6,7 +6,7 @@ import LocationDetail from '@/components/location/LocationDetail.tsx'
 const { id } = Astro.params
 ---
 
-<Layout title="活動地詳細">
+<Layout title="活動地詳細" currentPage={Astro.url.pathname}>
   <!-- React コンポーネント -->
   <LocationDetail client:load locationId={id} />
 </Layout>

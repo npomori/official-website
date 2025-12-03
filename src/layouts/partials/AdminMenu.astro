@@ -4,6 +4,7 @@ import EventModalLink from '@/components/event/EventModalLink'
 import NewsModalLink from '@/components/news/NewsModalLink'
 import NewsListModalLink from '@/components/news/NewsListModalLink'
 import RecordModalLink from '@/components/record/RecordModalLink'
+import LocationModalLink from '@/components/location/LocationModalLink'
 
 interface Props {
   variant?: 'desktop' | 'mobile'
@@ -27,6 +28,8 @@ const isCalendarPage = currentPage === '/calendar'
 const isRecordPage = currentPage === '/record'
 // お知らせページの場合のみNewsModalLinkを表示
 const isNewsPage = currentPage === '/news'
+// 活動地ページの場合のみLocationModalLinkを表示
+const isLocationPage = currentPage?.startsWith('/locations')
 // トップページの場合のみ一覧リンク群を表示
 const isTopPage = currentPage === '/'
 // ADMINまたはMODERATORロールの場合のみダッシュボードを表示
@@ -112,6 +115,11 @@ const showDashboard = user && (user.role === 'ADMIN' || user.role === 'MODERATOR
               <NewsListModalLink client:load />
             </li>
           )}
+          {isLocationPage && (
+            <li>
+              <LocationModalLink client:load />
+            </li>
+          )}
           {showDashboard && (
             <li>
               <a href="/admin" class="hover:bg-primary-600 flex items-center px-4 py-2 text-white">
@@ -180,6 +188,11 @@ const showDashboard = user && (user.role === 'ADMIN' || user.role === 'MODERATOR
           {isNewsPage && (
             <li>
               <NewsListModalLink client:load />
+            </li>
+          )}
+          {isLocationPage && (
+            <li>
+              <LocationModalLink client:load />
             </li>
           )}
           {showDashboard && (
