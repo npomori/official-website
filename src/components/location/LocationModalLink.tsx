@@ -1,4 +1,5 @@
 import Button from '@/components/base/Button'
+import LocationModal from '@/components/location/LocationModal'
 import LocationSelectModal from '@/components/location/LocationSelectModal'
 import { userStore } from '@/store/user'
 import type { UserAuth } from '@/types/user'
@@ -7,6 +8,7 @@ import { useState } from 'react'
 
 const LocationModalLink: React.FC = () => {
   const [showSelectModal, setShowSelectModal] = useState(false)
+  const [showLocationModal, setShowLocationModal] = useState(false)
   const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null)
 
   // ユーザー情報を取得
@@ -22,9 +24,19 @@ const LocationModalLink: React.FC = () => {
 
   const handleSelectLocation = (locationId: string) => {
     setSelectedLocationId(locationId)
-    // TODO: LocationModal を開く処理を実装
-    console.log('Selected location:', locationId)
-    alert(`活動地編集機能は準備中です。選択されたID: ${locationId}`)
+    setShowSelectModal(false)
+    setShowLocationModal(true)
+  }
+
+  const handleCloseLocationModal = () => {
+    setShowLocationModal(false)
+    setSelectedLocationId(null)
+  }
+
+  const handleSuccess = () => {
+    setShowLocationModal(false)
+    setSelectedLocationId(null)
+    window.location.reload()
   }
 
   return (
@@ -43,7 +55,13 @@ const LocationModalLink: React.FC = () => {
         onSelect={handleSelectLocation}
       />
 
-      {/* TODO: LocationModal コンポーネントを追加 */}
+      {showLocationModal && selectedLocationId && (
+        <LocationModal
+          locationId={selectedLocationId}
+          onClose={handleCloseLocationModal}
+          onSuccess={handleSuccess}
+        />
+      )}
     </>
   )
 }

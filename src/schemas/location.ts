@@ -30,7 +30,7 @@ export const locationBaseSchema = z.object({
   activities: z.string().trim().nullable().optional(),
   image: z.string().nullable().optional(),
   address: z.string().trim().nullable().optional(),
-  hasDetail: z.boolean().default(false),
+  hasDetail: z.boolean(),
 
   // 詳細情報
   activityDetails: z.string().trim().nullable().optional(),

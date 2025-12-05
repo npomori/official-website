@@ -56,6 +56,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const type = formData.get('type') as string
     const activities = formData.get('activities') as string | null
     const hasDetail = formData.get('hasDetail') === 'true'
+    const isDraft = formData.get('isDraft') === 'true'
 
     // 位置情報
     const positionStr = formData.get('position') as string
@@ -79,13 +80,14 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const meetingMapUrl = formData.get('meetingMapUrl') as string | null
     const meetingAdditionalInfo = formData.get('meetingAdditionalInfo') as string | null
 
-    // 活動予定日
+    // 活動予定日（textarea改行区切りから配列へ変換）
     const upcomingDatesStr = formData.get('upcomingDates') as string
-    const upcomingDates = upcomingDatesStr ? JSON.parse(upcomingDatesStr) : null
-
-    // 添付ファイル
-    const attachmentsStr = formData.get('attachments') as string
-    const attachments = attachmentsStr ? JSON.parse(attachmentsStr) : null
+    const upcomingDates = upcomingDatesStr
+      ? upcomingDatesStr
+          .split('\n')
+          .map((line) => line.trim())
+          .filter(Boolean)
+      : null
 
     const locationFileUploader = new FileUploader(UPLOAD_DIR)
     const locationConfig = config.upload.location
@@ -129,7 +131,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       // ファイルをアップロード
       try {
         const uploadedFiles = await locationFileUploader.uploadFiles([mainImageFile])
-        if (uploadedFiles && uploadedFiles.length > 0) {
+        if (uploadedFiles && uploadedFiles.length > 0 && uploadedFiles[0]) {
           mainImageUrl = `${cfg.url}/${uploadedFiles[0].filename}`
         }
       } catch (uploadError) {
@@ -224,6 +226,74 @@ export const POST: APIRoute = async ({ request, locals }) => {
       }
     }
 
+    // 添付ファイルのアップロード
+    let uploadedAttachments: Array<{
+      name: string
+      url: string
+      size: string
+    }> = []
+    const attachmentFiles = formData.getAll('attachments') as File[]
+    if (attachmentFiles && attachmentFiles.length > 0) {
+      // ファイル数のバリデーション
+      if (!locationFileUploader.validateFileCount(attachmentFiles, locationConfig.maxFiles)) {
+        return new Response(
+          JSON.stringify({
+            success: false,
+            message: `添付ファイル数が多すぎます (最大${locationConfig.maxFiles}個)`
+          }),
+          {
+            status: 400,
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          }
+        )
+      }
+
+      // ファイルサイズのバリデーション
+      for (const file of attachmentFiles) {
+        if (!locationFileUploader.validateFileSize(file, locationConfig.maxFileSize)) {
+          const maxSizeMB = Math.round(locationConfig.maxFileSize / (1024 * 1024))
+          return new Response(
+            JSON.stringify({
+              success: false,
+              message: `添付ファイルサイズが大きすぎます: ${file.name} (最大${maxSizeMB}MB)`
+            }),
+            {
+              status: 400,
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            }
+          )
+        }
+      }
+
+      // ファイルをアップロード
+      try {
+        const uploadedFiles = await locationFileUploader.uploadFiles(attachmentFiles)
+        uploadedAttachments = uploadedFiles.map((f) => ({
+          name: f.originalName,
+          url: `${cfg.url}/${f.filename}`,
+          size: `${Math.round(f.originalName.length / 1024)}KB`
+        }))
+      } catch (uploadError) {
+        console.error('Attachments upload error:', uploadError)
+        return new Response(
+          JSON.stringify({
+            success: false,
+            message: '添付ファイルのアップロードに失敗しました'
+          }),
+          {
+            status: 500,
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          }
+        )
+      }
+    }
+
     // DBに保存
     const createdLocation = await locationDB.create({
       id,
@@ -246,12 +316,12 @@ export const POST: APIRoute = async ({ request, locals }) => {
       requirements,
       participationFee,
       contact,
-      upcomingDates,
+      ...(upcomingDates && { upcomingDates }),
       notes,
       other,
-      images: galleryImages.length > 0 ? galleryImages : null,
-      attachments,
-      status: 'published',
+      ...(galleryImages.length > 0 && { images: galleryImages }),
+      ...(uploadedAttachments.length > 0 && { attachments: uploadedAttachments }),
+      status: isDraft ? 'draft' : 'published',
       creator: {
         connect: {
           id: locals.user!.id
