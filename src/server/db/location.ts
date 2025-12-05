@@ -166,11 +166,43 @@ class LocationDB extends BaseDB {
    */
   async findAllAdmin() {
     return await BaseDB.prisma.location.findMany({
-      include: {
+      select: {
+        id: true,
+        name: true,
+        position: true,
+        type: true,
+        activities: true,
+        image: true,
+        address: true,
+        hasDetail: true,
+        activityDetails: true,
+        fieldCharacteristics: true,
+        meetingAddress: true,
+        meetingTime: true,
+        meetingMapUrl: true,
+        meetingAdditionalInfo: true,
+        access: true,
+        facilities: true,
+        schedule: true,
+        requirements: true,
+        participationFee: true,
+        contact: true,
+        organizer: true,
+        startedDate: true,
+        upcomingDates: true,
+        notes: true,
+        other: true,
+        images: true,
+        attachments: true,
+        status: true,
+        createdAt: true,
+        updatedAt: true,
+        creatorId: true,
         creator: {
           select: {
             id: true,
-            name: true
+            name: true,
+            email: true
           }
         }
       },
@@ -186,11 +218,43 @@ class LocationDB extends BaseDB {
   async findByIdAdmin(id: string) {
     return await BaseDB.prisma.location.findUnique({
       where: { id },
-      include: {
+      select: {
+        id: true,
+        name: true,
+        position: true,
+        type: true,
+        activities: true,
+        image: true,
+        address: true,
+        hasDetail: true,
+        activityDetails: true,
+        fieldCharacteristics: true,
+        meetingAddress: true,
+        meetingTime: true,
+        meetingMapUrl: true,
+        meetingAdditionalInfo: true,
+        access: true,
+        facilities: true,
+        schedule: true,
+        requirements: true,
+        participationFee: true,
+        contact: true,
+        organizer: true,
+        startedDate: true,
+        upcomingDates: true,
+        notes: true,
+        other: true,
+        images: true,
+        attachments: true,
+        status: true,
+        createdAt: true,
+        updatedAt: true,
+        creatorId: true,
         creator: {
           select: {
             id: true,
-            name: true
+            name: true,
+            email: true
           }
         }
       }

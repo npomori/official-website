@@ -13,6 +13,8 @@ export interface DetailInfo {
   schedule: string
   requirements: string
   contact: string
+  organizer?: string
+  startedDate?: string
   gallery: string[]
   activityDetails?: string
   fieldCharacteristics?: string

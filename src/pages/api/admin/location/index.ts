@@ -71,6 +71,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const requirements = formData.get('requirements') as string | null
     const participationFee = formData.get('participationFee') as string | null
     const contact = formData.get('contact') as string | null
+    const organizer = formData.get('organizer') as string | null
+    const startedDate = formData.get('startedDate') as string | null
     const notes = formData.get('notes') as string | null
     const other = formData.get('other') as string | null
 
@@ -316,6 +318,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
       requirements,
       participationFee,
       contact,
+      organizer,
+      startedDate,
       ...(upcomingDates && { upcomingDates }),
       notes,
       other,

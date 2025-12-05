@@ -31,6 +31,7 @@ export const locationBaseSchema = z.object({
   image: z.string().nullable().optional(),
   address: z.string().trim().nullable().optional(),
   hasDetail: z.boolean(),
+  isDraft: z.boolean().optional(),
 
   // 詳細情報
   activityDetails: z.string().trim().nullable().optional(),
@@ -41,6 +42,8 @@ export const locationBaseSchema = z.object({
   requirements: z.string().trim().nullable().optional(),
   participationFee: z.string().trim().nullable().optional(),
   contact: z.string().trim().nullable().optional(),
+  organizer: z.string().trim().nullable().optional(),
+  startedDate: z.string().trim().nullable().optional(),
   notes: z.string().trim().nullable().optional(),
   other: z.string().trim().nullable().optional(),
 

@@ -156,6 +156,8 @@ model Location {
   requirements             String?  @db.Text // 持ち物・服装
   participationFee         String?  // 参加費
   contact                  String?  // 連絡先
+  organizer                String?  // 活動世話人
+  startedDate              String?  // 活動開始年月
   notes                    String?  @db.Text // 注意事項
   other                    String?  @db.Text // その他の情報
   

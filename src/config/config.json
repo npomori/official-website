@@ -94,6 +94,7 @@
     }
   },
   "api": {
+    "url": "/api",
     "rootUrl": "/api",
     "adminUrl": "/api/admin",
     "memberUrl": "/api/member"

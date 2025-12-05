@@ -58,6 +58,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
       image: null,
       address: null,
       hasDetail: false,
+      isDraft: false,
       activityDetails: null,
       fieldCharacteristics: null,
       access: null,
@@ -66,6 +67,8 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
       requirements: null,
       participationFee: null,
       contact: null,
+      organizer: null,
+      startedDate: null,
       notes: null,
       other: null,
       meetingAddress: null,
@@ -97,6 +100,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
             image: location.image || null,
             address: location.address || null,
             hasDetail: location.hasDetail || false,
+            isDraft: location.status === 'draft',
             activityDetails: location.activityDetails || null,
             fieldCharacteristics: location.fieldCharacteristics || null,
             access: location.access || null,
@@ -105,6 +109,8 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
             requirements: location.requirements || null,
             participationFee: location.participationFee || null,
             contact: location.contact || null,
+            organizer: location.organizer || null,
+            startedDate: location.startedDate || null,
             notes: location.notes || null,
             other: location.other || null,
             meetingAddress: location.meetingAddress || null,
@@ -155,7 +161,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
       formData.append('position', JSON.stringify(values.position))
       formData.append('type', values.type)
       formData.append('hasDetail', String(values.hasDetail))
-      formData.append('isDraft', String(watch('hasDetail') === false))
+      formData.append('isDraft', String(values.isDraft))
 
       if (values.activities) formData.append('activities', values.activities)
       if (values.address) formData.append('address', values.address)
@@ -168,6 +174,8 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
       if (values.requirements) formData.append('requirements', values.requirements)
       if (values.participationFee) formData.append('participationFee', values.participationFee)
       if (values.contact) formData.append('contact', values.contact)
+      if (values.organizer) formData.append('organizer', values.organizer)
+      if (values.startedDate) formData.append('startedDate', values.startedDate)
       if (values.notes) formData.append('notes', values.notes)
       if (values.other) formData.append('other', values.other)
       if (values.meetingAddress) formData.append('meetingAddress', values.meetingAddress)
@@ -288,7 +296,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
 
   return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto bg-black/50 p-4">
-      <div className="relative flex max-h-[90vh] w-full max-w-2xl transform flex-col overflow-hidden rounded-2xl bg-gradient-to-br from-white to-gray-50 shadow-2xl">
+      <div className="relative flex max-h-[90vh] w-full max-w-4xl transform flex-col overflow-hidden rounded-2xl bg-gradient-to-br from-white to-gray-50 shadow-2xl">
         {/* ヘッダー - 固定 */}
         <div className="relative flex-shrink-0 px-6 pt-6 pb-4">
           <div className="absolute top-6 right-6">
@@ -330,7 +338,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                   <h3 className="mb-4 text-lg font-semibold text-gray-900">基本情報</h3>
 
                   <div className="mb-4">
-                    <label htmlFor="id" className="mb-1 block text-sm font-medium text-gray-700">
+                    <label htmlFor="id" className="mb-1 block font-medium text-gray-700">
                       ID <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -344,7 +352,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                   </div>
 
                   <div className="mb-4">
-                    <label htmlFor="name" className="mb-1 block text-sm font-medium text-gray-700">
+                    <label htmlFor="name" className="mb-1 block font-medium text-gray-700">
                       名称 <span className="text-red-500">*</span>
                     </label>
                     <input id="name" type="text" {...register('name')} className={fieldClass} />
@@ -357,7 +365,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                     <div>
                       <label
                         htmlFor="position-lat"
-                        className="mb-1 block text-sm font-medium text-gray-700"
+                        className="mb-1 block font-medium text-gray-700"
                       >
                         緯度 <span className="text-red-500">*</span>
                       </label>
@@ -376,7 +384,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                     <div>
                       <label
                         htmlFor="position-lng"
-                        className="mb-1 block text-sm font-medium text-gray-700"
+                        className="mb-1 block font-medium text-gray-700"
                       >
                         経度 <span className="text-red-500">*</span>
                       </label>
@@ -398,7 +406,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                   )}
 
                   <div className="mb-4">
-                    <label htmlFor="type" className="mb-1 block text-sm font-medium text-gray-700">
+                    <label htmlFor="type" className="mb-1 block font-medium text-gray-700">
                       タイプ<span className="text-red-500">*</span>
                     </label>
                     <select id="type" {...register('type')} className={fieldClass}>
@@ -411,10 +419,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                   </div>
 
                   <div className="mb-4">
-                    <label
-                      htmlFor="address"
-                      className="mb-1 block text-sm font-medium text-gray-700"
-                    >
+                    <label htmlFor="address" className="mb-1 block font-medium text-gray-700">
                       住所
                     </label>
                     <input
@@ -429,11 +434,8 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                   </div>
 
                   <div className="mb-4">
-                    <label
-                      htmlFor="activities"
-                      className="mb-1 block text-sm font-medium text-gray-700"
-                    >
-                      活動内容
+                    <label htmlFor="activities" className="mb-1 block font-medium text-gray-700">
+                      活動内容(概要)
                     </label>
                     <textarea
                       id="activities"
@@ -447,21 +449,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                   </div>
 
                   <div className="mb-4">
-                    <label className="mb-1 flex items-center text-sm font-medium text-gray-900">
-                      <input
-                        type="checkbox"
-                        {...register('hasDetail')}
-                        className="text-primary-600 focus:ring-primary-500 mr-2 h-4 w-4 rounded border-gray-300"
-                      />
-                      詳細情報を公開する
-                    </label>
-                    {errors.hasDetail && (
-                      <p className="mt-1 text-xs text-red-600">{errors.hasDetail.message}</p>
-                    )}
-                  </div>
-
-                  <div className="mb-4">
-                    <label htmlFor="image" className="mb-1 block text-sm font-medium text-gray-700">
+                    <label htmlFor="image" className="mb-1 block font-medium text-gray-700">
                       メイン画像
                     </label>
                     {watch('image') && !selectedMainImage && (
@@ -493,16 +481,44 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                       <p className="mt-1 text-xs text-red-600">{errors.image.message}</p>
                     )}
                   </div>
+
+                  <div className="mb-4">
+                    <label className="mb-1 flex items-center font-medium text-gray-900">
+                      <input
+                        type="checkbox"
+                        {...register('hasDetail')}
+                        className="text-primary-600 focus:ring-primary-500 mr-2 h-4 w-4 rounded border-gray-300"
+                      />
+                      詳細情報を公開する
+                    </label>
+                    <p className="ml-6 text-base text-gray-600">
+                      チェックを入れると、活動情報・集合場所・アクセス情報などの詳細ページが公開されます
+                    </p>
+                  </div>
+
+                  <div className="mb-4">
+                    <label className="mb-1 flex items-center font-medium text-gray-900">
+                      <input
+                        type="checkbox"
+                        {...register('isDraft')}
+                        className="text-primary-600 focus:ring-primary-500 mr-2 h-4 w-4 rounded border-gray-300"
+                      />
+                      下書きとして保存
+                    </label>
+                    <p className="ml-6 text-base text-gray-600">
+                      チェックを入れると、この活動地は下書き状態となり、一般には公開されません
+                    </p>
+                  </div>
                 </div>
 
                 {/* 活動情報 */}
-                <div className="rounded-lg border border-gray-200 p-4">
+                <div className="mt-6 rounded-lg border border-gray-200 p-4">
                   <h3 className="mb-4 text-lg font-semibold text-gray-900">活動情報</h3>
 
                   <div className="mb-4">
                     <label
                       htmlFor="activityDetails"
-                      className="mb-1 block text-sm font-medium text-gray-700"
+                      className="mb-1 block font-medium text-gray-700"
                     >
                       活動の詳細
                     </label>
@@ -520,7 +536,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                   <div className="mb-4">
                     <label
                       htmlFor="fieldCharacteristics"
-                      className="mb-1 block text-sm font-medium text-gray-700"
+                      className="mb-1 block font-medium text-gray-700"
                     >
                       フィールドの特徴
                     </label>
@@ -538,10 +554,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                   </div>
 
                   <div className="mb-4">
-                    <label
-                      htmlFor="schedule"
-                      className="mb-1 block text-sm font-medium text-gray-700"
-                    >
+                    <label htmlFor="schedule" className="mb-1 block font-medium text-gray-700">
                       スケジュール
                     </label>
                     <input
@@ -558,13 +571,13 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                 </div>
 
                 {/* 集合場所 */}
-                <div className="rounded-lg border border-gray-200 p-4">
+                <div className="mt-6 rounded-lg border border-gray-200 p-4">
                   <h3 className="mb-4 text-lg font-semibold text-gray-900">集合場所</h3>
 
                   <div className="mb-4">
                     <label
                       htmlFor="meetingAddress"
-                      className="mb-1 block text-sm font-medium text-gray-700"
+                      className="mb-1 block font-medium text-gray-700"
                     >
                       集合場所の住所
                     </label>
@@ -580,10 +593,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                   </div>
 
                   <div className="mb-4">
-                    <label
-                      htmlFor="meetingTime"
-                      className="mb-1 block text-sm font-medium text-gray-700"
-                    >
+                    <label htmlFor="meetingTime" className="mb-1 block font-medium text-gray-700">
                       集合時刻
                     </label>
                     <input
@@ -599,10 +609,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                   </div>
 
                   <div className="mb-4">
-                    <label
-                      htmlFor="meetingMapUrl"
-                      className="mb-1 block text-sm font-medium text-gray-700"
-                    >
+                    <label htmlFor="meetingMapUrl" className="mb-1 block font-medium text-gray-700">
                       地図URL
                     </label>
                     <input
@@ -620,7 +627,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                   <div className="mb-4">
                     <label
                       htmlFor="meetingAdditionalInfo"
-                      className="mb-1 block text-sm font-medium text-gray-700"
+                      className="mb-1 block font-medium text-gray-700"
                     >
                       補足情報
                     </label>
@@ -639,14 +646,11 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                 </div>
 
                 {/* アクセス・施設 */}
-                <div className="rounded-lg border border-gray-200 p-4">
+                <div className="mt-6 rounded-lg border border-gray-200 p-4">
                   <h3 className="mb-4 text-lg font-semibold text-gray-900">アクセス・施設</h3>
 
                   <div className="mb-4">
-                    <label
-                      htmlFor="access"
-                      className="mb-1 block text-sm font-medium text-gray-700"
-                    >
+                    <label htmlFor="access" className="mb-1 block font-medium text-gray-700">
                       アクセス方法
                     </label>
                     <textarea id="access" rows={3} {...register('access')} className={fieldClass} />
@@ -656,10 +660,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                   </div>
 
                   <div className="mb-4">
-                    <label
-                      htmlFor="facilities"
-                      className="mb-1 block text-sm font-medium text-gray-700"
-                    >
+                    <label htmlFor="facilities" className="mb-1 block font-medium text-gray-700">
                       施設情報
                     </label>
                     <textarea
@@ -675,10 +676,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                   </div>
 
                   <div className="mb-4">
-                    <label
-                      htmlFor="requirements"
-                      className="mb-1 block text-sm font-medium text-gray-700"
-                    >
+                    <label htmlFor="requirements" className="mb-1 block font-medium text-gray-700">
                       参加条件
                     </label>
                     <textarea
@@ -695,7 +693,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                   <div className="mb-4">
                     <label
                       htmlFor="participationFee"
-                      className="mb-1 block text-sm font-medium text-gray-700"
+                      className="mb-1 block font-medium text-gray-700"
                     >
                       参加費
                     </label>
@@ -712,10 +710,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                   </div>
 
                   <div className="mb-4">
-                    <label
-                      htmlFor="contact"
-                      className="mb-1 block text-sm font-medium text-gray-700"
-                    >
+                    <label htmlFor="contact" className="mb-1 block font-medium text-gray-700">
                       連絡先
                     </label>
                     <textarea
@@ -728,19 +723,48 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                       <p className="mt-1 text-xs text-red-600">{errors.contact.message}</p>
                     )}
                   </div>
+
+                  <div className="mb-4">
+                    <label htmlFor="organizer" className="mb-1 block font-medium text-gray-700">
+                      活動世話人
+                    </label>
+                    <input
+                      id="organizer"
+                      type="text"
+                      {...register('organizer')}
+                      placeholder="例: 山田太郎"
+                      className={fieldClass}
+                    />
+                    {errors.organizer && (
+                      <p className="mt-1 text-xs text-red-600">{errors.organizer.message}</p>
+                    )}
+                  </div>
+
+                  <div className="mb-4">
+                    <label htmlFor="startedDate" className="mb-1 block font-medium text-gray-700">
+                      活動開始年月
+                    </label>
+                    <input
+                      id="startedDate"
+                      type="text"
+                      {...register('startedDate')}
+                      placeholder="例: 2020年4月"
+                      className={fieldClass}
+                    />
+                    {errors.startedDate && (
+                      <p className="mt-1 text-xs text-red-600">{errors.startedDate.message}</p>
+                    )}
+                  </div>
                 </div>
 
                 {/* ギャラリー・添付ファイル */}
-                <div className="rounded-lg border border-gray-200 p-4">
+                <div className="mt-6 rounded-lg border border-gray-200 p-4">
                   <h3 className="mb-4 text-lg font-semibold text-gray-900">
                     ギャラリー・添付ファイル
                   </h3>
 
                   <div className="mb-4">
-                    <label
-                      htmlFor="gallery"
-                      className="mb-1 block text-sm font-medium text-gray-700"
-                    >
+                    <label htmlFor="gallery" className="mb-1 block font-medium text-gray-700">
                       ギャラリー画像
                     </label>
 
@@ -824,10 +848,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                   </div>
 
                   <div className="mb-4">
-                    <label
-                      htmlFor="attachments"
-                      className="mb-1 block text-sm font-medium text-gray-700"
-                    >
+                    <label htmlFor="attachments" className="mb-1 block font-medium text-gray-700">
                       添付ファイル
                     </label>
 
@@ -887,14 +908,11 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                 </div>
 
                 {/* その他 */}
-                <div className="rounded-lg border border-gray-200 p-4">
+                <div className="mt-6 rounded-lg border border-gray-200 p-4">
                   <h3 className="mb-4 text-lg font-semibold text-gray-900">その他</h3>
 
                   <div className="mb-4">
-                    <label
-                      htmlFor="upcomingDates"
-                      className="mb-1 block text-sm font-medium text-gray-700"
-                    >
+                    <label htmlFor="upcomingDates" className="mb-1 block font-medium text-gray-700">
                       今後の活動予定日
                     </label>
                     <textarea
@@ -910,8 +928,8 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                   </div>
 
                   <div className="mb-4">
-                    <label htmlFor="notes" className="mb-1 block text-sm font-medium text-gray-700">
-                      備考
+                    <label htmlFor="notes" className="mb-1 block font-medium text-gray-700">
+                      注意事項
                     </label>
                     <textarea id="notes" rows={3} {...register('notes')} className={fieldClass} />
                     {errors.notes && (
@@ -920,7 +938,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                   </div>
 
                   <div className="mb-4">
-                    <label htmlFor="other" className="mb-1 block text-sm font-medium text-gray-700">
+                    <label htmlFor="other" className="mb-1 block font-medium text-gray-700">
                       その他情報
                     </label>
                     <textarea id="other" rows={3} {...register('other')} className={fieldClass} />

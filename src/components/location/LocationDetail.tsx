@@ -1,7 +1,8 @@
 import ImageModal from '@/components/base/ImageModal'
 import ContentNotFound from '@/components/ContentNotFound'
-import { findLocationById, type LocationData } from '@/data/locations'
+import LocationFetch from '@/fetch/location'
 import { getLocationUploadConfig } from '@/types/config'
+import type { LocationData } from '@/types/location'
 import React, { useEffect, useState } from 'react'
 
 interface LocationDetailProps {
@@ -17,12 +18,56 @@ const LocationDetail: React.FC<LocationDetailProps> = ({ locationId }) => {
   // 設定を取得
   const locationConfig = getLocationUploadConfig()
 
-  // 活動地データを取得する関数
-  const fetchLocation = (id: string) => {
+  // 活動地データを取得する関数（LocationFetch経由）
+  const fetchLocation = async (id: string) => {
     try {
       setIsLoading(true)
-      const data = findLocationById(id)
-      setLocation(data || null)
+      const result = await LocationFetch.getLocationById(id)
+
+      if (result.success && result.data) {
+        // APIレスポンスをLocationData形式に変換
+        const apiData = result.data
+        const locationData: LocationData = {
+          id: apiData.id,
+          name: apiData.name,
+          position: apiData.position as [number, number],
+          type: apiData.type,
+          activities: apiData.activities || undefined,
+          image: apiData.image || undefined,
+          address: apiData.address || undefined,
+          hasDetail: apiData.hasDetail,
+          detailInfo: apiData.hasDetail
+            ? {
+                access: apiData.access || '',
+                facilities: apiData.facilities || '',
+                schedule: apiData.schedule || '',
+                requirements: apiData.requirements || '',
+                contact: apiData.contact || '',
+                organizer: apiData.organizer || undefined,
+                startedDate: apiData.startedDate || undefined,
+                gallery: apiData.images || [],
+                activityDetails: apiData.activityDetails || undefined,
+                fieldCharacteristics: apiData.fieldCharacteristics || undefined,
+                meetingPoint: apiData.meetingAddress
+                  ? {
+                      address: apiData.meetingAddress,
+                      time: apiData.meetingTime || '',
+                      mapUrl: apiData.meetingMapUrl || undefined,
+                      additionalInfo: apiData.meetingAdditionalInfo || undefined
+                    }
+                  : undefined,
+                participationFee: apiData.participationFee || undefined,
+                upcomingDates: apiData.upcomingDates || undefined,
+                notes: apiData.notes || undefined,
+                other: apiData.other || undefined,
+                attachments: apiData.attachments || undefined
+              }
+            : undefined
+        }
+        setLocation(locationData)
+      } else {
+        setLocation(null)
+      }
     } catch (err) {
       console.error('活動地取得エラー:', err)
       setLocation(null)
@@ -235,6 +280,18 @@ const LocationDetail: React.FC<LocationDetailProps> = ({ locationId }) => {
                   <h3 className="mb-2 text-lg font-semibold">お問い合わせ</h3>
                   <p className="text-gray-700">{detailInfo.contact}</p>
                 </div>
+                {detailInfo.organizer && (
+                  <div>
+                    <h3 className="mb-2 text-lg font-semibold">活動世話人</h3>
+                    <p className="text-gray-700">{detailInfo.organizer}</p>
+                  </div>
+                )}
+                {detailInfo.startedDate && (
+                  <div>
+                    <h3 className="mb-2 text-lg font-semibold">活動開始年月</h3>
+                    <p className="text-gray-700">{detailInfo.startedDate}</p>
+                  </div>
+                )}
               </div>
             </div>
 
