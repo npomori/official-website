@@ -125,7 +125,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
           }
         }
       } catch (err) {
-        console.log('新規登録モーチE', err)
+        console.log('新規登録モーダル', err)
         setIsEditMode(false)
       } finally {
         setIsLoading(false)
@@ -325,9 +325,9 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
               {success && <Alert message={success} type="success" />}
               {error && <Alert message={error} type="error" />}
               <fieldset disabled={completed}>
-                {/* 基本惁E�� */}
+                {/* 基本情報 */}
                 <div className="rounded-lg border border-gray-200 p-4">
-                  <h3 className="mb-4 text-lg font-semibold text-gray-900">基本惁E��</h3>
+                  <h3 className="mb-4 text-lg font-semibold text-gray-900">基本情報</h3>
 
                   <div className="mb-4">
                     <label htmlFor="id" className="mb-1 block text-sm font-medium text-gray-700">
@@ -399,7 +399,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
 
                   <div className="mb-4">
                     <label htmlFor="type" className="mb-1 block text-sm font-medium text-gray-700">
-                      タイチE<span className="text-red-500">*</span>
+                      タイプ<span className="text-red-500">*</span>
                     </label>
                     <select id="type" {...register('type')} className={fieldClass}>
                       <option value="regular">定期活動地</option>
@@ -433,7 +433,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                       htmlFor="activities"
                       className="mb-1 block text-sm font-medium text-gray-700"
                     >
-                      活動�E容
+                      活動内容
                     </label>
                     <textarea
                       id="activities"
@@ -453,7 +453,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                         {...register('hasDetail')}
                         className="text-primary-600 focus:ring-primary-500 mr-2 h-4 w-4 rounded border-gray-300"
                       />
-                      詳細惁E��を�E閁E{' '}
+                      詳細情報を公開する
                     </label>
                     {errors.hasDetail && (
                       <p className="mt-1 text-xs text-red-600">{errors.hasDetail.message}</p>
@@ -504,7 +504,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                       htmlFor="activityDetails"
                       className="mb-1 block text-sm font-medium text-gray-700"
                     >
-                      活動�E詳細
+                      活動の詳細
                     </label>
                     <textarea
                       id="activityDetails"
@@ -522,7 +522,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                       htmlFor="fieldCharacteristics"
                       className="mb-1 block text-sm font-medium text-gray-700"
                     >
-                      フィールド�E特徴
+                      フィールドの特徴
                     </label>
                     <textarea
                       id="fieldCharacteristics"
@@ -557,16 +557,16 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                   </div>
                 </div>
 
-                {/* 雁E��場所 */}
+                {/* 集合場所 */}
                 <div className="rounded-lg border border-gray-200 p-4">
-                  <h3 className="mb-4 text-lg font-semibold text-gray-900">雁E��場所</h3>
+                  <h3 className="mb-4 text-lg font-semibold text-gray-900">集合場所</h3>
 
                   <div className="mb-4">
                     <label
                       htmlFor="meetingAddress"
                       className="mb-1 block text-sm font-medium text-gray-700"
                     >
-                      雁E��場所の住所
+                      集合場所の住所
                     </label>
                     <input
                       id="meetingAddress"
@@ -584,13 +584,13 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                       htmlFor="meetingTime"
                       className="mb-1 block text-sm font-medium text-gray-700"
                     >
-                      雁E��時刻
+                      集合時刻
                     </label>
                     <input
                       id="meetingTime"
                       type="text"
                       {...register('meetingTime')}
-                      placeholder="侁E 9:00"
+                      placeholder="例: 9:00"
                       className={fieldClass}
                     />
                     {errors.meetingTime && (
@@ -609,7 +609,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                       id="meetingMapUrl"
                       type="text"
                       {...register('meetingMapUrl')}
-                      placeholder="Google Maps等�EURL"
+                      placeholder="Google Maps等のURL"
                       className={fieldClass}
                     />
                     {errors.meetingMapUrl && (
@@ -622,7 +622,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                       htmlFor="meetingAdditionalInfo"
                       className="mb-1 block text-sm font-medium text-gray-700"
                     >
-                      補足惁E��
+                      補足情報
                     </label>
                     <textarea
                       id="meetingAdditionalInfo"
@@ -660,13 +660,13 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                       htmlFor="facilities"
                       className="mb-1 block text-sm font-medium text-gray-700"
                     >
-                      施設惁E��
+                      施設情報
                     </label>
                     <textarea
                       id="facilities"
                       rows={3}
                       {...register('facilities')}
-                      placeholder="侁E トイレ有、E��車場10台"
+                      placeholder="例: トイレ有、駐車場10台"
                       className={fieldClass}
                     />
                     {errors.facilities && (
@@ -730,7 +730,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                   </div>
                 </div>
 
-                {/* ギャラリー・添仁E*/}
+                {/* ギャラリー・添付ファイル */}
                 <div className="rounded-lg border border-gray-200 p-4">
                   <h3 className="mb-4 text-lg font-semibold text-gray-900">
                     ギャラリー・添付ファイル
@@ -741,7 +741,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                       htmlFor="gallery"
                       className="mb-1 block text-sm font-medium text-gray-700"
                     >
-                      ギャラリー画僁E{' '}
+                      ギャラリー画像
                     </label>
 
                     {existingGalleryImages.length > 0 && (
@@ -750,7 +750,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                           <div key={index} className="relative">
                             <img
                               src={imageUrl}
-                              alt={`既存画僁E${index + 1}`}
+                              alt={`既存画像${index + 1}`}
                               className="h-24 w-full rounded border border-gray-300 object-cover"
                             />
                             <button
@@ -783,7 +783,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                           <div key={index} className="relative">
                             <img
                               src={URL.createObjectURL(file)}
-                              alt={`新規画僁E${index + 1}`}
+                              alt={`新規画像${index + 1}`}
                               className="h-24 w-full rounded border border-gray-300 object-cover"
                             />
                             <button
