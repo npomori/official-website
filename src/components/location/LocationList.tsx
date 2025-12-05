@@ -1,9 +1,20 @@
+import locationConfig from '@/config/location.json'
 import LocationFetch from '@/fetch/location'
 import type { LocationData } from '@/types/location'
 import React, { useEffect, useState } from 'react'
 
 // KinkiMapを動的インポート（クライアントサイドのみ）
 const KinkiMap = React.lazy(() => import('@/components/KinkiMap'))
+
+// location.jsonの並び順に従ってソートする関数
+const sortLocationsByConfig = (locations: LocationData[]): LocationData[] => {
+  const orderMap = new Map(locationConfig.map((item, index) => [item.value, index]))
+  return locations.sort((a, b) => {
+    const orderA = orderMap.get(a.id) ?? 999
+    const orderB = orderMap.get(b.id) ?? 999
+    return orderA - orderB
+  })
+}
 
 const LocationList: React.FC = () => {
   const [regularLocations, setRegularLocations] = useState<LocationData[]>([])
@@ -21,13 +32,13 @@ const LocationList: React.FC = () => {
         // 定例活動地を取得
         const regularResult = await LocationFetch.getLocations({ type: 'regular' })
         if (regularResult.success && regularResult.data?.locations) {
-          setRegularLocations(regularResult.data.locations)
+          setRegularLocations(sortLocationsByConfig(regularResult.data.locations))
         }
 
         // 他団体との共同活動地を取得
         const otherResult = await LocationFetch.getLocations({ type: 'activity' })
         if (otherResult.success && otherResult.data?.locations) {
-          setOtherLocations(otherResult.data.locations)
+          setOtherLocations(sortLocationsByConfig(otherResult.data.locations))
         }
       } catch (error) {
         console.error('活動地データの取得に失敗しました:', error)
