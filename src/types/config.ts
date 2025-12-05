@@ -58,11 +58,26 @@ interface NewsUploadConfig {
   allowedTypes: string[]
 }
 
+interface LocationUploadConfig {
+  enabled: boolean
+  url: string
+  directory: string
+  maxFiles: number
+  maxFileSize: number
+  allowedTypes: string[]
+  maxSize: {
+    width: number
+    height: number
+  }
+  quality: number
+}
+
 interface UploadConfig {
   avatar: AvatarUploadConfig
   record: RecordUploadConfig
   news: NewsUploadConfig
   article: ArticleUploadConfig
+  location: LocationUploadConfig
 }
 
 interface ApiConfig {
