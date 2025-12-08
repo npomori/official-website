@@ -41,5 +41,5 @@ export interface LocationData {
   image?: string
   address?: string
   hasDetail?: boolean
-  detailInfo?: DetailInfo
+  detailInfo: DetailInfo | undefined
 }
