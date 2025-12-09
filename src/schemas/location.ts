@@ -26,7 +26,7 @@ export const locationBaseSchema = z.object({
   position: z
     .array(z.number())
     .length(2, { message: '位置情報は[緯度, 経度]の形式で入力してください' }),
-  type: z.enum(['regular', 'activity'], { message: 'タイプは必須です' }),
+  type: z.enum(['regular', 'collaboration', 'other'], { message: 'タイプは必須です' }),
   activities: z.string().trim().nullable().optional(),
   image: z.string().nullable().optional(),
   address: z.string().trim().nullable().optional(),

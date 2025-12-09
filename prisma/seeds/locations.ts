@@ -256,7 +256,7 @@ async function seedLocations(prisma: PrismaClient): Promise<void> {
       id: 'ntt-horigono',
       name: 'ＮＴＴドコモほりごの森活動支援',
       position: [34.85, 135.45],
-      type: 'activity',
+      type: 'collaboration',
       activities:
         'ＮＴＴドコモとの協働による企業との協働活動、森づくり支援、社会貢献活動を行っています。',
       image:
@@ -282,7 +282,7 @@ async function seedLocations(prisma: PrismaClient): Promise<void> {
       id: 'zurich',
       name: 'チューリッヒ生命植樹指導',
       position: [34.75, 135.55],
-      type: 'activity',
+      type: 'collaboration',
       activities: 'チューリッヒ生命との連携による植樹指導、環境教育、企業連携を行っています。',
       image:
         'https://images.unsplash.com/photo-1440342359743-84fcb8c21f21?w=600&auto=format&fit=crop&q=60',
@@ -295,7 +295,7 @@ async function seedLocations(prisma: PrismaClient): Promise<void> {
       id: 'mikusayama',
       name: '三草山の防鹿柵設置',
       position: [34.95, 135.25],
-      type: 'activity',
+      type: 'collaboration',
       activities: '兵庫県三草山での防鹿柵設置、野生動物対策、森林保護を行っています。',
       image:
         'https://images.unsplash.com/photo-1475483768296-6163e08872a1?w=600&auto=format&fit=crop&q=60',

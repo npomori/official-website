@@ -36,7 +36,7 @@ const LocationList: React.FC = () => {
         }
 
         // 他団体との共同活動地を取得
-        const otherResult = await LocationFetch.getLocations({ type: 'activity' })
+        const otherResult = await LocationFetch.getLocations({ type: 'collaboration' })
         if (otherResult.success && otherResult.data?.locations) {
           setOtherLocations(sortLocationsByConfig(otherResult.data.locations))
         }

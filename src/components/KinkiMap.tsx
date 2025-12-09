@@ -74,16 +74,9 @@ const KinkiMap: React.FC<KinkiMapProps> = ({ locations }) => {
   // すべての活動地の境界を計算
   const allActivityBounds = L.latLngBounds(locations.map((l) => l.position))
 
-  // 活動地の種類に応じてアイコンの色を変更
-  const getMarkerColor = (type: string) => {
-    switch (type) {
-      case 'regular':
-        return '#16a34a' // 緑色（定例活動地）
-      case 'activity':
-        return '#3b82f6' // 青色（その他の活動地）
-      default:
-        return '#6b7280' // グレー（その他）
-    }
+  // 定例活動地のみ表示するためマーカー色は固定（緑色）
+  const getMarkerColor = () => {
+    return '#16a34a' // 緑色（定例活動地）
   }
 
   return (
@@ -128,20 +121,8 @@ const KinkiMap: React.FC<KinkiMapProps> = ({ locations }) => {
                   {location.address && (
                     <p className="mt-1 text-xs text-gray-500">{location.address}</p>
                   )}
-                  <span
-                    className={`mt-2 inline-block rounded px-2 py-1 text-xs ${
-                      location.type === 'regular'
-                        ? 'bg-primary-100 text-primary-800'
-                        : location.type === 'activity'
-                          ? 'bg-blue-100 text-blue-800'
-                          : 'bg-gray-100 text-gray-800'
-                    }`}
-                  >
-                    {location.type === 'regular'
-                      ? '定例活動地'
-                      : location.type === 'activity'
-                        ? '活動地'
-                        : 'その他'}
+                  <span className="bg-primary-100 text-primary-800 mt-2 inline-block rounded px-2 py-1 text-xs">
+                    定例活動地
                   </span>
                 </div>
               </Popup>

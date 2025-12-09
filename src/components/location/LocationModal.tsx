@@ -410,8 +410,9 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                       タイプ<span className="text-red-500">*</span>
                     </label>
                     <select id="type" {...register('type')} className={fieldClass}>
-                      <option value="regular">定期活動地</option>
-                      <option value="event">イベント開催地</option>
+                      <option value="regular">定例活動地</option>
+                      <option value="collaboration">他団体との共同活動地</option>
+                      <option value="other">その他</option>
                     </select>
                     {errors.type && (
                       <p className="mt-1 text-xs text-red-600">{errors.type.message}</p>
