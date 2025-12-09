@@ -1,8 +1,8 @@
+import type { LocationData } from '@/types/location'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import React, { useEffect, useState } from 'react'
 import { MapContainer, Marker, Popup, TileLayer, Tooltip, useMap } from 'react-leaflet'
-import type { LocationData } from '../data/locations'
 
 // Leafletのデフォルトアイコンの問題を修正
 delete (L.Icon.Default.prototype as any)._getIconUrl
@@ -14,7 +14,7 @@ L.Icon.Default.mergeOptions({
 
 // 地図の表示位置を制御するコンポーネント
 interface MapControllerProps {
-  targetLocation?: string
+  targetLocation: string | undefined
   locations: LocationData[]
 }
 
@@ -73,11 +73,6 @@ const KinkiMap: React.FC<KinkiMapProps> = ({ locations }) => {
 
   // すべての活動地の境界を計算
   const allActivityBounds = L.latLngBounds(locations.map((l) => l.position))
-
-  // 定例活動地のみ表示するためマーカー色は固定（緑色）
-  const getMarkerColor = () => {
-    return '#16a34a' // 緑色（定例活動地）
-  }
 
   return (
     <div className="relative z-0 w-full">

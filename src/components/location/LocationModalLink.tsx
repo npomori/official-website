@@ -1,26 +1,12 @@
 import Button from '@/components/base/Button'
 import LocationModal from '@/components/location/LocationModal'
 import LocationSelectModal from '@/components/location/LocationSelectModal'
-import { userStore } from '@/store/user'
-import type { UserAuth } from '@/types/user'
-import { useStore } from '@nanostores/react'
 import { useState } from 'react'
 
 const LocationModalLink: React.FC = () => {
   const [showSelectModal, setShowSelectModal] = useState(false)
   const [showLocationModal, setShowLocationModal] = useState(false)
   const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null)
-
-  // ユーザー情報を取得
-  const user = useStore(userStore) as UserAuth | null
-
-  // 編集権限をチェック
-  const canEdit =
-    user && (user.role === 'ADMIN' || user.role === 'MODERATOR' || user.role === 'EDITOR')
-
-  if (!canEdit) {
-    return null
-  }
 
   const handleSelectLocation = (locationId: string) => {
     setSelectedLocationId(locationId)
