@@ -23,13 +23,6 @@ export default defineConfig({
   server: { port: 3000, host: true },
   vite: {
     plugins: [tailwindcss()],
-    css: {
-      preprocessorOptions: {
-        scss: {
-          api: 'modern-compiler'
-        }
-      }
-    },
     optimizeDeps: {
       exclude: ['@fullcalendar/core', '@fullcalendar/daygrid', '@fullcalendar/react']
     }
