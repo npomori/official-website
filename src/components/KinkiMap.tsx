@@ -48,6 +48,9 @@ const KinkiMap: React.FC<KinkiMapProps> = ({ locations }) => {
   const [targetLocation, setTargetLocation] = useState<string | undefined>()
   const [isReady, setIsReady] = useState(false)
 
+  // position[0,0]の活動地を除外
+  const validLocations = locations.filter((loc) => loc.position[0] !== 0 || loc.position[1] !== 0)
+
   // コンポーネントの初期化完了を通知
   useEffect(() => {
     // 少し遅延を入れてコンポーネントの初期化を確実にする
@@ -72,7 +75,7 @@ const KinkiMap: React.FC<KinkiMapProps> = ({ locations }) => {
   }, [])
 
   // すべての活動地の境界を計算
-  const allActivityBounds = L.latLngBounds(locations.map((l) => l.position))
+  const allActivityBounds = L.latLngBounds(validLocations.map((l) => l.position))
 
   return (
     <div className="relative z-0 w-full">
@@ -90,13 +93,13 @@ const KinkiMap: React.FC<KinkiMapProps> = ({ locations }) => {
           boundsOptions={{ padding: [50, 50] }}
           style={{ height: '100%', width: '100%', zIndex: 0 }}
         >
-          <MapController targetLocation={targetLocation} locations={locations} />
+          <MapController targetLocation={targetLocation} locations={validLocations} />
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
 
-          {locations.map((location, index) => (
+          {validLocations.map((location, index) => (
             <Marker key={index} position={location.position}>
               <Tooltip
                 permanent

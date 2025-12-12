@@ -125,7 +125,11 @@ const LocationList: React.FC = () => {
               </div>
             }
           >
-            <KinkiMap locations={regularLocations} />
+            <KinkiMap
+              locations={regularLocations.filter(
+                (loc) => loc.position[0] !== 0 || loc.position[1] !== 0
+              )}
+            />
           </React.Suspense>
         )}
       </section>

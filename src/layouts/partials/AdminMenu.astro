@@ -92,6 +92,17 @@ const showDashboard = user && (user.role === 'ADMIN' || user.role === 'MODERATOR
           )}
           {isTopPage && (
             <li>
+              <a
+                href="/locations"
+                class="hover:bg-primary-600 flex items-center px-4 py-2 text-white"
+              >
+                <Icon class="mr-2 h-4 w-4" name="mdi:map-marker-multiple" />
+                活動地一覧
+              </a>
+            </li>
+          )}
+          {isTopPage && (
+            <li>
               <hr class="border-primary-600 my-1" />
             </li>
           )}
@@ -162,6 +173,14 @@ const showDashboard = user && (user.role === 'ADMIN' || user.role === 'MODERATOR
               <a href="/record" class="hover:text-primary-200 flex items-center text-white">
                 <Icon class="mr-3 h-5 w-5" name="mdi:notebook-outline" />
                 活動記録一覧
+              </a>
+            </li>
+          )}
+          {isTopPage && (
+            <li>
+              <a href="/locations" class="hover:text-primary-200 flex items-center text-white">
+                <Icon class="mr-3 h-5 w-5" name="mdi:map-marker-multiple" />
+                活動地一覧
               </a>
             </li>
           )}

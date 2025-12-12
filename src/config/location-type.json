@@ -1,0 +1,14 @@
+[
+  {
+    "name": "定例活動地",
+    "value": "regular"
+  },
+  {
+    "name": "他団体との共同活動地",
+    "value": "collaboration"
+  },
+  {
+    "name": "その他",
+    "value": "other"
+  }
+]

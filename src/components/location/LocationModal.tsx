@@ -1,6 +1,7 @@
 import Alert from '@/components/base/Alert'
 import Button from '@/components/base/Button'
 import config from '@/config/config.json'
+import locationTypes from '@/config/location-type.json'
 import locationOptions from '@/config/location.json'
 import AdminLocationFetch from '@/fetch/admin/location'
 import { locationCreateSchema, type LocationCreate } from '@/schemas/location'
@@ -430,9 +431,11 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                       タイプ<span className="text-red-500">*</span>
                     </label>
                     <select id="type" {...register('type')} className={fieldClass}>
-                      <option value="regular">定例活動地</option>
-                      <option value="collaboration">他団体との共同活動地</option>
-                      <option value="other">その他</option>
+                      {locationTypes.map((type) => (
+                        <option key={type.value} value={type.value}>
+                          {type.name}
+                        </option>
+                      ))}
                     </select>
                     {errors.type && (
                       <p className="mt-1 text-xs text-red-600">{errors.type.message}</p>
