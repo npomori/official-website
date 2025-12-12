@@ -452,6 +452,32 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                   <div className="mb-4">
                     <label htmlFor="image" className="mb-1 block font-medium text-gray-700">
                       メイン画像
+                      <span className="group relative ml-2 inline-flex items-center text-gray-500">
+                        <svg
+                          className="h-4 w-4 cursor-help"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                          />
+                        </svg>
+                        <div className="absolute bottom-full left-0 mb-2 hidden w-[300px] transform rounded-lg bg-gray-900 p-3 text-sm text-white opacity-0 transition-opacity group-hover:block group-hover:opacity-100">
+                          <div className="space-y-2 whitespace-pre-wrap">
+                            <div className="font-medium">対応ファイル形式</div>
+                            <div>JPEG, PNG, GIF</div>
+                            <div className="border-t border-gray-700 pt-2">
+                              最大ファイルサイズ:{' '}
+                              {Math.round(locationConfig.maxFileSize / (1024 * 1024))}MB
+                            </div>
+                          </div>
+                          <div className="absolute -bottom-1 left-4 h-2 w-2 rotate-45 transform bg-gray-900"></div>
+                        </div>
+                      </span>
                     </label>
                     {watch('image') && !selectedMainImage && (
                       <div className="mb-2">
@@ -471,13 +497,34 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                         />
                       </div>
                     )}
-                    <input
-                      id="image"
-                      type="file"
-                      accept="image/*"
-                      onChange={handleMainImageChange}
-                      className="w-full text-sm text-gray-700"
-                    />
+                    <label
+                      htmlFor="image"
+                      className="inline-flex cursor-pointer items-center rounded-lg bg-gray-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-700 focus:ring-2 focus:ring-gray-400 focus:outline-none"
+                    >
+                      <svg
+                        className="mr-2 h-4 w-4"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 20 16"
+                      >
+                        <path
+                          stroke="currentColor"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                        ></path>
+                      </svg>
+                      画像を選択
+                      <input
+                        id="image"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleMainImageChange}
+                        className="hidden"
+                      />
+                    </label>
                     {errors.image && (
                       <p className="mt-1 text-xs text-red-600">{errors.image.message}</p>
                     )}
@@ -767,6 +814,35 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                   <div className="mb-4">
                     <label htmlFor="gallery" className="mb-1 block font-medium text-gray-700">
                       ギャラリー画像
+                      <span className="group relative ml-2 inline-flex items-center text-gray-500">
+                        <svg
+                          className="h-4 w-4 cursor-help"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                          />
+                        </svg>
+                        <div className="absolute bottom-full left-0 mb-2 hidden w-[300px] transform rounded-lg bg-gray-900 p-3 text-sm text-white opacity-0 transition-opacity group-hover:block group-hover:opacity-100">
+                          <div className="space-y-2 whitespace-pre-wrap">
+                            <div className="font-medium">対応ファイル形式</div>
+                            <div>JPEG, PNG, GIF</div>
+                            <div className="border-t border-gray-700 pt-2">
+                              最大ファイル数: {locationConfig.maxFiles}枚
+                            </div>
+                            <div>
+                              最大ファイルサイズ:{' '}
+                              {Math.round(locationConfig.maxFileSize / (1024 * 1024))}MB
+                            </div>
+                          </div>
+                          <div className="absolute -bottom-1 left-4 h-2 w-2 rotate-45 transform bg-gray-900"></div>
+                        </div>
+                      </span>
                     </label>
 
                     {existingGalleryImages.length > 0 && (
@@ -835,14 +911,35 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                       </div>
                     )}
 
-                    <input
-                      id="gallery"
-                      type="file"
-                      accept="image/*"
-                      multiple
-                      onChange={handleGalleryImagesChange}
-                      className="w-full text-sm text-gray-700"
-                    />
+                    <label
+                      htmlFor="gallery"
+                      className="inline-flex cursor-pointer items-center rounded-lg bg-gray-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-700 focus:ring-2 focus:ring-gray-400 focus:outline-none"
+                    >
+                      <svg
+                        className="mr-2 h-4 w-4"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 20 16"
+                      >
+                        <path
+                          stroke="currentColor"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                        ></path>
+                      </svg>
+                      画像を選択
+                      <input
+                        id="gallery"
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        onChange={handleGalleryImagesChange}
+                        className="hidden"
+                      />
+                    </label>
                     {errors.images && (
                       <p className="mt-1 text-xs text-red-600">{errors.images.message}</p>
                     )}
@@ -851,6 +948,35 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                   <div className="mb-4">
                     <label htmlFor="attachments" className="mb-1 block font-medium text-gray-700">
                       添付ファイル
+                      <span className="group relative ml-2 inline-flex items-center text-gray-500">
+                        <svg
+                          className="h-4 w-4 cursor-help"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                          />
+                        </svg>
+                        <div className="absolute bottom-full left-0 mb-2 hidden w-[300px] transform rounded-lg bg-gray-900 p-3 text-sm text-white opacity-0 transition-opacity group-hover:block group-hover:opacity-100">
+                          <div className="space-y-2 whitespace-pre-wrap">
+                            <div className="font-medium">対応ファイル形式</div>
+                            <div>PDF, Word, Excel, JPEG, PNG, GIF</div>
+                            <div className="border-t border-gray-700 pt-2">
+                              最大ファイル数: {locationConfig.maxFiles}個
+                            </div>
+                            <div>
+                              最大ファイルサイズ:{' '}
+                              {Math.round(locationConfig.maxFileSize / (1024 * 1024))}MB
+                            </div>
+                          </div>
+                          <div className="absolute -bottom-1 left-4 h-2 w-2 rotate-45 transform bg-gray-900"></div>
+                        </div>
+                      </span>
                     </label>
 
                     {existingAttachments.length > 0 && (
@@ -895,13 +1021,34 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                       </div>
                     )}
 
-                    <input
-                      id="attachments"
-                      type="file"
-                      multiple
-                      onChange={handleAttachmentsChange}
-                      className="w-full text-sm text-gray-700"
-                    />
+                    <label
+                      htmlFor="attachments"
+                      className="inline-flex cursor-pointer items-center rounded-lg bg-gray-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-700 focus:ring-2 focus:ring-gray-400 focus:outline-none"
+                    >
+                      <svg
+                        className="mr-2 h-4 w-4"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 20 16"
+                      >
+                        <path
+                          stroke="currentColor"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                        ></path>
+                      </svg>
+                      ファイルを選択
+                      <input
+                        id="attachments"
+                        type="file"
+                        multiple
+                        onChange={handleAttachmentsChange}
+                        className="hidden"
+                      />
+                    </label>
                     {errors.attachments && (
                       <p className="mt-1 text-xs text-red-600">{errors.attachments.message}</p>
                     )}
