@@ -7,7 +7,8 @@ import { locationCreateSchema, type LocationCreate } from '@/schemas/location'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
+import { NumericFormat } from 'react-number-format'
 
 interface LocationModalProps {
   locationId: string
@@ -41,6 +42,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
   }
 
   const {
+    control,
     register,
     reset,
     watch,
@@ -369,16 +371,25 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                       >
                         緯度 <span className="text-red-500">*</span>
                       </label>
-                      <input
-                        id="position-lat"
-                        type="text"
-                        value={watch('position')?.[0] ?? 0}
-                        onChange={(e) => {
-                          const lat = parseFloat(e.target.value) || 0
-                          const lng = watch('position')?.[1] ?? 0
-                          setValue('position', [lat, lng])
-                        }}
-                        className={fieldClass}
+                      <Controller
+                        name="position"
+                        control={control}
+                        render={({ field }) => (
+                          <NumericFormat
+                            id="position-lat"
+                            value={field.value?.[0] || ''}
+                            onValueChange={(values) => {
+                              const lat = values.floatValue ?? 0
+                              const lng = field.value?.[1] ?? 0
+                              field.onChange([lat, lng])
+                            }}
+                            decimalScale={10}
+                            allowNegative={true}
+                            placeholder="例: 34.6937"
+                            disabled={completed}
+                            className={fieldClass}
+                          />
+                        )}
                       />
                     </div>
                     <div>
@@ -388,16 +399,25 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                       >
                         経度 <span className="text-red-500">*</span>
                       </label>
-                      <input
-                        id="position-lng"
-                        type="text"
-                        value={watch('position')?.[1] ?? 0}
-                        onChange={(e) => {
-                          const lat = watch('position')?.[0] ?? 0
-                          const lng = parseFloat(e.target.value) || 0
-                          setValue('position', [lat, lng])
-                        }}
-                        className={fieldClass}
+                      <Controller
+                        name="position"
+                        control={control}
+                        render={({ field }) => (
+                          <NumericFormat
+                            id="position-lng"
+                            value={field.value?.[1] || ''}
+                            onValueChange={(values) => {
+                              const lat = field.value?.[0] ?? 0
+                              const lng = values.floatValue ?? 0
+                              field.onChange([lat, lng])
+                            }}
+                            decimalScale={10}
+                            allowNegative={true}
+                            placeholder="例: 135.5023"
+                            disabled={completed}
+                            className={fieldClass}
+                          />
+                        )}
                       />
                     </div>
                   </div>
@@ -529,33 +549,65 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                       <p className="mt-1 text-xs text-red-600">{errors.image.message}</p>
                     )}
                   </div>
+                </div>
 
-                  <div className="mb-4">
-                    <label className="mb-1 flex items-center font-medium text-gray-900">
-                      <input
-                        type="checkbox"
-                        {...register('hasDetail')}
-                        className="text-primary-600 focus:ring-primary-500 mr-2 h-4 w-4 rounded border-gray-300"
+                {/* 公開設定 */}
+                <div className="mt-6 rounded-lg border-2 border-blue-200 bg-blue-50 p-4">
+                  <div className="mb-3 flex items-center">
+                    <svg
+                      className="mr-2 h-5 w-5 text-blue-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
                       />
-                      詳細情報を公開する
-                    </label>
-                    <p className="ml-6 text-base text-gray-600">
-                      チェックを入れると、活動情報・集合場所・アクセス情報などの詳細ページが公開されます
-                    </p>
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                      />
+                    </svg>
+                    <h3 className="text-lg font-semibold text-blue-900">公開設定</h3>
                   </div>
 
-                  <div className="mb-4">
-                    <label className="mb-1 flex items-center font-medium text-gray-900">
-                      <input
-                        type="checkbox"
-                        {...register('isDraft')}
-                        className="text-primary-600 focus:ring-primary-500 mr-2 h-4 w-4 rounded border-gray-300"
-                      />
-                      下書きとして保存
-                    </label>
-                    <p className="ml-6 text-base text-gray-600">
-                      チェックを入れると、この活動地は下書き状態となり、一般には公開されません
-                    </p>
+                  <div className="space-y-3">
+                    <div className="rounded-lg border border-blue-200 bg-white p-3">
+                      <label className="flex cursor-pointer items-start">
+                        <input
+                          type="checkbox"
+                          {...register('hasDetail')}
+                          className="text-primary-600 focus:ring-primary-500 mt-0.5 mr-3 h-5 w-5 rounded border-gray-300"
+                        />
+                        <div className="flex-1">
+                          <div className="font-medium text-gray-900">詳細情報を公開する</div>
+                          <p className="mt-1 text-sm text-gray-600">
+                            活動情報・集合場所・アクセス情報などの詳細ページが公開されます
+                          </p>
+                        </div>
+                      </label>
+                    </div>
+
+                    <div className="rounded-lg border border-blue-200 bg-white p-3">
+                      <label className="flex cursor-pointer items-start">
+                        <input
+                          type="checkbox"
+                          {...register('isDraft')}
+                          className="text-primary-600 focus:ring-primary-500 mt-0.5 mr-3 h-5 w-5 rounded border-gray-300"
+                        />
+                        <div className="flex-1">
+                          <div className="font-medium text-gray-900">下書きとして保存</div>
+                          <p className="mt-1 text-sm text-gray-600">
+                            この活動地は下書き状態となり、一般には公開されません
+                          </p>
+                        </div>
+                      </label>
+                    </div>
                   </div>
                 </div>
 
