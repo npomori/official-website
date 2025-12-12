@@ -124,12 +124,17 @@ interface ArticleContentConfig {
   headingShift?: number
 }
 
+interface LocationContentConfig {
+  activitiesMaxLength: number
+}
+
 interface ContentConfig {
-  // コンテンツ共通のタイトル最大文字数（未指定時はUI側で適切なデフォルトにフォールバック）
+  // コンテンツ共通のタイトル最大文字数(未指定時はUI側で適切なデフォルトにフォールバック)
   titleMaxLength?: number
   record: RecordContentConfig
   news: NewsContentConfig
   article?: ArticleContentConfig
+  location?: LocationContentConfig
 }
 
 export interface Config {

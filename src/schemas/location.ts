@@ -27,7 +27,14 @@ export const locationBaseSchema = z.object({
     .array(z.number())
     .length(2, { message: '位置情報は[緯度, 経度]の形式で入力してください' }),
   type: z.enum(['regular', 'collaboration', 'other'], { message: 'タイプは必須です' }),
-  activities: z.string().trim().nullable().optional(),
+  activities: z
+    .string()
+    .trim()
+    .max(config.content.location?.activitiesMaxLength ?? 200, {
+      message: `活動内容は${config.content.location?.activitiesMaxLength ?? 200}文字以内で入力してください`
+    })
+    .nullable()
+    .optional(),
   image: z.string().nullable().optional(),
   address: z.string().trim().nullable().optional(),
   hasDetail: z.boolean(),

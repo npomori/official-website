@@ -135,6 +135,9 @@
     },
     "article": {
       "headingShift": 1
+    },
+    "location": {
+      "activitiesMaxLength": 200
     }
   },
   "contact": {

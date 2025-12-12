@@ -34,8 +34,9 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
   const scrollRef = useRef<HTMLDivElement>(null)
   const locationConfig = config.upload.location
   const fieldClass =
-    'block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 focus:border-primary-500 focus:ring-primary-500 focus:outline-none'
+    'block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 placeholder:text-gray-400 focus:border-primary-500 focus:ring-primary-500 focus:outline-none'
   const disabledFieldClass = `${fieldClass} cursor-not-allowed bg-gray-100 text-gray-500`
+  const errorClass = 'mt-1 text-sm text-red-600'
 
   const getInitialLocationName = () => {
     const location = locationOptions.find((loc) => loc.value === locationId)
@@ -351,7 +352,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                       {...register('id')}
                       className={disabledFieldClass}
                     />
-                    {errors.id && <p className="mt-1 text-xs text-red-600">{errors.id.message}</p>}
+                    {errors.id && <p className={errorClass}>{errors.id.message}</p>}
                   </div>
 
                   <div className="mb-4">
@@ -359,9 +360,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                       名称 <span className="text-red-500">*</span>
                     </label>
                     <input id="name" type="text" {...register('name')} className={fieldClass} />
-                    {errors.name && (
-                      <p className="mt-1 text-xs text-red-600">{errors.name.message}</p>
-                    )}
+                    {errors.name && <p className={errorClass}>{errors.name.message}</p>}
                   </div>
 
                   <div className="mb-4 grid grid-cols-2 gap-4">
@@ -370,7 +369,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                         htmlFor="position-lat"
                         className="mb-1 block font-medium text-gray-700"
                       >
-                        緯度 <span className="text-red-500">*</span>
+                        緯度
                       </label>
                       <Controller
                         name="position"
@@ -398,7 +397,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                         htmlFor="position-lng"
                         className="mb-1 block font-medium text-gray-700"
                       >
-                        経度 <span className="text-red-500">*</span>
+                        経度
                       </label>
                       <Controller
                         name="position"
@@ -422,9 +421,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                       />
                     </div>
                   </div>
-                  {errors.position && (
-                    <p className="mt-1 text-xs text-red-600">{errors.position.message}</p>
-                  )}
+                  {errors.position && <p className={errorClass}>{errors.position.message}</p>}
 
                   <div className="mb-4">
                     <label htmlFor="type" className="mb-1 block font-medium text-gray-700">
@@ -437,9 +434,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                         </option>
                       ))}
                     </select>
-                    {errors.type && (
-                      <p className="mt-1 text-xs text-red-600">{errors.type.message}</p>
-                    )}
+                    {errors.type && <p className={errorClass}>{errors.type.message}</p>}
                   </div>
 
                   <div className="mb-4">
@@ -452,9 +447,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                       {...register('address')}
                       className={fieldClass}
                     />
-                    {errors.address && (
-                      <p className="mt-1 text-xs text-red-600">{errors.address.message}</p>
-                    )}
+                    {errors.address && <p className={errorClass}>{errors.address.message}</p>}
                   </div>
 
                   <div className="mb-4">
@@ -467,9 +460,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                       {...register('activities')}
                       className={fieldClass}
                     />
-                    {errors.activities && (
-                      <p className="mt-1 text-xs text-red-600">{errors.activities.message}</p>
-                    )}
+                    {errors.activities && <p className={errorClass}>{errors.activities.message}</p>}
                   </div>
 
                   <div className="mb-4">
@@ -548,9 +539,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                         className="hidden"
                       />
                     </label>
-                    {errors.image && (
-                      <p className="mt-1 text-xs text-red-600">{errors.image.message}</p>
-                    )}
+                    {errors.image && <p className={errorClass}>{errors.image.message}</p>}
                   </div>
                 </div>
 
@@ -632,7 +621,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                       className={fieldClass}
                     />
                     {errors.activityDetails && (
-                      <p className="mt-1 text-xs text-red-600">{errors.activityDetails.message}</p>
+                      <p className={errorClass}>{errors.activityDetails.message}</p>
                     )}
                   </div>
 
@@ -650,9 +639,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                       className={fieldClass}
                     />
                     {errors.fieldCharacteristics && (
-                      <p className="mt-1 text-xs text-red-600">
-                        {errors.fieldCharacteristics.message}
-                      </p>
+                      <p className={errorClass}>{errors.fieldCharacteristics.message}</p>
                     )}
                   </div>
 
@@ -667,9 +654,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                       placeholder="例: 毎週日曜日 9:00-12:00"
                       className={fieldClass}
                     />
-                    {errors.schedule && (
-                      <p className="mt-1 text-xs text-red-600">{errors.schedule.message}</p>
-                    )}
+                    {errors.schedule && <p className={errorClass}>{errors.schedule.message}</p>}
                   </div>
                 </div>
 
@@ -691,7 +676,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                       className={fieldClass}
                     />
                     {errors.meetingAddress && (
-                      <p className="mt-1 text-xs text-red-600">{errors.meetingAddress.message}</p>
+                      <p className={errorClass}>{errors.meetingAddress.message}</p>
                     )}
                   </div>
 
@@ -707,7 +692,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                       className={fieldClass}
                     />
                     {errors.meetingTime && (
-                      <p className="mt-1 text-xs text-red-600">{errors.meetingTime.message}</p>
+                      <p className={errorClass}>{errors.meetingTime.message}</p>
                     )}
                   </div>
 
@@ -723,7 +708,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                       className={fieldClass}
                     />
                     {errors.meetingMapUrl && (
-                      <p className="mt-1 text-xs text-red-600">{errors.meetingMapUrl.message}</p>
+                      <p className={errorClass}>{errors.meetingMapUrl.message}</p>
                     )}
                   </div>
 
@@ -741,9 +726,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                       className={fieldClass}
                     />
                     {errors.meetingAdditionalInfo && (
-                      <p className="mt-1 text-xs text-red-600">
-                        {errors.meetingAdditionalInfo.message}
-                      </p>
+                      <p className={errorClass}>{errors.meetingAdditionalInfo.message}</p>
                     )}
                   </div>
                 </div>
@@ -757,9 +740,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                       アクセス方法
                     </label>
                     <textarea id="access" rows={3} {...register('access')} className={fieldClass} />
-                    {errors.access && (
-                      <p className="mt-1 text-xs text-red-600">{errors.access.message}</p>
-                    )}
+                    {errors.access && <p className={errorClass}>{errors.access.message}</p>}
                   </div>
 
                   <div className="mb-4">
@@ -773,9 +754,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                       placeholder="例: トイレ有、駐車場10台"
                       className={fieldClass}
                     />
-                    {errors.facilities && (
-                      <p className="mt-1 text-xs text-red-600">{errors.facilities.message}</p>
-                    )}
+                    {errors.facilities && <p className={errorClass}>{errors.facilities.message}</p>}
                   </div>
 
                   <div className="mb-4">
@@ -789,7 +768,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                       className={fieldClass}
                     />
                     {errors.requirements && (
-                      <p className="mt-1 text-xs text-red-600">{errors.requirements.message}</p>
+                      <p className={errorClass}>{errors.requirements.message}</p>
                     )}
                   </div>
 
@@ -808,7 +787,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                       className={fieldClass}
                     />
                     {errors.participationFee && (
-                      <p className="mt-1 text-xs text-red-600">{errors.participationFee.message}</p>
+                      <p className={errorClass}>{errors.participationFee.message}</p>
                     )}
                   </div>
 
@@ -822,9 +801,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                       {...register('contact')}
                       className={fieldClass}
                     />
-                    {errors.contact && (
-                      <p className="mt-1 text-xs text-red-600">{errors.contact.message}</p>
-                    )}
+                    {errors.contact && <p className={errorClass}>{errors.contact.message}</p>}
                   </div>
 
                   <div className="mb-4">
@@ -838,9 +815,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                       placeholder="例: 山田太郎"
                       className={fieldClass}
                     />
-                    {errors.organizer && (
-                      <p className="mt-1 text-xs text-red-600">{errors.organizer.message}</p>
-                    )}
+                    {errors.organizer && <p className={errorClass}>{errors.organizer.message}</p>}
                   </div>
 
                   <div className="mb-4">
@@ -855,7 +830,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                       className={fieldClass}
                     />
                     {errors.startedDate && (
-                      <p className="mt-1 text-xs text-red-600">{errors.startedDate.message}</p>
+                      <p className={errorClass}>{errors.startedDate.message}</p>
                     )}
                   </div>
                 </div>
@@ -995,9 +970,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                         className="hidden"
                       />
                     </label>
-                    {errors.images && (
-                      <p className="mt-1 text-xs text-red-600">{errors.images.message}</p>
-                    )}
+                    {errors.images && <p className={errorClass}>{errors.images.message}</p>}
                   </div>
 
                   <div className="mb-4">
@@ -1105,7 +1078,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                       />
                     </label>
                     {errors.attachments && (
-                      <p className="mt-1 text-xs text-red-600">{errors.attachments.message}</p>
+                      <p className={errorClass}>{errors.attachments.message}</p>
                     )}
                   </div>
                 </div>
@@ -1126,7 +1099,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                       className={fieldClass}
                     />
                     {errors.upcomingDates && (
-                      <p className="mt-1 text-xs text-red-600">{errors.upcomingDates.message}</p>
+                      <p className={errorClass}>{errors.upcomingDates.message}</p>
                     )}
                   </div>
 
@@ -1135,9 +1108,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                       注意事項
                     </label>
                     <textarea id="notes" rows={3} {...register('notes')} className={fieldClass} />
-                    {errors.notes && (
-                      <p className="mt-1 text-xs text-red-600">{errors.notes.message}</p>
-                    )}
+                    {errors.notes && <p className={errorClass}>{errors.notes.message}</p>}
                   </div>
 
                   <div className="mb-4">
@@ -1145,9 +1116,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                       その他情報
                     </label>
                     <textarea id="other" rows={3} {...register('other')} className={fieldClass} />
-                    {errors.other && (
-                      <p className="mt-1 text-xs text-red-600">{errors.other.message}</p>
-                    )}
+                    {errors.other && <p className={errorClass}>{errors.other.message}</p>}
                   </div>
                 </div>
               </fieldset>
