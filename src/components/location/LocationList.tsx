@@ -154,19 +154,21 @@ const LocationList: React.FC = () => {
                   />
                   <div className="mb-3 flex items-center justify-between">
                     <h3 className="text-xl font-bold">{location.name}</h3>
-                    <button
-                      onClick={() => focusOnMap(location.name)}
-                      className="text-primary-600 hover:text-primary-700 cursor-pointer drop-shadow-sm transition-all duration-200 hover:scale-110"
-                      title="地図で見る"
-                    >
-                      <svg className="h-8 w-8" fill="currentColor" viewBox="0 0 20 20">
-                        <path
-                          fillRule="evenodd"
-                          d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </button>
+                    {(location.position[0] !== 0 || location.position[1] !== 0) && (
+                      <button
+                        onClick={() => focusOnMap(location.name)}
+                        className="text-primary-600 hover:text-primary-700 cursor-pointer drop-shadow-sm transition-all duration-200 hover:scale-110"
+                        title="地図で見る"
+                      >
+                        <svg className="h-8 w-8" fill="currentColor" viewBox="0 0 20 20">
+                          <path
+                            fillRule="evenodd"
+                            d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      </button>
+                    )}
                   </div>
                   {location.activities && (
                     <p className="mb-4 text-gray-700">{location.activities}</p>
