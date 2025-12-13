@@ -171,7 +171,7 @@ const LocationList: React.FC = () => {
                     )}
                   </div>
                   {location.activities && (
-                    <p className="mb-4 text-gray-700">{location.activities}</p>
+                    <p className="mb-4 whitespace-pre-line text-gray-700">{location.activities}</p>
                   )}
                   {location.hasDetail && (
                     <div className="mt-4 flex justify-end">
@@ -212,7 +212,7 @@ const LocationList: React.FC = () => {
                   />
                   <h3 className="mb-3 text-xl font-bold">{location.name}</h3>
                   {location.activities && (
-                    <p className="mb-4 text-gray-700">{location.activities}</p>
+                    <p className="mb-4 whitespace-pre-line text-gray-700">{location.activities}</p>
                   )}
                   {location.hasDetail && (
                     <div className="mt-4 flex justify-end">
