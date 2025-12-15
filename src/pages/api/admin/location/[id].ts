@@ -138,6 +138,10 @@ export const PUT: APIRoute = async ({ params, request }) => {
     const removedImagesStr = formData.get('removedImages') as string
     const removedImages = removedImagesStr ? JSON.parse(removedImagesStr) : []
 
+    // 削除対象添付ファイル
+    const removedAttachmentsStr = formData.get('removedAttachments') as string
+    const removedAttachments = removedAttachmentsStr ? JSON.parse(removedAttachmentsStr) : []
+
     const locationFileUploader = new FileUploader(UPLOAD_DIR)
     const locationConfig = (await import('@/config/config.json')).default.upload.location
 
@@ -288,9 +292,24 @@ export const PUT: APIRoute = async ({ params, request }) => {
     let existingAttachments =
       (existingLocation.attachments as Array<{
         name: string
-        url: string
+        filename: string
         size: string
       }>) || []
+
+    // 削除対象の添付ファイルを除外
+    if (removedAttachments.length > 0) {
+      existingAttachments = existingAttachments.filter(
+        (att) => !removedAttachments.includes(att.filename)
+      )
+
+      // 物理削除
+      try {
+        await locationFileUploader.deleteFiles(removedAttachments)
+      } catch (deleteError) {
+        console.error('Failed to delete attachment files:', deleteError)
+        // 物理削除に失敗してもデータベースからは削除する（既に削除済みの可能性もあるため）
+      }
+    }
 
     // 新規添付ファイルのアップロード
     const attachmentFiles = formData.getAll('attachments') as File[]
@@ -384,7 +403,7 @@ export const PUT: APIRoute = async ({ params, request }) => {
       notes,
       other,
       ...(galleryImages.length > 0 && { images: galleryImages }),
-      ...(existingAttachments.length > 0 && { attachments: existingAttachments }),
+      attachments: existingAttachments,
       status: isDraft ? 'draft' : 'published'
     })
 

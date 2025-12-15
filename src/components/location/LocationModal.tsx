@@ -29,8 +29,9 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
   const [removedImages, setRemovedImages] = useState<string[]>([])
   const [selectedAttachments, setSelectedAttachments] = useState<File[]>([])
   const [existingAttachments, setExistingAttachments] = useState<
-    Array<{ name: string; url: string; size: string }>
+    Array<{ name: string; filename: string; size: string }>
   >([])
+  const [removedAttachments, setRemovedAttachments] = useState<string[]>([])
   const scrollRef = useRef<HTMLDivElement>(null)
   const locationConfig = config.upload.location
   const fieldClass =
@@ -79,8 +80,6 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
       meetingTime: null,
       meetingMapUrl: null,
       meetingAdditionalInfo: null,
-      images: null,
-      attachments: null,
       upcomingDates: null
     }
   })
@@ -90,6 +89,13 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
       setIsLoading(true)
       setSuccess('')
       setError('')
+      setSelectedMainImage(null)
+      setSelectedGalleryImages([])
+      setExistingGalleryImages([])
+      setRemovedImages([])
+      setSelectedAttachments([])
+      setExistingAttachments([])
+      setRemovedAttachments([])
       try {
         const result = await AdminLocationFetch.getLocationById(locationId)
         if (result.success && result.data) {
@@ -121,8 +127,6 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
             meetingTime: location.meetingTime || null,
             meetingMapUrl: location.meetingMapUrl || null,
             meetingAdditionalInfo: location.meetingAdditionalInfo || null,
-            images: location.images || null,
-            attachments: location.attachments || null,
             upcomingDates: location.upcomingDates || null
           })
           if (location.images && Array.isArray(location.images)) {
@@ -130,7 +134,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
           }
           if (location.attachments && Array.isArray(location.attachments)) {
             setExistingAttachments(
-              location.attachments as Array<{ name: string; url: string; size: string }>
+              location.attachments as Array<{ name: string; filename: string; size: string }>
             )
           }
         }
@@ -205,6 +209,10 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
         formData.append('removedImages', JSON.stringify(removedImages))
       }
 
+      if (removedAttachments.length > 0) {
+        formData.append('removedAttachments', JSON.stringify(removedAttachments))
+      }
+
       selectedAttachments.forEach((file) => {
         formData.append('attachments', file)
       })
@@ -275,6 +283,13 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
   const handleRemoveExistingImage = (imageUrl: string) => {
     setRemovedImages((prev) => [...prev, imageUrl])
     setExistingGalleryImages((prev) => prev.filter((url) => url !== imageUrl))
+  }
+
+  const handleRemoveExistingAttachment = (attachmentFilename: string) => {
+    setRemovedAttachments((prev) => [...prev, attachmentFilename])
+    setExistingAttachments((prev) =>
+      prev.filter((attachment) => attachment.filename !== attachmentFilename)
+    )
   }
 
   const handleAttachmentsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -1022,6 +1037,13 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                             >
                               {attachment.name} ({attachment.size})
                             </a>
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveExistingAttachment(attachment.filename)}
+                              className="text-red-600 hover:text-red-700"
+                            >
+                              削除
+                            </button>
                           </div>
                         ))}
                       </div>
@@ -1129,10 +1151,15 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
           <div className="flex justify-end space-x-3">
             {!completed && (
               <Button
-                type="submit"
+                type="button"
                 variant="primary"
                 disabled={isSubmitting}
-                onClick={handleSubmit(onSubmit)}
+                onClick={(e) => {
+                  e.preventDefault()
+                  handleSubmit(onSubmit, (errors) => {
+                    setError('入力内容に誤りがあります。フォームを確認してください。')
+                  })()
+                }}
               >
                 {isEditMode ? '更新する' : '登録する'}
               </Button>
