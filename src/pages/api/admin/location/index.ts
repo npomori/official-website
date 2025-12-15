@@ -276,8 +276,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
         const uploadedFiles = await locationFileUploader.uploadFiles(attachmentFiles)
         uploadedAttachments = uploadedFiles.map((f) => ({
           name: f.originalName,
-          url: `${cfg.url}/${f.filename}`,
-          size: `${Math.round(f.originalName.length / 1024)}KB`
+          filename: f.filename,
+          size: f.size
         }))
       } catch (uploadError) {
         console.error('Attachments upload error:', uploadError)

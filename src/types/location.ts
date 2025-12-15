@@ -2,6 +2,8 @@
  * Location型定義
  */
 
+import type { Attachment } from './attachment'
+
 export interface MeetingPoint {
   address: string
   time: string
@@ -25,11 +27,7 @@ export interface DetailInfo {
   upcomingDates?: string[]
   notes?: string
   other?: string
-  attachments?: Array<{
-    name: string
-    url: string
-    size?: string
-  }>
+  attachments?: Attachment[]
 }
 
 export interface LocationData {

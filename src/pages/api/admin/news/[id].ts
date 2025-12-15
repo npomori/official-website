@@ -210,9 +210,14 @@ export const PUT: APIRoute = async ({ params, request }) => {
     }
 
     // 新規ファイルをアップロード
-    let uploadedAttachments: { originalName: string; filename: string }[] = []
+    let uploadedAttachments: { name: string; filename: string; size: number }[] = []
     if (newFiles.length > 0) {
-      uploadedAttachments = await newsFileUploader.uploadFiles(newFiles)
+      const uploadedFiles = await newsFileUploader.uploadFiles(newFiles)
+      uploadedAttachments = uploadedFiles.map((f) => ({
+        name: f.originalName,
+        filename: f.filename,
+        size: f.size
+      }))
     }
 
     // 合成

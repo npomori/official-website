@@ -196,7 +196,12 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
       // ファイルをアップロード
       try {
-        uploadedAttachments = await newsFileUploader.uploadFiles(files)
+        const uploadedFiles = await newsFileUploader.uploadFiles(files)
+        uploadedAttachments = uploadedFiles.map((f) => ({
+          name: f.originalName,
+          filename: f.filename,
+          size: f.size
+        }))
       } catch (uploadError) {
         console.error('File upload error:', uploadError)
         return new Response(

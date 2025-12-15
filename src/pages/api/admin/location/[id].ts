@@ -338,8 +338,8 @@ export const PUT: APIRoute = async ({ params, request }) => {
         const uploadedFiles = await locationFileUploader.uploadFiles(attachmentFiles)
         const newAttachments = uploadedFiles.map((f) => ({
           name: f.originalName,
-          url: `${cfg.url}/${f.filename}`,
-          size: `${Math.round(f.originalName.length / 1024)}KB`
+          filename: f.filename,
+          size: f.size
         }))
         existingAttachments = [...existingAttachments, ...newAttachments]
       } catch (uploadError) {

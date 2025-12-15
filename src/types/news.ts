@@ -1,7 +1,7 @@
-export interface NewsAttachment {
-  originalName: string
-  filename: string
-}
+import type { Attachment } from './attachment'
+
+// NewsAttachment は Attachment と同じ型
+export type NewsAttachment = Attachment
 
 export interface News {
   id: number

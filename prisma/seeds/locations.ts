@@ -57,13 +57,13 @@ async function seedLocations(prisma: PrismaClient): Promise<void> {
       attachments: [
         {
           name: '活動地マップ.pdf',
-          url: '/uploads/locations/minoh-map.pdf',
-          size: '1.2MB'
+          filename: 'minoh-map.pdf',
+          size: 1258291 // 1.2MB
         },
         {
           name: '持ち物リスト.pdf',
-          url: '/uploads/locations/minoh-checklist.pdf',
-          size: '256KB'
+          filename: 'minoh-checklist.pdf',
+          size: 262144 // 256KB
         }
       ],
       status: 'published' as const,
@@ -317,12 +317,12 @@ async function seedLocations(prisma: PrismaClient): Promise<void> {
         image: location.image,
         address: location.address,
         hasDetail: location.hasDetail,
-        activityDetails: location.activityDetails,
-        fieldCharacteristics: location.fieldCharacteristics,
-        meetingAddress: location.meetingAddress,
-        meetingTime: location.meetingTime,
-        meetingMapUrl: location.meetingMapUrl,
-        meetingAdditionalInfo: location.meetingAdditionalInfo,
+        activityDetails: location.activityDetails || null,
+        fieldCharacteristics: location.fieldCharacteristics || null,
+        meetingAddress: location.meetingAddress || null,
+        meetingTime: location.meetingTime || null,
+        meetingMapUrl: location.meetingMapUrl || null,
+        meetingAdditionalInfo: location.meetingAdditionalInfo || null,
         access: location.access,
         facilities: location.facilities,
         schedule: location.schedule,

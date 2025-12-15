@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid'
 interface UploadedFile {
   originalName: string
   filename: string
+  size: number
 }
 
 export default class FileUploader {
@@ -45,7 +46,8 @@ export default class FileUploader {
 
       return {
         originalName: file.name,
-        filename: serverFileName
+        filename: serverFileName,
+        size: file.size // ファイルサイズ(バイト数)を追加
       }
     } catch (error) {
       console.error('File upload error:', error)

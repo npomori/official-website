@@ -1,3 +1,4 @@
+import { formatFileSize, getFileEmoji } from '@/helpers/file'
 import type { NewsAttachment } from '@/types/news'
 import React from 'react'
 
@@ -17,18 +18,7 @@ const NewsAttachments: React.FC<NewsAttachmentsProps> = ({
   }
 
   const getFileIcon = (filename: string): string => {
-    const ext = filename.toLowerCase().split('.').pop()
-    if (ext === 'pdf') {
-      return '📄'
-    } else if (['doc', 'docx'].includes(ext || '')) {
-      return '📝'
-    } else if (['xls', 'xlsx'].includes(ext || '')) {
-      return '📊'
-    } else if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext || '')) {
-      return '🖼️'
-    } else {
-      return '📎'
-    }
+    return getFileEmoji(filename)
   }
 
   const handleDownload = async (attachment: NewsAttachment) => {
@@ -44,7 +34,7 @@ const NewsAttachments: React.FC<NewsAttachmentsProps> = ({
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
-      a.download = attachment.originalName
+      a.download = attachment.name
       document.body.appendChild(a)
       a.click()
       window.URL.revokeObjectURL(url)
@@ -65,9 +55,10 @@ const NewsAttachments: React.FC<NewsAttachmentsProps> = ({
             className="flex items-center justify-between rounded-lg bg-gray-50 p-2 transition-colors hover:bg-gray-100"
           >
             <div className="flex items-center space-x-2">
-              <span className="text-lg">{getFileIcon(attachment.originalName)}</span>
+              <span className="text-lg">{getFileIcon(attachment.name)}</span>
               <div>
-                <p className="text-sm font-medium text-gray-900">{attachment.originalName}</p>
+                <p className="text-sm font-medium text-gray-900">{attachment.name}</p>
+                <p className="text-xs text-gray-500">{formatFileSize(attachment.size)}</p>
               </div>
             </div>
             <button
