@@ -1,3 +1,4 @@
+import type { NewsAttachment } from '@/types/news'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import NewsModal from '../NewsModal'
@@ -52,6 +53,49 @@ describe('NewsModal', () => {
     await waitFor(() => {
       expect(screen.getByText(/カテゴリーは必須です/)).toBeInTheDocument()
       //expect(screen.getByText('お知らせを追加しました')).toBeInTheDocument()
+    })
+  })
+
+  it('NewsAttachment 型が正しいプロパティを持つ', () => {
+    const attachment: NewsAttachment = {
+      name: 'テストファイル.pdf',
+      filename: 'test-123456.pdf',
+      size: 1024
+    }
+
+    expect(attachment).toHaveProperty('name')
+    expect(attachment).toHaveProperty('filename')
+    expect(attachment).toHaveProperty('size')
+    expect(attachment).not.toHaveProperty('originalName')
+    expect(typeof attachment.name).toBe('string')
+    expect(typeof attachment.filename).toBe('string')
+    expect(typeof attachment.size).toBe('number')
+  })
+
+  it('編集モードで既存の添付ファイルが正しく表示される', async () => {
+    const mockNewsData = {
+      id: '1',
+      title: '既存のお知らせ',
+      content: '既存の内容',
+      date: new Date(),
+      categories: ['イベント'],
+      priority: null,
+      isMemberOnly: false,
+      author: 'テスト太郎',
+      attachments: [
+        {
+          name: 'existing-file.pdf',
+          filename: 'existing-123.pdf',
+          size: 2048
+        }
+      ]
+    }
+
+    render(<NewsModal onClose={() => {}} news={mockNewsData} isEditMode={true} />)
+
+    // 添付ファイル名が表示されることを確認
+    await waitFor(() => {
+      expect(screen.getByText('existing-file.pdf')).toBeInTheDocument()
     })
   })
 })

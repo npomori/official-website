@@ -81,7 +81,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
           (attachment): attachment is NewsAttachment =>
             typeof attachment === 'object' &&
             attachment !== null &&
-            'originalName' in attachment &&
+            'name' in attachment &&
             'filename' in attachment
         )
         setExistingFiles(validAttachments)
@@ -271,7 +271,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
   // ファイル削除ハンドラー
   const removeFile = (fileName: string, index: number) => {
     // 既存ファイルか新しいファイルかを判定
-    const existingFile = existingFiles.find((file) => file.originalName === fileName)
+    const existingFile = existingFiles.find((file) => file.name === fileName)
     if (existingFile) {
       // 既存ファイルの場合、削除リストに追加
       setRemovedFiles((prev) => [...prev, existingFile.filename])
@@ -676,8 +676,8 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
                                     const fileName =
                                       typeof file === 'string'
                                         ? file
-                                        : file && typeof file === 'object' && 'originalName' in file
-                                          ? file.originalName
+                                        : file && typeof file === 'object' && 'name' in file
+                                          ? file.name
                                           : 'unknown'
                                     return (
                                       <div

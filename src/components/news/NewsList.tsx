@@ -5,6 +5,7 @@ import newsCategories from '@/config/news-category.json'
 import newsPriority from '@/config/news-priority.json'
 import AdminNewsFetch from '@/fetch/admin/news'
 import NewsFetch from '@/fetch/news'
+import { formatFileSize } from '@/helpers/file'
 import useSWR from '@/hooks/swr'
 import { userStore } from '@/store/user'
 import { getConfig } from '@/types/config'
@@ -525,16 +526,17 @@ const NewsList: React.FC = () => {
                               <a
                                 key={index}
                                 href={`/api/news/download/${newsItem.id}/${file.filename}`}
-                                className="inline-flex items-center rounded-lg bg-blue-50 px-3 py-1 text-base text-blue-700 transition-colors hover:bg-blue-100"
+                                className="inline-flex items-center rounded-lg bg-blue-50 px-3 py-2 text-base text-blue-700 transition-colors hover:bg-blue-100"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                download={file.originalName}
+                                download={file.name}
                               >
                                 <i className="fas fa-file-alt mr-2"></i>
-                                {file.originalName}
-                                {downloadCount !== null && (
-                                  <span className="ml-1 text-gray-500">({downloadCount})</span>
-                                )}
+                                {file.name}
+                                <span className="ml-2 text-sm text-gray-500">
+                                  ({formatFileSize(file.size)}
+                                  {downloadCount !== null && ` · ${downloadCount}回`})
+                                </span>
                               </a>
                             )
                           })}
