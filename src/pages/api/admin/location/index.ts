@@ -8,12 +8,10 @@ import { join } from 'path'
 const cfg = getLocationUploadConfig()
 const UPLOAD_DIR = join(process.cwd(), cfg.directory)
 
-const locationDB = new LocationDB()
-
 // 管理者用の活動地一覧取得
 export const GET: APIRoute = async () => {
   try {
-    const locations = await locationDB.findAllAdmin()
+    const locations = await LocationDB.findAllAdmin()
 
     return new Response(
       JSON.stringify({
@@ -275,7 +273,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       try {
         const uploadedFiles = await locationFileUploader.uploadFiles(attachmentFiles)
         uploadedAttachments = uploadedFiles.map((f) => ({
-          name: f.originalName,
+          name: f.name,
           filename: f.filename,
           size: f.size
         }))
@@ -297,7 +295,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     }
 
     // DBに保存
-    const createdLocation = await locationDB.create({
+    const createdLocation = await LocationDB.create({
       id,
       name,
       position,

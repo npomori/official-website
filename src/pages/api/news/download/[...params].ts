@@ -99,7 +99,7 @@ export const GET: APIRoute = async ({ params, locals }) => {
     }
 
     const attachment = news.attachments.find(
-      (att: { filename: string; originalName: string }) => att.filename === filename
+      (att: { filename: string; name: string }) => att.filename === filename
     )
     if (!attachment) {
       return new Response(
@@ -129,9 +129,9 @@ export const GET: APIRoute = async ({ params, locals }) => {
       const fileBuffer = await fs.readFile(filePath)
 
       // ファイル名をエンコード（日本語対応）
-      const encodedFilename = encodeURIComponent(attachment.originalName)
+      const encodedFilename = encodeURIComponent(attachment.name)
       // ASCII文字のみのフォールバック名
-      const asciiFilename = attachment.originalName.replace(/[^\x20-\x7E]/g, '_')
+      const asciiFilename = attachment.name.replace(/[^\x20-\x7E]/g, '_')
       const contentDisposition = `attachment; filename="${asciiFilename}"; filename*=UTF-8''${encodedFilename}`
 
       // レスポンスヘッダーを設定してファイルを送信

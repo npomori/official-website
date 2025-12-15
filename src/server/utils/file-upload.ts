@@ -4,7 +4,7 @@ import { join } from 'path'
 import { v4 as uuidv4 } from 'uuid'
 
 interface UploadedFile {
-  originalName: string
+  name: string
   filename: string
   size: number
 }
@@ -45,7 +45,7 @@ export default class FileUploader {
       await writeFile(filePath, buffer)
 
       return {
-        originalName: file.name,
+        name: file.name,
         filename: serverFileName,
         size: file.size // ファイルサイズ(バイト数)を追加
       }

@@ -1,8 +1,6 @@
 import LocationDB from '@/server/db/location'
 import type { APIRoute } from 'astro'
 
-const locationDB = new LocationDB()
-
 // 公開用の活動地詳細取得
 export const GET: APIRoute = async ({ params }) => {
   try {
@@ -23,7 +21,7 @@ export const GET: APIRoute = async ({ params }) => {
       )
     }
 
-    const location = await locationDB.findById(id)
+    const location = await LocationDB.findById(id)
 
     if (!location) {
       return new Response(

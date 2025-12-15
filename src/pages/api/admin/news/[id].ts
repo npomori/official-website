@@ -214,7 +214,7 @@ export const PUT: APIRoute = async ({ params, request }) => {
     if (newFiles.length > 0) {
       const uploadedFiles = await newsFileUploader.uploadFiles(newFiles)
       uploadedAttachments = uploadedFiles.map((f) => ({
-        name: f.originalName,
+        name: f.name,
         filename: f.filename,
         size: f.size
       }))

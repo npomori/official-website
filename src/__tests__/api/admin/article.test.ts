@@ -4,7 +4,7 @@ const mocks = vi.hoisted(() => {
   const uploaderInstance = {
     validateFileType: vi.fn<(file: File, allowed: string[]) => boolean>(),
     validateFileSize: vi.fn<(file: File, maxSize: number) => boolean>(),
-    uploadFile: vi.fn<(file: File) => Promise<{ filename: string; originalName: string }>>(),
+    uploadFile: vi.fn<(file: File) => Promise<{ filename: string; name: string }>>(),
     deleteFile: vi.fn<(filename: string) => Promise<boolean>>()
   }
 
@@ -76,7 +76,7 @@ beforeEach(() => {
   mocks.uploaderInstance.validateFileSize.mockReturnValue(true)
   mocks.uploaderInstance.uploadFile.mockResolvedValue({
     filename: 'saved-file.png',
-    originalName: 'original.png'
+    name: 'original.png'
   })
   mocks.uploaderInstance.deleteFile.mockResolvedValue(true)
 
@@ -398,7 +398,7 @@ describe('POST /api/admin/article/upload', () => {
 
     mocks.uploaderInstance.uploadFile.mockResolvedValue({
       filename: 'stored.png',
-      originalName: 'valid.png'
+      name: 'valid.png'
     })
 
     const request = new Request('http://localhost/api/admin/article/upload', {

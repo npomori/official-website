@@ -28,8 +28,8 @@ export const GET: APIRoute = async ({ params }) => {
 
     // 添付ファイル情報が見つからない場合、ファイル名をそのまま使用（旧形式のデータ対応）
     let originalFileName = filename
-    if (attachment?.originalName) {
-      originalFileName = attachment.originalName
+    if (attachment?.name) {
+      originalFileName = attachment.name
     }
 
     // ファイルパスを構築

@@ -305,14 +305,14 @@ const LocationDetail: React.FC<LocationDetailProps> = ({ locationId }) => {
                     <a
                       key={index}
                       href={`/api/admin/location/download/${file.filename}`}
-                      className="inline-flex items-center rounded-lg bg-blue-50 px-3 py-2 text-sm text-blue-700 transition-colors hover:bg-blue-100"
+                      className="inline-flex items-center rounded-lg bg-blue-50 px-3 py-2 text-base text-blue-700 transition-colors hover:bg-blue-100"
                       target="_blank"
                       rel="noopener noreferrer"
                       download
                     >
                       <i className="fas fa-file-alt mr-2"></i>
                       {file.name}
-                      <span className="ml-2 text-xs text-gray-500">
+                      <span className="ml-2 text-sm text-gray-500">
                         ({formatFileSize(file.size)})
                       </span>
                     </a>

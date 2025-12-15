@@ -260,6 +260,18 @@ class LocationDB extends BaseDB {
       }
     })
   }
+
+  /**
+   * 指定されたfilenameを含む添付ファイルを持つ活動地を検索
+   */
+  async findAllWithAttachment(filename: string) {
+    return await BaseDB.prisma.location.findMany({
+      select: {
+        id: true,
+        attachments: true
+      }
+    })
+  }
 }
 
-export default LocationDB
+export default new LocationDB()

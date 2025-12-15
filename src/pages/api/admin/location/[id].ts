@@ -7,8 +7,6 @@ import { join } from 'path'
 const cfg = getLocationUploadConfig()
 const UPLOAD_DIR = join(process.cwd(), cfg.directory)
 
-const locationDB = new LocationDB()
-
 // 管理者用の個別活動地取得
 export const GET: APIRoute = async ({ params }) => {
   try {
@@ -23,7 +21,7 @@ export const GET: APIRoute = async ({ params }) => {
       })
     }
 
-    const location = await locationDB.findByIdAdmin(id)
+    const location = await LocationDB.findByIdAdmin(id)
 
     if (!location) {
       return new Response(JSON.stringify({ success: false, message: '活動地が見つかりません' }), {
@@ -84,7 +82,7 @@ export const PUT: APIRoute = async ({ params, request }) => {
     const formData = await request.formData()
 
     // 活動地が存在するか確認
-    const existingLocation = await locationDB.findByIdAdmin(id)
+    const existingLocation = await LocationDB.findByIdAdmin(id)
 
     if (!existingLocation) {
       return new Response(JSON.stringify({ success: false, message: '活動地が見つかりません' }), {
@@ -337,7 +335,7 @@ export const PUT: APIRoute = async ({ params, request }) => {
       try {
         const uploadedFiles = await locationFileUploader.uploadFiles(attachmentFiles)
         const newAttachments = uploadedFiles.map((f) => ({
-          name: f.originalName,
+          name: f.name,
           filename: f.filename,
           size: f.size
         }))
@@ -360,7 +358,7 @@ export const PUT: APIRoute = async ({ params, request }) => {
     }
 
     // DBを更新
-    const updatedLocation = await locationDB.update(id, {
+    const updatedLocation = await LocationDB.update(id, {
       name,
       position,
       type,
@@ -435,7 +433,7 @@ export const DELETE: APIRoute = async ({ params }) => {
     }
 
     // 活動地が存在するか確認
-    const existingLocation = await locationDB.findByIdAdmin(id)
+    const existingLocation = await LocationDB.findByIdAdmin(id)
 
     if (!existingLocation) {
       return new Response(JSON.stringify({ success: false, message: '活動地が見つかりません' }), {
@@ -447,7 +445,7 @@ export const DELETE: APIRoute = async ({ params }) => {
     }
 
     // 削除実行
-    await locationDB.delete(id)
+    await LocationDB.delete(id)
 
     return new Response(
       JSON.stringify({

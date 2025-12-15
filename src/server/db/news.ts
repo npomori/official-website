@@ -118,12 +118,13 @@ class NewsDB extends BaseDB {
                 (att) =>
                   typeof att === 'object' &&
                   att !== null &&
-                  'originalName' in (att as any) &&
+                  'name' in (att as any) &&
                   'filename' in (att as any)
               )
               .map((att) => ({
-                originalName: String((att as any).originalName),
-                filename: String((att as any).filename)
+                name: String((att as any).name),
+                filename: String((att as any).filename),
+                size: Number((att as any).size) || 0
               }))
           : null
         const categories: string[] | null = Array.isArray(item.categories)
@@ -244,12 +245,13 @@ class NewsDB extends BaseDB {
                 (att) =>
                   typeof att === 'object' &&
                   att !== null &&
-                  'originalName' in (att as any) &&
+                  'name' in (att as any) &&
                   'filename' in (att as any)
               )
               .map((att) => ({
-                originalName: String((att as any).originalName),
-                filename: String((att as any).filename)
+                name: String((att as any).name),
+                filename: String((att as any).filename),
+                size: Number((att as any).size) || 0
               }))
           : null
         const categories: string[] | null = Array.isArray(item.categories)
@@ -301,12 +303,13 @@ class NewsDB extends BaseDB {
             (att) =>
               typeof att === 'object' &&
               att !== null &&
-              'originalName' in (att as any) &&
+              'name' in (att as any) &&
               'filename' in (att as any)
           )
           .map((att) => ({
-            originalName: String((att as any).originalName),
-            filename: String((att as any).filename)
+            name: String((att as any).name),
+            filename: String((att as any).filename),
+            size: Number((att as any).size) || 0
           }))
       : null
     const categories: string[] | null = Array.isArray(created.categories)
@@ -348,12 +351,13 @@ class NewsDB extends BaseDB {
               (att) =>
                 typeof att === 'object' &&
                 att !== null &&
-                'originalName' in (att as any) &&
+                'name' in (att as any) &&
                 'filename' in (att as any)
             )
             .map((att) => ({
-              originalName: String((att as any).originalName),
-              filename: String((att as any).filename)
+              name: String((att as any).name),
+              filename: String((att as any).filename),
+              size: Number((att as any).size) || 0
             }))
         : null
       const categories: string[] | null = Array.isArray(updated.categories)
@@ -430,12 +434,13 @@ class NewsDB extends BaseDB {
               (att) =>
                 typeof att === 'object' &&
                 att !== null &&
-                'originalName' in (att as any) &&
+                'name' in (att as any) &&
                 'filename' in (att as any)
             )
             .map((att) => ({
-              originalName: String((att as any).originalName),
-              filename: String((att as any).filename)
+              name: String((att as any).name),
+              filename: String((att as any).filename),
+              size: Number((att as any).size) || 0
             }))
         : null
       const categories: string[] | null = Array.isArray(news.categories)
@@ -489,12 +494,13 @@ class NewsDB extends BaseDB {
               (att) =>
                 typeof att === 'object' &&
                 att !== null &&
-                'originalName' in (att as any) &&
+                'name' in (att as any) &&
                 'filename' in (att as any)
             )
             .map((att) => ({
-              originalName: String((att as any).originalName),
-              filename: String((att as any).filename)
+              name: String((att as any).name),
+              filename: String((att as any).filename),
+              size: Number((att as any).size) || 0
             }))
         : null
       const categories: string[] | null = Array.isArray(news.categories)
@@ -569,12 +575,13 @@ class NewsDB extends BaseDB {
                 (att) =>
                   typeof att === 'object' &&
                   att !== null &&
-                  'originalName' in (att as any) &&
+                  'name' in (att as any) &&
                   'filename' in (att as any)
               )
               .map((att) => ({
-                originalName: String((att as any).originalName),
-                filename: String((att as any).filename)
+                name: String((att as any).name),
+                filename: String((att as any).filename),
+                size: Number((att as any).size) || 0
               }))
           : null
         const categories: string[] | null = Array.isArray(item.categories)
@@ -614,11 +621,16 @@ class NewsDB extends BaseDB {
             return false
           })
           if (attachment && typeof attachment === 'object' && attachment !== null) {
-            const typedAttachment = attachment as { originalName?: string; filename?: string }
-            if (typedAttachment.originalName && typedAttachment.filename) {
+            const typedAttachment = attachment as {
+              name?: string
+              filename?: string
+              size?: number
+            }
+            if (typedAttachment.name && typedAttachment.filename) {
               return {
-                originalName: typedAttachment.originalName,
-                filename: typedAttachment.filename
+                name: typedAttachment.name,
+                filename: typedAttachment.filename,
+                size: typedAttachment.size || 0
               } as NewsAttachment
             }
           }

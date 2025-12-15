@@ -138,8 +138,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
     // ファイルアップロード処理
     let uploadedAttachments: Array<{
-      originalName: string
+      name: string
       filename: string
+      size: number
     }> = []
     const files = formData.getAll('files') as File[]
 
@@ -198,7 +199,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       try {
         const uploadedFiles = await newsFileUploader.uploadFiles(files)
         uploadedAttachments = uploadedFiles.map((f) => ({
-          name: f.originalName,
+          name: f.name,
           filename: f.filename,
           size: f.size
         }))
