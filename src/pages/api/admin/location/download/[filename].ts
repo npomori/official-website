@@ -30,9 +30,9 @@ export const GET: APIRoute = async ({ params }) => {
     // 添付ファイルを探す
     for (const location of locations) {
       if (location.attachments && Array.isArray(location.attachments)) {
-        const found = (location.attachments as Array<{ name: string; filename: string }>).find(
-          (att) => att.filename === filename
-        )
+        const found = (
+          location.attachments as Array<{ name: string; filename: string; size: number }>
+        ).find((att) => att.filename === filename)
         if (found) {
           attachment = found
           break

@@ -152,7 +152,12 @@ export const POST: APIRoute = async ({ request, locals }) => {
     }
 
     // ギャラリー画像のアップロード
-    let galleryImages: string[] = []
+    let galleryImages: Array<{
+      name: string
+      filename: string
+      size: number
+      caption?: string
+    }> = []
     const galleryFiles = formData.getAll('gallery') as File[]
     if (galleryFiles && galleryFiles.length > 0) {
       // ファイル数のバリデーション
@@ -207,8 +212,17 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
       // ファイルをアップロード
       try {
-        const uploadedFiles = await locationFileUploader.uploadFiles(galleryFiles)
-        galleryImages = uploadedFiles.map((f) => `${cfg.url}/${f.filename}`)
+        const subDir = cfg.subDirectories?.gallery || 'gallery'
+        const uploadedFiles = await locationFileUploader.uploadFiles(galleryFiles, subDir)
+        galleryImages = uploadedFiles.map((f, index) => {
+          const caption = formData.get(`gallery_caption_${index}`) as string | null
+          return {
+            name: f.name,
+            filename: f.filename,
+            size: f.size,
+            ...(caption && { caption })
+          }
+        })
       } catch (uploadError) {
         console.error('Gallery upload error:', uploadError)
         return new Response(
@@ -229,8 +243,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
     // 添付ファイルのアップロード
     let uploadedAttachments: Array<{
       name: string
-      url: string
-      size: string
+      filename: string
+      size: number
     }> = []
     const attachmentFiles = formData.getAll('attachments') as File[]
     if (attachmentFiles && attachmentFiles.length > 0) {
@@ -271,7 +285,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
       // ファイルをアップロード
       try {
-        const uploadedFiles = await locationFileUploader.uploadFiles(attachmentFiles)
+        const subDir = cfg.subDirectories?.attachments || 'attachments'
+        const uploadedFiles = await locationFileUploader.uploadFiles(attachmentFiles, subDir)
         uploadedAttachments = uploadedFiles.map((f) => ({
           name: f.name,
           filename: f.filename,

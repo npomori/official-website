@@ -70,6 +70,12 @@ interface LocationUploadConfig {
     height: number
   }
   quality: number
+  captionMaxLength?: number
+  subDirectories?: {
+    main: string
+    gallery: string
+    attachments: string
+  }
 }
 
 interface UploadConfig {

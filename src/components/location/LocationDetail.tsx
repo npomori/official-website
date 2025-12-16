@@ -2,6 +2,7 @@ import ImageModal from '@/components/base/ImageModal'
 import ContentNotFound from '@/components/ContentNotFound'
 import LocationFetch from '@/fetch/location'
 import { formatFileSize } from '@/helpers/file'
+import type { ImageAttachment } from '@/types/attachment'
 import { getLocationUploadConfig } from '@/types/config'
 import type { LocationData } from '@/types/location'
 import React, { useEffect, useState } from 'react'
@@ -28,6 +29,13 @@ const LocationDetail: React.FC<LocationDetailProps> = ({ locationId }) => {
       if (result.success && result.data) {
         // APIレスポンスをLocationData形式に変換
         const apiData = result.data
+
+        // images を ImageAttachment[] としてパース
+        let galleryImages: ImageAttachment[] = []
+        if (apiData.images && Array.isArray(apiData.images)) {
+          galleryImages = apiData.images as ImageAttachment[]
+        }
+
         const locationData: LocationData = {
           id: apiData.id,
           name: apiData.name,
@@ -46,17 +54,17 @@ const LocationDetail: React.FC<LocationDetailProps> = ({ locationId }) => {
                 contact: apiData.contact || '',
                 organizer: apiData.organizer || undefined,
                 startedDate: apiData.startedDate || undefined,
-                gallery: apiData.images || [],
+                gallery: galleryImages,
                 activityDetails: apiData.activityDetails || undefined,
                 fieldCharacteristics: apiData.fieldCharacteristics || undefined,
-                meetingPoint: apiData.meetingAddress
-                  ? {
-                      address: apiData.meetingAddress,
-                      time: apiData.meetingTime || '',
-                      mapUrl: apiData.meetingMapUrl || undefined,
-                      additionalInfo: apiData.meetingAdditionalInfo || undefined
-                    }
-                  : undefined,
+                ...(apiData.meetingAddress && {
+                  meetingPoint: {
+                    address: apiData.meetingAddress,
+                    time: apiData.meetingTime || '',
+                    mapUrl: apiData.meetingMapUrl || undefined,
+                    additionalInfo: apiData.meetingAdditionalInfo || undefined
+                  }
+                }),
                 participationFee: apiData.participationFee || undefined,
                 upcomingDates: apiData.upcomingDates || undefined,
                 notes: apiData.notes || undefined,
@@ -413,20 +421,28 @@ const LocationDetail: React.FC<LocationDetailProps> = ({ locationId }) => {
             <div className="rounded-lg bg-white p-6 shadow-lg">
               <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                 {detailInfo.gallery.map((image, index) => {
-                  // 外部URLの場合はそのまま使用、ローカルファイルの場合はプレフィックスを付ける
-                  const imageSrc = image.startsWith('http')
-                    ? image
-                    : `${locationConfig.url}/${image}`
+                  // 外部URLの場合はそのまま使用、ローカルファイルの場合はサブディレクトリ付きパスを使用
+                  const imageSrc = image.filename.startsWith('http')
+                    ? image.filename
+                    : `${locationConfig.url}/${locationConfig.subDirectories?.gallery || 'gallery'}/${image.filename}`
                   return (
                     <div key={index} className="overflow-hidden rounded-lg">
                       <img
                         src={imageSrc}
-                        alt={`${location.name}の活動写真 ${index + 1}`}
+                        alt={image.caption || `${location.name}の活動写真 ${index + 1}`}
                         className="h-48 w-full cursor-pointer object-cover transition-transform duration-200 hover:scale-105"
                         onClick={() =>
-                          handleImageClick(imageSrc, `${location.name}の活動写真 ${index + 1}`)
+                          handleImageClick(
+                            imageSrc,
+                            image.caption || `${location.name}の活動写真 ${index + 1}`
+                          )
                         }
                       />
+                      {image.caption && (
+                        <div className="mt-2 rounded-b bg-gray-100 px-3 py-2">
+                          <p className="text-sm text-gray-700">{image.caption}</p>
+                        </div>
+                      )}
                     </div>
                   )
                 })}

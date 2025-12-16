@@ -4,8 +4,18 @@ import { z } from 'zod'
 // ファイル添付のスキーマ
 export const attachmentSchema = z.object({
   name: z.string(),
-  url: z.string(),
-  size: z.string().optional()
+  filename: z.string(),
+  size: z.number()
+})
+
+// 画像添付のスキーマ（ギャラリー画像用）
+export const imageAttachmentSchema = attachmentSchema.extend({
+  caption: z
+    .string()
+    .max(config.upload.location.captionMaxLength ?? 30, {
+      message: `キャプションは${config.upload.location.captionMaxLength ?? 30}文字以内で入力してください`
+    })
+    .optional()
 })
 
 // 基本的な活動地スキーマ
@@ -66,7 +76,7 @@ export const locationBaseSchema = z.object({
   meetingAdditionalInfo: z.string().trim().nullable().optional(),
 
   // メディア・添付ファイル
-  images: z.array(z.string()).nullable().optional(),
+  images: z.array(imageAttachmentSchema).nullable().optional(),
   attachments: z.array(attachmentSchema).nullable().optional(),
   upcomingDates: z.array(z.string()).nullable().optional()
 })

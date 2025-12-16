@@ -140,7 +140,9 @@ export const PUT: APIRoute = async ({ params, request }) => {
 
     // 削除対象添付ファイル
     const removedAttachmentsStr = formData.get('removedAttachments') as string
-    const removedAttachments = removedAttachmentsStr ? JSON.parse(removedAttachmentsStr) : []
+    const removedAttachments: string[] = removedAttachmentsStr
+      ? JSON.parse(removedAttachmentsStr)
+      : []
 
     const locationFileUploader = new FileUploader(UPLOAD_DIR)
     const locationConfig = (await import('@/config/config.json')).default.upload.location
@@ -205,11 +207,17 @@ export const PUT: APIRoute = async ({ params, request }) => {
     }
 
     // ギャラリー画像の更新
-    let galleryImages = (existingLocation.images as string[]) || []
+    let galleryImages =
+      (existingLocation.images as Array<{
+        name: string
+        filename: string
+        size: number
+        caption?: string
+      }>) || []
 
-    // 削除対象を除外
+    // 削除対象を除外（filenameベース）
     if (removedImages.length > 0) {
-      galleryImages = galleryImages.filter((img) => !removedImages.includes(img))
+      galleryImages = galleryImages.filter((img) => !removedImages.includes(img.filename))
     }
 
     // 新規ギャラリー画像のアップロード
@@ -268,8 +276,17 @@ export const PUT: APIRoute = async ({ params, request }) => {
 
       // ファイルをアップロード
       try {
-        const uploadedFiles = await locationFileUploader.uploadFiles(galleryFiles)
-        const newImages = uploadedFiles.map((f) => `${cfg.url}/${f.filename}`)
+        const subDir = cfg.subDirectories?.gallery || 'gallery'
+        const uploadedFiles = await locationFileUploader.uploadFiles(galleryFiles, subDir)
+        const newImages = uploadedFiles.map((f, index) => {
+          const caption = formData.get(`gallery_caption_${index}`) as string | null
+          return {
+            name: f.name,
+            filename: f.filename,
+            size: f.size,
+            ...(caption && { caption })
+          }
+        })
         galleryImages = [...galleryImages, ...newImages]
       } catch (uploadError) {
         console.error('Gallery upload error:', uploadError)
@@ -293,7 +310,7 @@ export const PUT: APIRoute = async ({ params, request }) => {
       (existingLocation.attachments as Array<{
         name: string
         filename: string
-        size: string
+        size: number
       }>) || []
 
     // 削除対象の添付ファイルを除外
@@ -352,7 +369,8 @@ export const PUT: APIRoute = async ({ params, request }) => {
 
       // ファイルをアップロード
       try {
-        const uploadedFiles = await locationFileUploader.uploadFiles(attachmentFiles)
+        const subDir = cfg.subDirectories?.attachments || 'attachments'
+        const uploadedFiles = await locationFileUploader.uploadFiles(attachmentFiles, subDir)
         const newAttachments = uploadedFiles.map((f) => ({
           name: f.name,
           filename: f.filename,

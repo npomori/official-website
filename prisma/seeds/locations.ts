@@ -50,9 +50,23 @@ async function seedLocations(prisma: PrismaClient): Promise<void> {
       notes: '・雨天中止の場合は前日17時までに連絡します\n・小学生以下は保護者同伴でお願いします',
       other: '駐車場は先着20台まで利用可能です。満車の場合は近隣の有料駐車場をご利用ください。',
       images: [
-        'https://images.unsplash.com/photo-1448375240586-882707db888b?w=400&auto=format&fit=crop&q=60',
-        'https://images.unsplash.com/photo-1440342359743-84fcb8c21f21?w=400&auto=format&fit=crop&q=60',
-        'https://images.unsplash.com/photo-1475483768296-6163e08872a1?w=400&auto=format&fit=crop&q=60'
+        {
+          name: 'forest-path.jpg',
+          filename: 'minoh-forest-1.jpg',
+          size: 245760, // 240KB
+          caption: '整備された遊歩道'
+        },
+        {
+          name: 'autumn-leaves.jpg',
+          filename: 'minoh-autumn-1.jpg',
+          size: 327680, // 320KB
+          caption: '秋の紅葉'
+        },
+        {
+          name: 'nature-scene.jpg',
+          filename: 'minoh-nature-1.jpg',
+          size: 294912 // 288KB
+        }
       ],
       attachments: [
         {
@@ -88,9 +102,23 @@ async function seedLocations(prisma: PrismaClient): Promise<void> {
       organizer: '山田 花子',
       startedDate: '2015年10月',
       images: [
-        'https://images.unsplash.com/photo-1440342359743-84fcb8c21f21?w=400&auto=format&fit=crop&q=60',
-        'https://images.unsplash.com/photo-1448375240586-882707db888b?w=400&auto=format&fit=crop&q=60',
-        'https://images.unsplash.com/photo-1524661135-423995f22d0b?w=400&auto=format&fit=crop&q=60'
+        {
+          name: 'mountain-trail.jpg',
+          filename: 'kongo-mountain-1.jpg',
+          size: 315392, // 308KB
+          caption: '金剛山頂上からの景色'
+        },
+        {
+          name: 'forest-work.jpg',
+          filename: 'kongo-forest-1.jpg',
+          size: 286720 // 280KB
+        },
+        {
+          name: 'mountain-view.jpg',
+          filename: 'kongo-view-1.jpg',
+          size: 298752, // 292KB
+          caption: '登山道の様子'
+        }
       ],
       status: 'published' as const,
       creatorId: 1
@@ -113,9 +141,22 @@ async function seedLocations(prisma: PrismaClient): Promise<void> {
       organizer: '佐藤 一郎',
       startedDate: '2020年6月',
       images: [
-        'https://images.unsplash.com/photo-1475483768296-6163e08872a1?w=400&auto=format&fit=crop&q=60',
-        'https://images.unsplash.com/photo-1448375240586-882707db888b?w=400&auto=format&fit=crop&q=60',
-        'https://images.unsplash.com/photo-1440342359743-84fcb8c21f21?w=400&auto=format&fit=crop&q=60'
+        {
+          name: 'kudoyama-forest.jpg',
+          filename: 'kudoyama-forest-1.jpg',
+          size: 267264 // 261KB
+        },
+        {
+          name: 'forest-activity.jpg',
+          filename: 'kudoyama-activity-1.jpg',
+          size: 301056, // 294KB
+          caption: '間伐作業中'
+        },
+        {
+          name: 'mountain-path.jpg',
+          filename: 'kudoyama-path-1.jpg',
+          size: 289792 // 283KB
+        }
       ],
       status: 'published' as const,
       creatorId: 1
@@ -138,9 +179,22 @@ async function seedLocations(prisma: PrismaClient): Promise<void> {
       organizer: '鈴木 明',
       startedDate: '2019年5月',
       images: [
-        'https://images.unsplash.com/photo-1524661135-423995f22d0b?w=400&auto=format&fit=crop&q=60',
-        'https://images.unsplash.com/photo-1448375240586-882707db888b?w=400&auto=format&fit=crop&q=60',
-        'https://images.unsplash.com/photo-1475483768296-6163e08872a1?w=400&auto=format&fit=crop&q=60'
+        {
+          name: 'nose-forest.jpg',
+          filename: 'nose-forest-1.jpg',
+          size: 273408, // 267KB
+          caption: '植樹祭の様子'
+        },
+        {
+          name: 'nature-experience.jpg',
+          filename: 'nose-experience-1.jpg',
+          size: 308224 // 301KB
+        },
+        {
+          name: 'camp-area.jpg',
+          filename: 'nose-camp-1.jpg',
+          size: 295936 // 289KB
+        }
       ],
       status: 'published' as const,
       creatorId: 1
@@ -271,9 +325,23 @@ async function seedLocations(prisma: PrismaClient): Promise<void> {
       organizer: '伊藤 健一',
       startedDate: '2016年9月',
       images: [
-        'https://images.unsplash.com/photo-1448375240586-882707db888b?w=400&auto=format&fit=crop&q=60',
-        'https://images.unsplash.com/photo-1440342359743-84fcb8c21f21?w=400&auto=format&fit=crop&q=60',
-        'https://images.unsplash.com/photo-1524661135-423995f22d0b?w=400&auto=format&fit=crop&q=60'
+        {
+          name: 'ntt-activity.jpg',
+          filename: 'ntt-horigono-1.jpg',
+          size: 312320, // 305KB
+          caption: '企業連携活動の様子'
+        },
+        {
+          name: 'forest-collaboration.jpg',
+          filename: 'ntt-collab-1.jpg',
+          size: 285696 // 279KB
+        },
+        {
+          name: 'group-work.jpg',
+          filename: 'ntt-group-1.jpg',
+          size: 297984, // 291KB
+          caption: 'チーム作業'
+        }
       ],
       status: 'published' as const,
       creatorId: 1

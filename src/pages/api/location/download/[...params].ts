@@ -65,9 +65,12 @@ export const GET: APIRoute = async ({ params }) => {
       )
     }
 
-    const attachment = location.attachments.find(
-      (att: { filename: string; name: string }) => att.filename === filename
-    )
+    const attachments = location.attachments as Array<{
+      filename: string
+      name: string
+      size: number
+    }>
+    const attachment = attachments.find((att) => att.filename === filename)
     if (!attachment) {
       return new Response(
         JSON.stringify({

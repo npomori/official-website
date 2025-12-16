@@ -85,12 +85,28 @@
       "directory": "public/uploads/locations",
       "maxFiles": 20,
       "maxFileSize": 10485760,
-      "allowedTypes": ["image/jpeg", "image/png", "image/gif", "image/webp"],
+      "allowedTypes": [
+        "image/jpeg",
+        "image/png",
+        "image/gif",
+        "image/webp",
+        "application/pdf",
+        "application/msword",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "application/vnd.ms-excel",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      ],
       "maxSize": {
         "width": 1920,
         "height": 1920
       },
-      "quality": 85
+      "quality": 85,
+      "captionMaxLength": 30,
+      "subDirectories": {
+        "main": "",
+        "gallery": "gallery",
+        "attachments": "attachments"
+      }
     }
   },
   "api": {

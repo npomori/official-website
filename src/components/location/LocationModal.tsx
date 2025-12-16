@@ -4,7 +4,9 @@ import config from '@/config/config.json'
 import locationTypes from '@/config/location-type.json'
 import locationOptions from '@/config/location.json'
 import AdminLocationFetch from '@/fetch/admin/location'
+import { formatFileSize } from '@/helpers/file'
 import { locationCreateSchema, type LocationCreate } from '@/schemas/location'
+import type { ImageAttachment } from '@/types/attachment'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
@@ -24,12 +26,14 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
   const [isLoading, setIsLoading] = useState(true)
   const [isEditMode, setIsEditMode] = useState(false)
   const [selectedMainImage, setSelectedMainImage] = useState<File | null>(null)
-  const [selectedGalleryImages, setSelectedGalleryImages] = useState<File[]>([])
-  const [existingGalleryImages, setExistingGalleryImages] = useState<string[]>([])
+  const [selectedGalleryImages, setSelectedGalleryImages] = useState<
+    Array<{ file: File; caption: string }>
+  >([])
+  const [existingGalleryImages, setExistingGalleryImages] = useState<ImageAttachment[]>([])
   const [removedImages, setRemovedImages] = useState<string[]>([])
   const [selectedAttachments, setSelectedAttachments] = useState<File[]>([])
   const [existingAttachments, setExistingAttachments] = useState<
-    Array<{ name: string; filename: string; size: string }>
+    Array<{ name: string; filename: string; size: number }>
   >([])
   const [removedAttachments, setRemovedAttachments] = useState<string[]>([])
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -50,7 +54,6 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
     reset,
     watch,
     handleSubmit,
-    setValue,
     formState: { errors, isSubmitting }
   } = useForm<LocationCreate>({
     resolver: zodResolver(locationCreateSchema),
@@ -130,11 +133,11 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
             upcomingDates: location.upcomingDates || null
           })
           if (location.images && Array.isArray(location.images)) {
-            setExistingGalleryImages(location.images as string[])
+            setExistingGalleryImages(location.images as ImageAttachment[])
           }
           if (location.attachments && Array.isArray(location.attachments)) {
             setExistingAttachments(
-              location.attachments as Array<{ name: string; filename: string; size: string }>
+              location.attachments as Array<{ name: string; filename: string; size: number }>
             )
           }
         }
@@ -201,8 +204,11 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
         formData.append('image', selectedMainImage)
       }
 
-      selectedGalleryImages.forEach((file) => {
-        formData.append('gallery', file)
+      selectedGalleryImages.forEach((item, index) => {
+        formData.append('gallery', item.file)
+        if (item.caption) {
+          formData.append(`gallery_caption_${index}`, item.caption)
+        }
       })
 
       if (removedImages.length > 0) {
@@ -273,16 +279,23 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
         return
       }
     }
-    setSelectedGalleryImages((prev) => [...prev, ...files])
+    const newImages = files.map((file) => ({ file, caption: '' }))
+    setSelectedGalleryImages((prev) => [...prev, ...newImages])
   }
 
   const handleRemoveGalleryImage = (index: number) => {
     setSelectedGalleryImages((prev) => prev.filter((_, i) => i !== index))
   }
 
-  const handleRemoveExistingImage = (imageUrl: string) => {
-    setRemovedImages((prev) => [...prev, imageUrl])
-    setExistingGalleryImages((prev) => prev.filter((url) => url !== imageUrl))
+  const handleGalleryCaptionChange = (index: number, caption: string) => {
+    setSelectedGalleryImages((prev) =>
+      prev.map((item, i) => (i === index ? { ...item, caption } : item))
+    )
+  }
+
+  const handleRemoveExistingImage = (imageFilename: string) => {
+    setRemovedImages((prev) => [...prev, imageFilename])
+    setExistingGalleryImages((prev) => prev.filter((img) => img.filename !== imageFilename))
   }
 
   const handleRemoveExistingAttachment = (attachmentFilename: string) => {
@@ -892,65 +905,102 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
 
                     {existingGalleryImages.length > 0 && (
                       <div className="mb-2 grid grid-cols-3 gap-2">
-                        {existingGalleryImages.map((imageUrl, index) => (
-                          <div key={index} className="relative">
-                            <img
-                              src={imageUrl}
-                              alt={`既存画像${index + 1}`}
-                              className="h-24 w-full rounded border border-gray-300 object-cover"
-                            />
-                            <button
-                              type="button"
-                              onClick={() => handleRemoveExistingImage(imageUrl)}
-                              className="absolute top-1 right-1 rounded-full bg-red-500 p-1 text-white hover:bg-red-600"
-                            >
-                              <svg
-                                className="h-4 w-4"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                viewBox="0 0 24 24"
+                        {existingGalleryImages.map((image, index) => {
+                          const imageUrl = image.filename.startsWith('http')
+                            ? image.filename
+                            : `${locationConfig.url}/${locationConfig.subDirectories?.gallery || 'gallery'}/${image.filename}`
+                          return (
+                            <div key={index} className="relative">
+                              <img
+                                src={imageUrl}
+                                alt={image.caption || `既存画像${index + 1}`}
+                                className="h-24 w-full rounded border border-gray-300 object-cover"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveExistingImage(image.filename)}
+                                className="absolute top-1 right-1 rounded-full bg-red-500 p-1 text-white hover:bg-red-600"
                               >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  d="M6 18L18 6M6 6l12 12"
-                                />
-                              </svg>
-                            </button>
-                          </div>
-                        ))}
+                                <svg
+                                  className="h-4 w-4"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M6 18L18 6M6 6l12 12"
+                                  />
+                                </svg>
+                              </button>
+                              {image.caption && (
+                                <div className="mt-1 text-xs text-gray-600">{image.caption}</div>
+                              )}
+                            </div>
+                          )
+                        })}
                       </div>
                     )}
 
                     {selectedGalleryImages.length > 0 && (
-                      <div className="mb-2 grid grid-cols-3 gap-2">
-                        {selectedGalleryImages.map((file, index) => (
-                          <div key={index} className="relative">
-                            <img
-                              src={URL.createObjectURL(file)}
-                              alt={`新規画像${index + 1}`}
-                              className="h-24 w-full rounded border border-gray-300 object-cover"
-                            />
-                            <button
-                              type="button"
-                              onClick={() => handleRemoveGalleryImage(index)}
-                              className="absolute top-1 right-1 rounded-full bg-red-500 p-1 text-white hover:bg-red-600"
-                            >
-                              <svg
-                                className="h-4 w-4"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  d="M6 18L18 6M6 6l12 12"
-                                />
-                              </svg>
-                            </button>
+                      <div className="mb-2 space-y-3">
+                        {selectedGalleryImages.map((item, index) => (
+                          <div key={index} className="rounded border border-gray-300 p-3">
+                            <div className="mb-2 flex items-start gap-3">
+                              <img
+                                src={URL.createObjectURL(item.file)}
+                                alt={`新規画像${index + 1}`}
+                                className="h-24 w-24 flex-shrink-0 rounded object-cover"
+                              />
+                              <div className="flex-1">
+                                <div className="mb-2 flex items-center justify-between">
+                                  <span className="text-sm font-medium text-gray-700">
+                                    {item.file.name}
+                                  </span>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleRemoveGalleryImage(index)}
+                                    className="rounded-full bg-red-500 p-1 text-white hover:bg-red-600"
+                                  >
+                                    <svg
+                                      className="h-4 w-4"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      strokeWidth="2"
+                                      viewBox="0 0 24 24"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M6 18L18 6M6 6l12 12"
+                                      />
+                                    </svg>
+                                  </button>
+                                </div>
+                                <div>
+                                  <label
+                                    htmlFor={`caption-${index}`}
+                                    className="mb-1 block text-sm text-gray-600"
+                                  >
+                                    キャプション（任意、最大{locationConfig.captionMaxLength || 30}
+                                    文字）
+                                  </label>
+                                  <input
+                                    type="text"
+                                    id={`caption-${index}`}
+                                    value={item.caption}
+                                    onChange={(e) =>
+                                      handleGalleryCaptionChange(index, e.target.value)
+                                    }
+                                    maxLength={locationConfig.captionMaxLength || 30}
+                                    className="focus:border-primary-500 focus:ring-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2 text-sm text-gray-900 focus:outline-none"
+                                    placeholder="画像の説明を入力..."
+                                  />
+                                </div>
+                              </div>
+                            </div>
                           </div>
                         ))}
                       </div>
@@ -1030,12 +1080,12 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                             className="flex items-center justify-between rounded border border-gray-300 p-2 text-sm"
                           >
                             <a
-                              href={attachment.url}
+                              href={`/api/location/download/${locationId}/${attachment.filename}`}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="text-blue-600 hover:underline"
                             >
-                              {attachment.name} ({attachment.size})
+                              {attachment.name} ({formatFileSize(attachment.size)})
                             </a>
                             <button
                               type="button"
@@ -1154,9 +1204,9 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                 type="button"
                 variant="primary"
                 disabled={isSubmitting}
-                onClick={(e) => {
+                onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                   e.preventDefault()
-                  handleSubmit(onSubmit, (errors) => {
+                  handleSubmit(onSubmit, () => {
                     setError('入力内容に誤りがあります。フォームを確認してください。')
                   })()
                 }}

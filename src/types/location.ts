@@ -2,7 +2,7 @@
  * Location型定義
  */
 
-import type { Attachment } from './attachment'
+import type { Attachment, ImageAttachment } from './attachment'
 
 export interface MeetingPoint {
   address: string
@@ -19,7 +19,7 @@ export interface DetailInfo {
   contact: string
   organizer?: string
   startedDate?: string
-  gallery: string[]
+  gallery: ImageAttachment[]
   activityDetails?: string
   fieldCharacteristics?: string
   meetingPoint?: MeetingPoint

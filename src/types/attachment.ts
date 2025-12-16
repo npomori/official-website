@@ -10,3 +10,12 @@ export interface Attachment {
   /** ファイルサイズ(バイト数) */
   size: number
 }
+
+/**
+ * 画像添付ファイルの型（ギャラリー画像用）
+ * Attachment を拡張し、キャプションを追加
+ */
+export interface ImageAttachment extends Attachment {
+  /** 画像のキャプション（説明文） */
+  caption?: string
+}
