@@ -31,7 +31,7 @@ class LocationDB extends BaseDB {
   /**
    * IDで活動地を取得
    */
-  async findById(id: string) {
+  async getLocationById(id: string) {
     return await BaseDB.prisma.location.findFirst({
       where: {
         id,
@@ -215,7 +215,7 @@ class LocationDB extends BaseDB {
   /**
    * 管理用: ステータスに関わらずIDで取得
    */
-  async findByIdAdmin(id: string) {
+  async getLocationByIdForAdmin(id: string) {
     return await BaseDB.prisma.location.findUnique({
       where: { id },
       select: {

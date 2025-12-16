@@ -21,7 +21,7 @@ export const GET: APIRoute = async ({ params }) => {
       })
     }
 
-    const location = await LocationDB.findByIdAdmin(id)
+    const location = await LocationDB.getLocationByIdForAdmin(id)
 
     if (!location) {
       return new Response(JSON.stringify({ success: false, message: '活動地が見つかりません' }), {
@@ -82,7 +82,7 @@ export const PUT: APIRoute = async ({ params, request }) => {
     const formData = await request.formData()
 
     // 活動地が存在するか確認
-    const existingLocation = await LocationDB.findByIdAdmin(id)
+    const existingLocation = await LocationDB.getLocationByIdForAdmin(id)
 
     if (!existingLocation) {
       return new Response(JSON.stringify({ success: false, message: '活動地が見つかりません' }), {
@@ -452,7 +452,7 @@ export const DELETE: APIRoute = async ({ params }) => {
     }
 
     // 活動地が存在するか確認
-    const existingLocation = await LocationDB.findByIdAdmin(id)
+    const existingLocation = await LocationDB.getLocationByIdForAdmin(id)
 
     if (!existingLocation) {
       return new Response(JSON.stringify({ success: false, message: '活動地が見つかりません' }), {

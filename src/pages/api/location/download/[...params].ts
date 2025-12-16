@@ -37,7 +37,7 @@ export const GET: APIRoute = async ({ params }) => {
     }
 
     // 活動地とファイルの存在確認
-    const location = await LocationDB.findById(locationId)
+    const location = await LocationDB.getLocationById(locationId)
     if (!location) {
       return new Response(
         JSON.stringify({

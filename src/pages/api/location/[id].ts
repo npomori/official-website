@@ -21,7 +21,7 @@ export const GET: APIRoute = async ({ params }) => {
       )
     }
 
-    const location = await LocationDB.findById(id)
+    const location = await LocationDB.getLocationById(id)
 
     if (!location) {
       return new Response(
