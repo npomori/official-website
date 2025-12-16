@@ -49,7 +49,7 @@ async function seedLocations(prisma: PrismaClient): Promise<void> {
       ],
       notes: '・雨天中止の場合は前日17時までに連絡します\n・小学生以下は保護者同伴でお願いします',
       other: '駐車場は先着20台まで利用可能です。満車の場合は近隣の有料駐車場をご利用ください。',
-      images: [
+      gallery: [
         {
           name: 'forest-path.jpg',
           filename: 'minoh-forest-1.jpg',
@@ -101,7 +101,7 @@ async function seedLocations(prisma: PrismaClient): Promise<void> {
       contact: '千早赤阪村役場 産業振興課 0721-72-0081',
       organizer: '山田 花子',
       startedDate: '2015年10月',
-      images: [
+      gallery: [
         {
           name: 'mountain-trail.jpg',
           filename: 'kongo-mountain-1.jpg',
@@ -140,7 +140,7 @@ async function seedLocations(prisma: PrismaClient): Promise<void> {
       contact: '九度山町役場 産業建設課 0736-54-2014',
       organizer: '佐藤 一郎',
       startedDate: '2020年6月',
-      images: [
+      gallery: [
         {
           name: 'kudoyama-forest.jpg',
           filename: 'kudoyama-forest-1.jpg',
@@ -178,7 +178,7 @@ async function seedLocations(prisma: PrismaClient): Promise<void> {
       contact: '能勢町役場 産業振興課 072-734-0001',
       organizer: '鈴木 明',
       startedDate: '2019年5月',
-      images: [
+      gallery: [
         {
           name: 'nose-forest.jpg',
           filename: 'nose-forest-1.jpg',
@@ -324,7 +324,7 @@ async function seedLocations(prisma: PrismaClient): Promise<void> {
       contact: 'ＮＴＴドコモ関西支社 CSR推進部 06-1234-5678',
       organizer: '伊藤 健一',
       startedDate: '2016年9月',
-      images: [
+      gallery: [
         {
           name: 'ntt-activity.jpg',
           filename: 'ntt-horigono-1.jpg',
@@ -402,7 +402,7 @@ async function seedLocations(prisma: PrismaClient): Promise<void> {
         upcomingDates: location.upcomingDates,
         notes: location.notes,
         other: location.other,
-        images: location.images,
+        gallery: location.gallery,
         attachments: location.attachments,
         status: location.status,
         creatorId: location.creatorId

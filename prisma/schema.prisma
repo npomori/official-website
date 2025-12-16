@@ -168,7 +168,7 @@ model Location {
   meetingAdditionalInfo String? @db.Text // 集合場所の補足情報
 
   // メディア・添付ファイル
-  images        Json? // 画像ギャラリー（ImageAttachment配列: {name: string, filename: string, size: number, caption?: string}[] を /uploads/locations/gallery/ に保存）
+  gallery       Json? // 画像ギャラリー（ImageAttachment配列: {name: string, filename: string, size: number, caption?: string}[] を /uploads/locations/gallery/ に保存）
   attachments   Json? // 添付ファイル（Attachment配列: {name: string, filename: string, size: number}[] を /uploads/locations/attachments/ に保存）
   upcomingDates Json? // 今後の活動予定日（日付文字列の配列）
 

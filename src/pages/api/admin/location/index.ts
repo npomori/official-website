@@ -336,7 +336,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       ...(upcomingDates && { upcomingDates }),
       notes,
       other,
-      ...(galleryImages.length > 0 && { images: galleryImages }),
+      ...(galleryImages.length > 0 && { gallery: galleryImages }),
       ...(uploadedAttachments.length > 0 && { attachments: uploadedAttachments }),
       status: isDraft ? 'draft' : 'published',
       creator: {

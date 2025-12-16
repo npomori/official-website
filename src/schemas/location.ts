@@ -76,7 +76,7 @@ export const locationBaseSchema = z.object({
   meetingAdditionalInfo: z.string().trim().nullable().optional(),
 
   // メディア・添付ファイル
-  images: z.array(imageAttachmentSchema).nullable().optional(),
+  gallery: z.array(imageAttachmentSchema).nullable().optional(),
   attachments: z.array(attachmentSchema).nullable().optional(),
   upcomingDates: z.array(z.string()).nullable().optional()
 })

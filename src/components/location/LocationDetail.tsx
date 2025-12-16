@@ -30,10 +30,10 @@ const LocationDetail: React.FC<LocationDetailProps> = ({ locationId }) => {
         // APIレスポンスをLocationData形式に変換
         const apiData = result.data
 
-        // images を ImageAttachment[] としてパース
+        // gallery を ImageAttachment[] としてパース
         let galleryImages: ImageAttachment[] = []
-        if (apiData.images && Array.isArray(apiData.images)) {
-          galleryImages = apiData.images as ImageAttachment[]
+        if (apiData.gallery && Array.isArray(apiData.gallery)) {
+          galleryImages = apiData.gallery as ImageAttachment[]
         }
 
         const locationData: LocationData = {
@@ -417,7 +417,7 @@ const LocationDetail: React.FC<LocationDetailProps> = ({ locationId }) => {
         detailInfo.gallery.length > 0 &&
         locationConfig.enabled && (
           <section className="mb-12">
-            <h2 className="mb-4 text-2xl font-bold">活動写真</h2>
+            <h2 className="mb-4 text-2xl font-bold">フォトギャラリー</h2>
             <div className="rounded-lg bg-white p-6 shadow-lg">
               <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                 {detailInfo.gallery.map((image, index) => {
@@ -429,17 +429,17 @@ const LocationDetail: React.FC<LocationDetailProps> = ({ locationId }) => {
                     <div key={index} className="overflow-hidden rounded-lg">
                       <img
                         src={imageSrc}
-                        alt={image.caption || `${location.name}の活動写真 ${index + 1}`}
-                        className="h-48 w-full cursor-pointer object-cover transition-transform duration-200 hover:scale-105"
+                        alt={image.caption || `${location.name}のフォトギャラリー ${index + 1}`}
+                        className="h-48 w-full cursor-pointer rounded-b-lg object-cover transition-transform duration-200 hover:scale-105"
                         onClick={() =>
                           handleImageClick(
                             imageSrc,
-                            image.caption || `${location.name}の活動写真 ${index + 1}`
+                            image.caption || `${location.name}のフォトギャラリー ${index + 1}`
                           )
                         }
                       />
                       {image.caption && (
-                        <div className="mt-2 rounded-b bg-gray-100 px-3 py-2">
+                        <div className="mt-2 px-3 py-2">
                           <p className="text-sm text-gray-700">{image.caption}</p>
                         </div>
                       )}

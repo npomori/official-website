@@ -208,7 +208,7 @@ export const PUT: APIRoute = async ({ params, request }) => {
 
     // ギャラリー画像の更新
     let galleryImages =
-      (existingLocation.images as Array<{
+      (existingLocation.gallery as Array<{
         name: string
         filename: string
         size: number
@@ -420,7 +420,7 @@ export const PUT: APIRoute = async ({ params, request }) => {
       ...(upcomingDates && { upcomingDates }),
       notes,
       other,
-      ...(galleryImages.length > 0 && { images: galleryImages }),
+      ...(galleryImages.length > 0 && { gallery: galleryImages }),
       attachments: existingAttachments,
       status: isDraft ? 'draft' : 'published'
     })
