@@ -1,6 +1,5 @@
 import { NewsDB } from '@/server/db'
 import { getConfig } from '@/types/config'
-import type { NewsListResponse } from '@/types/news'
 import type { APIRoute } from 'astro'
 
 export const GET: APIRoute = async ({ url, locals }) => {

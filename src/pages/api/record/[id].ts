@@ -1,5 +1,4 @@
 import { RecordDB } from '@/server/db'
-import type { Record } from '@/types/record'
 import type { APIRoute } from 'astro'
 
 export const GET: APIRoute = async ({ params, locals }) => {
