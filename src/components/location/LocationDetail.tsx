@@ -304,11 +304,11 @@ const LocationDetail: React.FC<LocationDetailProps> = ({ locationId }) => {
                   {detailInfo.attachments.map((file, index) => (
                     <a
                       key={index}
-                      href={`/api/admin/location/download/${file.filename}`}
+                      href={`/api/location/download/${location.id}/${file.filename}`}
                       className="inline-flex items-center rounded-lg bg-blue-50 px-3 py-2 text-base text-blue-700 transition-colors hover:bg-blue-100"
                       target="_blank"
                       rel="noopener noreferrer"
-                      download
+                      download={file.name}
                     >
                       <i className="fas fa-file-alt mr-2"></i>
                       {file.name}
