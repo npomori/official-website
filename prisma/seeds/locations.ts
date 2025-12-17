@@ -52,19 +52,22 @@ async function seedLocations(prisma: PrismaClient): Promise<void> {
       gallery: [
         {
           name: 'forest-path.jpg',
-          filename: 'minoh-forest-1.jpg',
+          filename:
+            'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=800&auto=format&fit=crop&q=80',
           size: 245760, // 240KB
           caption: '整備された遊歩道'
         },
         {
           name: 'autumn-leaves.jpg',
-          filename: 'minoh-autumn-1.jpg',
+          filename:
+            'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&auto=format&fit=crop&q=80',
           size: 327680, // 320KB
           caption: '秋の紅葉'
         },
         {
           name: 'nature-scene.jpg',
-          filename: 'minoh-nature-1.jpg',
+          filename:
+            'https://images.unsplash.com/photo-1559028012-481c04fa702d?w=800&auto=format&fit=crop&q=80',
           size: 294912 // 288KB
         }
       ],
@@ -104,18 +107,21 @@ async function seedLocations(prisma: PrismaClient): Promise<void> {
       gallery: [
         {
           name: 'mountain-trail.jpg',
-          filename: 'kongo-mountain-1.jpg',
+          filename:
+            'https://images.unsplash.com/photo-1544027993-37dbfe43562a?w=800&auto=format&fit=crop&q=80',
           size: 315392, // 308KB
           caption: '金剛山頂上からの景色'
         },
         {
           name: 'forest-work.jpg',
-          filename: 'kongo-forest-1.jpg',
+          filename:
+            'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&auto=format&fit=crop&q=80',
           size: 286720 // 280KB
         },
         {
           name: 'mountain-view.jpg',
-          filename: 'kongo-view-1.jpg',
+          filename:
+            'https://images.unsplash.com/photo-1470240731273-7821a6eeb6bd?w=800&auto=format&fit=crop&q=80',
           size: 298752, // 292KB
           caption: '登山道の様子'
         }
@@ -143,18 +149,21 @@ async function seedLocations(prisma: PrismaClient): Promise<void> {
       gallery: [
         {
           name: 'kudoyama-forest.jpg',
-          filename: 'kudoyama-forest-1.jpg',
+          filename:
+            'https://images.unsplash.com/photo-1559028012-481c04fa702d?w=800&auto=format&fit=crop&q=80',
           size: 267264 // 261KB
         },
         {
           name: 'forest-activity.jpg',
-          filename: 'kudoyama-activity-1.jpg',
+          filename:
+            'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=800&auto=format&fit=crop&q=80',
           size: 301056, // 294KB
           caption: '間伐作業中'
         },
         {
           name: 'mountain-path.jpg',
-          filename: 'kudoyama-path-1.jpg',
+          filename:
+            'https://images.unsplash.com/photo-1593113598332-cd288d649433?w=800&auto=format&fit=crop&q=80',
           size: 289792 // 283KB
         }
       ],
@@ -181,18 +190,21 @@ async function seedLocations(prisma: PrismaClient): Promise<void> {
       gallery: [
         {
           name: 'nose-forest.jpg',
-          filename: 'nose-forest-1.jpg',
+          filename:
+            'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&auto=format&fit=crop&q=80',
           size: 273408, // 267KB
           caption: '植樹祭の様子'
         },
         {
           name: 'nature-experience.jpg',
-          filename: 'nose-experience-1.jpg',
+          filename:
+            'https://images.unsplash.com/photo-1593113646773-028c64a8f1b8?w=800&auto=format&fit=crop&q=80',
           size: 308224 // 301KB
         },
         {
           name: 'camp-area.jpg',
-          filename: 'nose-camp-1.jpg',
+          filename:
+            'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=800&auto=format&fit=crop&q=80',
           size: 295936 // 289KB
         }
       ],
@@ -327,18 +339,21 @@ async function seedLocations(prisma: PrismaClient): Promise<void> {
       gallery: [
         {
           name: 'ntt-activity.jpg',
-          filename: 'ntt-horigono-1.jpg',
+          filename:
+            'https://images.unsplash.com/photo-1593113646773-028c64a8f1b8?w=800&auto=format&fit=crop&q=80',
           size: 312320, // 305KB
           caption: '企業連携活動の様子'
         },
         {
           name: 'forest-collaboration.jpg',
-          filename: 'ntt-collab-1.jpg',
+          filename:
+            'https://images.unsplash.com/photo-1559028012-481c04fa702d?w=800&auto=format&fit=crop&q=80',
           size: 285696 // 279KB
         },
         {
           name: 'group-work.jpg',
-          filename: 'ntt-group-1.jpg',
+          filename:
+            'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=800&auto=format&fit=crop&q=80',
           size: 297984, // 291KB
           caption: 'チーム作業'
         }

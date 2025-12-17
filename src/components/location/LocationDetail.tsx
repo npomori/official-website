@@ -426,11 +426,11 @@ const LocationDetail: React.FC<LocationDetailProps> = ({ locationId }) => {
                     ? image.filename
                     : `${locationConfig.url}/${locationConfig.subDirectories?.gallery || 'gallery'}/${image.filename}`
                   return (
-                    <div key={index} className="overflow-hidden rounded-lg">
+                    <div key={index} className="rounded-lg">
                       <img
                         src={imageSrc}
                         alt={image.caption || `${location.name}のフォトギャラリー ${index + 1}`}
-                        className="h-48 w-full cursor-pointer rounded-b-lg object-cover transition-transform duration-200 hover:scale-105"
+                        className="h-48 w-full cursor-pointer rounded-lg object-cover transition-transform duration-200 hover:scale-105"
                         onClick={() =>
                           handleImageClick(
                             imageSrc,
@@ -439,8 +439,8 @@ const LocationDetail: React.FC<LocationDetailProps> = ({ locationId }) => {
                         }
                       />
                       {image.caption && (
-                        <div className="mt-2 px-3 py-2">
-                          <p className="text-sm text-gray-700">{image.caption}</p>
+                        <div className="mt-1 px-3 py-2">
+                          <p className="text-base text-gray-700">{image.caption}</p>
                         </div>
                       )}
                     </div>
