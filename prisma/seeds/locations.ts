@@ -116,7 +116,8 @@ async function seedLocations(prisma: PrismaClient): Promise<void> {
           name: 'forest-work.jpg',
           filename:
             'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&auto=format&fit=crop&q=80',
-          size: 286720 // 280KB
+          size: 286720, // 280KB
+          caption: '森林保全作業'
         },
         {
           name: 'mountain-view.jpg',
@@ -124,6 +125,13 @@ async function seedLocations(prisma: PrismaClient): Promise<void> {
             'https://images.unsplash.com/photo-1470240731273-7821a6eeb6bd?w=800&auto=format&fit=crop&q=80',
           size: 298752, // 292KB
           caption: '登山道の様子'
+        },
+        {
+          name: 'kongosan-nature.jpg',
+          filename:
+            'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&auto=format&fit=crop&q=80',
+          size: 303104, // 296KB
+          caption: '金剛山の自然環境'
         }
       ],
       status: 'published' as const,
