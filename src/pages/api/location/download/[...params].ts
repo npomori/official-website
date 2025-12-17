@@ -1,4 +1,5 @@
 import LocationDB from '@/server/db/location'
+import { getLocationUploadConfig } from '@/types/config'
 import type { APIRoute } from 'astro'
 import { promises as fs } from 'fs'
 import path from 'path'
@@ -85,7 +86,9 @@ export const GET: APIRoute = async ({ params }) => {
     }
 
     // ファイルパスを構築
-    const uploadsDir = path.join(process.cwd(), 'public', 'uploads', 'locations')
+    const cfg = getLocationUploadConfig()
+    const subDir = cfg.subDirectories?.attachments || 'attachments'
+    const uploadsDir = path.join(process.cwd(), 'public', 'uploads', 'locations', subDir)
     const filePath = path.join(uploadsDir, filename)
 
     try {

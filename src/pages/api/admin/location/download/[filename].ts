@@ -1,4 +1,5 @@
 import LocationDB from '@/server/db/location'
+import { getLocationUploadConfig } from '@/types/config'
 import type { APIRoute } from 'astro'
 import { existsSync } from 'fs'
 import { readFile } from 'fs/promises'
@@ -56,7 +57,9 @@ export const GET: APIRoute = async ({ params }) => {
     }
 
     // ファイルパスを構築
-    const filePath = join('public/uploads/locations', filename)
+    const cfg = getLocationUploadConfig()
+    const subDir = cfg.subDirectories?.attachments || 'attachments'
+    const filePath = join(process.cwd(), 'public', 'uploads', 'locations', subDir, filename)
 
     // ファイルが存在するかチェック
     if (!existsSync(filePath)) {

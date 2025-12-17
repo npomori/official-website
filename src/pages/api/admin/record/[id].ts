@@ -1,29 +1,10 @@
 import { safeValidateRecordData } from '@/schemas/record'
 import { RecordDB } from '@/server/db'
+import FileUploader from '@/server/utils/file-upload'
+import { processImagesWithResize } from '@/server/utils/image-processor'
 import { getRecordUploadConfig } from '@/types/config'
 import type { APIRoute } from 'astro'
-import { mkdir, unlink } from 'fs/promises'
 import { join } from 'path'
-import sharp from 'sharp'
-import { v4 as uuidv4 } from 'uuid'
-
-// 削除された画像ファイルを物理的に削除する関数
-async function deleteImageFiles(imageNames: string[], recordConfig: any) {
-  const uploadDir = join(process.cwd(), recordConfig.directory)
-
-  await Promise.all(
-    imageNames.map(async (imageName) => {
-      try {
-        const imagePath = join(uploadDir, imageName)
-        await unlink(imagePath)
-        console.log(`Deleted image file: ${imageName}`)
-      } catch (error) {
-        console.error(`Failed to delete image file: ${imageName}`, error)
-        // ファイルが存在しない場合もエラーになるが、削除目的なので無視
-      }
-    })
-  )
-}
 
 // 個別の記録を取得
 export const GET: APIRoute = async ({ params, locals }) => {
@@ -212,6 +193,7 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
 
     // 画像アップロード処理
     let uploadedImageNames: string[] = []
+    let totalNewImageCount = 0
     if (images.length > 0) {
       const recordConfig = getRecordUploadConfig()
 
@@ -247,50 +229,24 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
         )
       }
 
-      // アップロードディレクトリを作成
-      const uploadDir = join(process.cwd(), recordConfig.directory)
-      await mkdir(uploadDir, { recursive: true })
+      totalNewImageCount = images.length
 
-      uploadedImageNames = await Promise.all(
-        images.map(async (file) => {
-          // ファイル形式チェック
-          if (!recordConfig.allowedTypes.includes(file.type)) {
-            throw new Error(
-              `対応していないファイル形式です。対応形式: ${recordConfig.allowedTypes.join(', ')}`
-            )
-          }
+      // 画像をリサイズ処理（部分成功対応）
+      const processingResult = await processImagesWithResize(images, {
+        directory: recordConfig.directory,
+        maxWidth: recordConfig.maxSize.width,
+        maxHeight: recordConfig.maxSize.height,
+        quality: recordConfig.quality,
+        allowedTypes: recordConfig.allowedTypes,
+        maxFileSize: recordConfig.maxFileSize
+      })
 
-          // ファイルサイズチェック
-          if (file.size > recordConfig.maxFileSize) {
-            const maxSizeMB = Math.round(recordConfig.maxFileSize / (1024 * 1024))
-            throw new Error(`ファイルサイズは${maxSizeMB}MB以下にしてください`)
-          }
+      uploadedImageNames = processingResult.succeeded.map((f) => f.filename)
 
-          // ファイル名を生成（UUID + 元の拡張子）
-          const fileExtension = file.name.split('.').pop()
-          const fileName = `${uuidv4()}.${fileExtension}`
-          const uploadPath = join(uploadDir, fileName)
-
-          try {
-            const bytes = await file.arrayBuffer()
-            const buffer = Buffer.from(bytes)
-
-            // 画像をリサイズして保存
-            await sharp(buffer)
-              .resize(recordConfig.maxSize.width, recordConfig.maxSize.height, {
-                fit: 'inside',
-                withoutEnlargement: true
-              })
-              .jpeg({ quality: recordConfig.quality })
-              .toFile(uploadPath)
-
-            return fileName
-          } catch (error) {
-            console.error('Image upload error:', error)
-            throw new Error('画像のアップロードに失敗しました')
-          }
-        })
-      )
+      // 失敗した画像がある場合はログに記録
+      if (processingResult.failed.length > 0) {
+        console.warn('Some images failed to upload:', processingResult.failed)
+      }
     }
 
     // サーバー側バリデーション
@@ -333,7 +289,14 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
     )
     if (deletedImages.length > 0) {
       const recordConfig = getRecordUploadConfig()
-      await deleteImageFiles(deletedImages, recordConfig)
+      const uploadDir = join(process.cwd(), recordConfig.directory)
+      const fileUploader = new FileUploader(uploadDir)
+      try {
+        await fileUploader.deleteFiles(deletedImages)
+      } catch (deleteError) {
+        console.error('Failed to delete image files:', deleteError)
+        // 物理削除に失敗してもデータベースからは削除する（既に削除済みの可能性もあるため）
+      }
     }
 
     if (uploadedImageNames.length > 0) {
@@ -363,10 +326,16 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
       images: finalImages
     })
 
+    // 部分成功時の警告メッセージを生成
+    let message = '記録を更新しました'
+    if (totalNewImageCount > 0 && uploadedImageNames.length < totalNewImageCount) {
+      message += `（画像: ${uploadedImageNames.length}/${totalNewImageCount}件アップロード成功）`
+    }
+
     return new Response(
       JSON.stringify({
         success: true,
-        message: '記録を更新しました',
+        message,
         data: updatedRecord
       }),
       {
@@ -471,7 +440,14 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
     const existingImages = existingRecord.images as string[]
     if (existingImages && existingImages.length > 0) {
       const recordConfig = getRecordUploadConfig()
-      await deleteImageFiles(existingImages, recordConfig)
+      const uploadDir = join(process.cwd(), recordConfig.directory)
+      const fileUploader = new FileUploader(uploadDir)
+      try {
+        await fileUploader.deleteFiles(existingImages)
+      } catch (deleteError) {
+        console.error('Failed to delete image files:', deleteError)
+        // 物理削除に失敗してもデータベースからは削除する（既に削除済みの可能性もあるため）
+      }
     }
 
     // 記録を削除

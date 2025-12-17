@@ -1,6 +1,7 @@
 import config from '@/config/config.json'
 import LocationDB from '@/server/db/location'
 import FileUploader from '@/server/utils/file-upload'
+import { processImageWithResize, processImagesWithResize } from '@/server/utils/image-processor'
 import { getLocationUploadConfig } from '@/types/config'
 import type { APIRoute } from 'astro'
 import { join } from 'path'
@@ -92,57 +93,31 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const locationFileUploader = new FileUploader(UPLOAD_DIR)
     const locationConfig = config.upload.location
 
-    // メイン画像のアップロード
+    // メイン画像のアップロード（リサイズ処理を適用）
     let mainImageUrl: string | null = null
     const mainImageFile = formData.get('image') as File | null
     if (mainImageFile && mainImageFile.size > 0) {
-      // ファイルのバリデーション
-      if (!locationFileUploader.validateFileType(mainImageFile, locationConfig.allowedTypes)) {
-        return new Response(
-          JSON.stringify({
-            success: false,
-            message: `画像ファイルタイプが許可されていません: ${mainImageFile.name}`
-          }),
-          {
-            status: 400,
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          }
-        )
-      }
-
-      if (!locationFileUploader.validateFileSize(mainImageFile, locationConfig.maxFileSize)) {
-        const maxSizeMB = Math.round(locationConfig.maxFileSize / (1024 * 1024))
-        return new Response(
-          JSON.stringify({
-            success: false,
-            message: `画像ファイルサイズが大きすぎます: ${mainImageFile.name} (最大${maxSizeMB}MB)`
-          }),
-          {
-            status: 400,
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          }
-        )
-      }
-
-      // ファイルをアップロード
       try {
-        const uploadedFiles = await locationFileUploader.uploadFiles([mainImageFile])
-        if (uploadedFiles && uploadedFiles.length > 0 && uploadedFiles[0]) {
-          mainImageUrl = `${cfg.url}/${uploadedFiles[0].filename}`
-        }
-      } catch (uploadError) {
-        console.error('Main image upload error:', uploadError)
+        const uploadedImage = await processImageWithResize(mainImageFile, {
+          directory: cfg.directory,
+          maxWidth: locationConfig.maxSize.width,
+          maxHeight: locationConfig.maxSize.height,
+          quality: locationConfig.quality,
+          allowedTypes: locationConfig.allowedTypes,
+          maxFileSize: locationConfig.maxFileSize
+        })
+        mainImageUrl = `${cfg.url}/${uploadedImage.filename}`
+      } catch (error) {
+        console.error('Main image upload error:', error)
+        const errorMessage =
+          error instanceof Error ? error.message : 'メイン画像のアップロードに失敗しました'
         return new Response(
           JSON.stringify({
             success: false,
-            message: 'メイン画像のアップロードに失敗しました'
+            message: errorMessage
           }),
           {
-            status: 500,
+            status: 400,
             headers: {
               'Content-Type': 'application/json'
             }
@@ -151,7 +126,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       }
     }
 
-    // ギャラリー画像のアップロード
+    // ギャラリー画像のアップロード（リサイズ処理を適用）
     let galleryImages: Array<{
       name: string
       filename: string
@@ -176,67 +151,32 @@ export const POST: APIRoute = async ({ request, locals }) => {
         )
       }
 
-      // ファイルのバリデーション
-      for (const file of galleryFiles) {
-        if (!locationFileUploader.validateFileType(file, locationConfig.allowedTypes)) {
-          return new Response(
-            JSON.stringify({
-              success: false,
-              message: `ギャラリー画像ファイルタイプが許可されていません: ${file.name}`
-            }),
-            {
-              status: 400,
-              headers: {
-                'Content-Type': 'application/json'
-              }
-            }
-          )
-        }
+      // 画像処理（部分成功対応）
+      const subDir = cfg.subDirectories?.gallery || 'gallery'
+      const processingResult = await processImagesWithResize(galleryFiles, {
+        directory: cfg.directory,
+        subDirectory: subDir,
+        maxWidth: locationConfig.maxSize.width,
+        maxHeight: locationConfig.maxSize.height,
+        quality: locationConfig.quality,
+        allowedTypes: locationConfig.allowedTypes,
+        maxFileSize: locationConfig.maxFileSize
+      })
 
-        if (!locationFileUploader.validateFileSize(file, locationConfig.maxFileSize)) {
-          const maxSizeMB = Math.round(locationConfig.maxFileSize / (1024 * 1024))
-          return new Response(
-            JSON.stringify({
-              success: false,
-              message: `ギャラリー画像ファイルサイズが大きすぎます: ${file.name} (最大${maxSizeMB}MB)`
-            }),
-            {
-              status: 400,
-              headers: {
-                'Content-Type': 'application/json'
-              }
-            }
-          )
+      // 成功した画像をギャラリーに追加
+      galleryImages = processingResult.succeeded.map((f, index) => {
+        const caption = formData.get(`gallery_caption_${index}`) as string | null
+        return {
+          name: f.name,
+          filename: f.filename,
+          size: f.size,
+          ...(caption && { caption })
         }
-      }
+      })
 
-      // ファイルをアップロード
-      try {
-        const subDir = cfg.subDirectories?.gallery || 'gallery'
-        const uploadedFiles = await locationFileUploader.uploadFiles(galleryFiles, subDir)
-        galleryImages = uploadedFiles.map((f, index) => {
-          const caption = formData.get(`gallery_caption_${index}`) as string | null
-          return {
-            name: f.name,
-            filename: f.filename,
-            size: f.size,
-            ...(caption && { caption })
-          }
-        })
-      } catch (uploadError) {
-        console.error('Gallery upload error:', uploadError)
-        return new Response(
-          JSON.stringify({
-            success: false,
-            message: 'ギャラリー画像のアップロードに失敗しました'
-          }),
-          {
-            status: 500,
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          }
-        )
+      // 失敗した画像がある場合はログに記録
+      if (processingResult.failed.length > 0) {
+        console.warn('Some gallery images failed to upload:', processingResult.failed)
       }
     }
 
@@ -346,11 +286,18 @@ export const POST: APIRoute = async ({ request, locals }) => {
       }
     })
 
+    // 部分成功時の警告メッセージを生成
+    let message = '活動地を作成しました'
+    const galleryFailedCount = galleryFiles.length - galleryImages.length
+    if (galleryFailedCount > 0) {
+      message += `（ギャラリー画像: ${galleryImages.length}/${galleryFiles.length}件アップロード成功）`
+    }
+
     return new Response(
       JSON.stringify({
         success: true,
         data: createdLocation,
-        message: '活動地を作成しました'
+        message
       }),
       {
         status: 201,

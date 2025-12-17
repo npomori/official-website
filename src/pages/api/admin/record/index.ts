@@ -1,11 +1,8 @@
 import { safeValidateRecordData } from '@/schemas/record'
 import { RecordDB } from '@/server/db'
+import { processImagesWithResize } from '@/server/utils/image-processor'
 import { getConfig, getRecordUploadConfig } from '@/types/config'
 import type { APIRoute } from 'astro'
-import { mkdir } from 'fs/promises'
-import { join } from 'path'
-import sharp from 'sharp'
-import { v4 as uuidv4 } from 'uuid'
 
 export const GET: APIRoute = async ({ url, locals }) => {
   try {
@@ -103,6 +100,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     let dateForFilename: string
     let data: any
     let uploadedImageNames: string[] = []
+    let totalImageCount = 0
 
     if (contentType.includes('multipart/form-data')) {
       // FormDataの場合（画像付き）
@@ -113,6 +111,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
       // 画像ファイルの処理
       const imageFiles = formData.getAll('images') as File[]
+      totalImageCount = imageFiles.length
 
       if (imageFiles.length > 0) {
         // 画像アップロード機能の有効性チェック
@@ -147,50 +146,22 @@ export const POST: APIRoute = async ({ request, locals }) => {
           )
         }
 
-        // アップロードディレクトリを作成
-        const uploadDir = join(process.cwd(), recordConfig.directory)
-        await mkdir(uploadDir, { recursive: true })
+        // 画像をリサイズ処理（部分成功対応）
+        const processingResult = await processImagesWithResize(imageFiles, {
+          directory: recordConfig.directory,
+          maxWidth: recordConfig.maxSize.width,
+          maxHeight: recordConfig.maxSize.height,
+          quality: recordConfig.quality,
+          allowedTypes: recordConfig.allowedTypes,
+          maxFileSize: recordConfig.maxFileSize
+        })
 
-        uploadedImageNames = await Promise.all(
-          imageFiles.map(async (file, index) => {
-            // ファイル形式チェック
-            if (!recordConfig.allowedTypes.includes(file.type)) {
-              throw new Error(
-                `対応していないファイル形式です。対応形式: ${recordConfig.allowedTypes.join(', ')}`
-              )
-            }
+        uploadedImageNames = processingResult.succeeded.map((f) => f.filename)
 
-            // ファイルサイズチェック
-            if (file.size > recordConfig.maxFileSize) {
-              const maxSizeMB = Math.round(recordConfig.maxFileSize / (1024 * 1024))
-              throw new Error(`ファイルサイズは${maxSizeMB}MB以下にしてください`)
-            }
-
-            // ファイル名を生成（UUID + 元の拡張子）
-            const fileExtension = file.name.split('.').pop()
-            const fileName = `${uuidv4()}.${fileExtension}`
-            const uploadPath = join(uploadDir, fileName)
-
-            try {
-              const bytes = await file.arrayBuffer()
-              const buffer = Buffer.from(bytes)
-
-              // 画像をリサイズして保存
-              await sharp(buffer)
-                .resize(recordConfig.maxSize.width, recordConfig.maxSize.height, {
-                  fit: 'inside',
-                  withoutEnlargement: true
-                })
-                .jpeg({ quality: recordConfig.quality })
-                .toFile(uploadPath)
-
-              return fileName
-            } catch (error) {
-              console.error('Image upload error:', error)
-              throw new Error('画像のアップロードに失敗しました')
-            }
-          })
-        )
+        // 失敗した画像がある場合はログに記録
+        if (processingResult.failed.length > 0) {
+          console.warn('Some images failed to upload:', processingResult.failed)
+        }
       }
     } else {
       // multipart/form-data以外はエラー
@@ -264,10 +235,16 @@ export const POST: APIRoute = async ({ request, locals }) => {
       creatorId: locals.user.id
     })
 
+    // 部分成功時の警告メッセージを生成
+    let message = '活動記録を追加しました'
+    if (totalImageCount > 0 && uploadedImageNames.length < totalImageCount) {
+      message += `（画像: ${uploadedImageNames.length}/${totalImageCount}件アップロード成功）`
+    }
+
     return new Response(
       JSON.stringify({
         success: true,
-        message: '活動記録を追加しました',
+        message,
         record: record
       }),
       {

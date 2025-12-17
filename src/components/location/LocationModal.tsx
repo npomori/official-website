@@ -83,6 +83,8 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
       meetingTime: null,
       meetingMapUrl: null,
       meetingAdditionalInfo: null,
+      gallery: null,
+      attachments: null,
       upcomingDates: null
     }
   })
@@ -132,8 +134,8 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
             meetingAdditionalInfo: location.meetingAdditionalInfo || null,
             upcomingDates: location.upcomingDates || null
           })
-          if (location.images && Array.isArray(location.images)) {
-            setExistingGalleryImages(location.images as ImageAttachment[])
+          if (location.gallery && Array.isArray(location.gallery)) {
+            setExistingGalleryImages(location.gallery as ImageAttachment[])
           }
           if (location.attachments && Array.isArray(location.attachments)) {
             setExistingAttachments(
@@ -1035,7 +1037,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                         className="hidden"
                       />
                     </label>
-                    {errors.images && <p className={errorClass}>{errors.images.message}</p>}
+                    {errors.gallery && <p className={errorClass}>{errors.gallery.message}</p>}
                   </div>
 
                   <div className="mb-4">
