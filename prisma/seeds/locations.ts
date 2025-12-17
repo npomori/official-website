@@ -48,7 +48,8 @@ async function seedLocations(prisma: PrismaClient): Promise<void> {
         '2026年3月28日(土)'
       ],
       notes: '・雨天中止の場合は前日17時までに連絡します\n・小学生以下は保護者同伴でお願いします',
-      other: '駐車場は先着20台まで利用可能です。満車の場合は近隣の有料駐車場をご利用ください。',
+      other:
+        '【地域連携プログラム】\n近隣農園と協力し、季節の収穫体験を実施（夏：ブルーベリー、秋：サツマイモ、冬：茶の剪定体験）。',
       gallery: [
         {
           name: 'forest-path.jpg',
