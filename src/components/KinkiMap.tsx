@@ -23,16 +23,12 @@ const MapController: React.FC<MapControllerProps> = ({ targetLocation, locations
 
   useEffect(() => {
     if (targetLocation) {
-      console.log('MapController: Focusing on location:', targetLocation)
       const location = locations.find((loc) => loc.name === targetLocation)
       if (location) {
-        console.log('MapController: Found location data:', location)
         map.setView(location.position, 14, {
           animate: true,
           duration: 1
         })
-      } else {
-        console.log('MapController: Location not found:', targetLocation)
       }
     }
   }, [targetLocation, map, locations])
@@ -59,7 +55,6 @@ const KinkiMap: React.FC<KinkiMapProps> = ({ locations }) => {
 
       // 初期化完了後にイベントリスナーを設定
       const handleFocusLocation = (event: CustomEvent) => {
-        console.log('KinkiMap received focusLocation event:', event.detail)
         setTargetLocation(event.detail.location)
       }
 
@@ -74,8 +69,9 @@ const KinkiMap: React.FC<KinkiMapProps> = ({ locations }) => {
     return () => clearTimeout(timer)
   }, [])
 
-  // すべての活動地の境界を計算
-  const allActivityBounds = L.latLngBounds(validLocations.map((l) => l.position))
+  // デフォルトの近畿地方中心位置
+  const kinkiDefaultCenter: [number, number] = [34.9, 135.5]
+  const kinkiDefaultZoom = 9
 
   return (
     <div className="relative z-0 w-full">
@@ -88,45 +84,58 @@ const KinkiMap: React.FC<KinkiMapProps> = ({ locations }) => {
 
       {/* 地図部分 */}
       <div className="relative h-[500px] w-full" style={{ zIndex: 0 }}>
-        <MapContainer
-          bounds={allActivityBounds}
-          boundsOptions={{ padding: [50, 50] }}
-          style={{ height: '100%', width: '100%', zIndex: 0 }}
-        >
-          <MapController targetLocation={targetLocation} locations={validLocations} />
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
+        {validLocations.length > 0 ? (
+          <MapContainer
+            bounds={L.latLngBounds(validLocations.map((l) => l.position))}
+            boundsOptions={{ padding: [50, 50] }}
+            style={{ height: '100%', width: '100%', zIndex: 0 }}
+          >
+            <MapController targetLocation={targetLocation} locations={validLocations} />
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
 
-          {validLocations.map((location, index) => (
-            <Marker key={index} position={location.position}>
-              <Tooltip
-                permanent
-                direction="right"
-                offset={[-3, 0]}
-                opacity={0.9}
-                className="map-label"
-              >
-                {location.name}
-              </Tooltip>
-              <Popup>
-                <div className="p-2">
-                  <h3 className="mb-2 text-lg font-bold text-gray-800">{location.name}</h3>
-                  {location.activities && (
-                    <p className="text-sm text-gray-600">{location.activities}</p>
-                  )}
-                  {location.address && (
-                    <p className="mt-1 text-xs text-gray-500">{location.address}</p>
-                  )}
-                  <span className="bg-primary-100 text-primary-800 mt-2 inline-block rounded px-2 py-1 text-xs">
-                    定例活動地
-                  </span>
-                </div>
-              </Popup>
-            </Marker>
-          ))}
-        </MapContainer>
+            {validLocations.map((location, index) => (
+              <Marker key={index} position={location.position}>
+                <Tooltip
+                  permanent
+                  direction="right"
+                  offset={[-3, 0]}
+                  opacity={0.9}
+                  className="map-label"
+                >
+                  {location.name}
+                </Tooltip>
+                <Popup>
+                  <div className="p-2">
+                    <h3 className="mb-2 text-lg font-bold text-gray-800">{location.name}</h3>
+                    {location.activities && (
+                      <p className="text-sm text-gray-600">{location.activities}</p>
+                    )}
+                    {location.address && (
+                      <p className="mt-1 text-xs text-gray-500">{location.address}</p>
+                    )}
+                    <span className="bg-primary-100 text-primary-800 mt-2 inline-block rounded px-2 py-1 text-xs">
+                      定例活動地
+                    </span>
+                  </div>
+                </Popup>
+              </Marker>
+            ))}
+          </MapContainer>
+        ) : (
+          <MapContainer
+            center={kinkiDefaultCenter}
+            zoom={kinkiDefaultZoom}
+            style={{ height: '100%', width: '100%', zIndex: 0 }}
+          >
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+          </MapContainer>
+        )}
       </div>
     </div>
   )
