@@ -37,6 +37,8 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
   >([])
   const [removedAttachments, setRemovedAttachments] = useState<string[]>([])
   const scrollRef = useRef<HTMLDivElement>(null)
+  const galleryInputRef = useRef<HTMLInputElement>(null)
+  const attachmentsInputRef = useRef<HTMLInputElement>(null)
   const locationConfig = config.upload.location
   const fieldClass =
     'block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 placeholder:text-gray-400 focus:border-primary-500 focus:ring-primary-500 focus:outline-none'
@@ -286,6 +288,10 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
     }
     const newImages = files.map((file) => ({ file, caption: '' }))
     setSelectedGalleryImages((prev) => [...prev, ...newImages])
+    // input要素をリセットして同じファイルを再選択できるようにする
+    if (galleryInputRef.current) {
+      galleryInputRef.current.value = ''
+    }
   }
 
   const handleRemoveGalleryImage = (index: number) => {
@@ -325,6 +331,10 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
       }
     }
     setSelectedAttachments((prev) => [...prev, ...files])
+    // input要素をリセットして同じファイルを再選択できるようにする
+    if (attachmentsInputRef.current) {
+      attachmentsInputRef.current.value = ''
+    }
   }
 
   const handleRemoveAttachment = (index: number) => {
@@ -737,7 +747,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                       id="meetingMapUrl"
                       type="text"
                       {...register('meetingMapUrl')}
-                      placeholder="Google Maps等のURL"
+                      placeholder="Google MapsのURL"
                       className={fieldClass}
                     />
                     {errors.meetingMapUrl && (
@@ -941,7 +951,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                                 </svg>
                               </button>
                               {image.caption && (
-                                <div className="mt-1 text-xs text-gray-600">{image.caption}</div>
+                                <div className="mt-1 text-sm text-gray-600">{image.caption}</div>
                               )}
                             </div>
                           )
@@ -961,7 +971,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                               />
                               <div className="flex-1">
                                 <div className="mb-2 flex items-center justify-between">
-                                  <span className="text-sm font-medium text-gray-700">
+                                  <span className="font-medium text-gray-900">
                                     {item.file.name}
                                   </span>
                                   <button
@@ -987,7 +997,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                                 <div>
                                   <label
                                     htmlFor={`caption-${index}`}
-                                    className="mb-1 block text-sm text-gray-600"
+                                    className="mb-1 block text-gray-600"
                                   >
                                     キャプション（任意、最大{locationConfig.captionMaxLength || 30}
                                     文字）
@@ -1000,7 +1010,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                                       handleGalleryCaptionChange(index, e.target.value)
                                     }
                                     maxLength={locationConfig.captionMaxLength || 30}
-                                    className="focus:border-primary-500 focus:ring-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2 text-sm text-gray-900 focus:outline-none"
+                                    className="focus:border-primary-500 focus:ring-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2 text-gray-900 placeholder:text-gray-400 focus:outline-none"
                                     placeholder="画像の説明を入力..."
                                   />
                                 </div>
@@ -1032,6 +1042,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                       </svg>
                       画像を選択
                       <input
+                        ref={galleryInputRef}
                         id="gallery"
                         type="file"
                         accept="image/*"
@@ -1082,7 +1093,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                         {existingAttachments.map((attachment, index) => (
                           <div
                             key={index}
-                            className="flex items-center justify-between rounded border border-gray-300 p-2 text-sm"
+                            className="flex items-center justify-between rounded border border-gray-300 p-2"
                           >
                             <a
                               href={`/api/location/download/${locationId}/${attachment.filename}`}
@@ -1095,9 +1106,21 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                             <button
                               type="button"
                               onClick={() => handleRemoveExistingAttachment(attachment.filename)}
-                              className="text-red-600 hover:text-red-700"
+                              className="rounded-full bg-red-500 p-1 text-white hover:bg-red-600"
                             >
-                              削除
+                              <svg
+                                className="h-4 w-4"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M6 18L18 6M6 6l12 12"
+                                />
+                              </svg>
                             </button>
                           </div>
                         ))}
@@ -1109,7 +1132,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                         {selectedAttachments.map((file, index) => (
                           <div
                             key={index}
-                            className="flex items-center justify-between rounded border border-gray-300 p-2 text-sm"
+                            className="flex items-center justify-between rounded border border-gray-300 p-2"
                           >
                             <span className="text-gray-700">
                               {file.name} ({(file.size / 1024).toFixed(1)} KB)
@@ -1117,9 +1140,21 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                             <button
                               type="button"
                               onClick={() => handleRemoveAttachment(index)}
-                              className="text-red-600 hover:text-red-700"
+                              className="rounded-full bg-red-500 p-1 text-white hover:bg-red-600"
                             >
-                              削除
+                              <svg
+                                className="h-4 w-4"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M6 18L18 6M6 6l12 12"
+                                />
+                              </svg>
                             </button>
                           </div>
                         ))}
@@ -1147,6 +1182,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
                       </svg>
                       ファイルを選択
                       <input
+                        ref={attachmentsInputRef}
                         id="attachments"
                         type="file"
                         multiple
