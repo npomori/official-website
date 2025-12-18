@@ -132,7 +132,10 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
             meetingTime: location.meetingTime || null,
             meetingMapUrl: location.meetingMapUrl || null,
             meetingAdditionalInfo: location.meetingAdditionalInfo || null,
-            upcomingDates: location.upcomingDates || null
+            upcomingDates:
+              location.upcomingDates && Array.isArray(location.upcomingDates)
+                ? location.upcomingDates.join('\n')
+                : location.upcomingDates || null
           })
           if (location.gallery && Array.isArray(location.gallery)) {
             setExistingGalleryImages(location.gallery as ImageAttachment[])
@@ -198,7 +201,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ locationId, onClose, onSu
         formData.append('meetingAdditionalInfo', values.meetingAdditionalInfo)
 
       const upcomingDatesText = watch('upcomingDates')
-      if (upcomingDatesText && typeof upcomingDatesText === 'string') {
+      if (upcomingDatesText && typeof upcomingDatesText === 'string' && upcomingDatesText.trim()) {
         formData.append('upcomingDates', upcomingDatesText)
       }
 

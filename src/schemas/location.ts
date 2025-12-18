@@ -78,7 +78,7 @@ export const locationBaseSchema = z.object({
   // メディア・添付ファイル
   gallery: z.array(imageAttachmentSchema).nullable().optional(),
   attachments: z.array(attachmentSchema).nullable().optional(),
-  upcomingDates: z.array(z.string()).nullable().optional()
+  upcomingDates: z.string().nullable().optional()
 })
 
 // フロントエンド用（ファイル含む）
