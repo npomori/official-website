@@ -95,6 +95,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const categories = JSON.parse(formData.get('categories') as string)
     const priority = (formData.get('priority') as string) || null
     const isMemberOnly = formData.get('isMemberOnly') === 'true'
+    const isDraft = formData.get('isDraft') === 'true'
     const author = formData.get('author') as string
 
     const newsFileUploader = new FileUploader(UPLOAD_DIR)
@@ -229,7 +230,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       attachments: uploadedAttachments,
       isMemberOnly,
       author: author, // フォームから取得した作成者名を使用
-      status: 'published',
+      status: isDraft ? 'draft' : 'published',
       creatorId: locals.user?.id || 1 // 認証されたユーザーIDまたはデフォルト値
     }
 

@@ -98,4 +98,105 @@ describe('NewsModal', () => {
       expect(screen.getByText('existing-file.pdf')).toBeInTheDocument()
     })
   })
+
+  describe('公開設定', () => {
+    it('会員限定コンテンツのチェックボックスが表示される', () => {
+      render(<NewsModal onClose={() => {}} />)
+      const checkbox = screen.getByLabelText(/会員限定コンテンツ/)
+      expect(checkbox).toBeInTheDocument()
+      expect(checkbox).not.toBeChecked()
+    })
+
+    it('下書きとして保存のチェックボックスが表示される', () => {
+      render(<NewsModal onClose={() => {}} />)
+      const checkbox = screen.getByLabelText(/下書きとして保存/)
+      expect(checkbox).toBeInTheDocument()
+      expect(checkbox).not.toBeChecked()
+    })
+
+    it('会員限定コンテンツをチェックできる', () => {
+      render(<NewsModal onClose={() => {}} />)
+      const checkbox = screen.getByLabelText(/会員限定コンテンツ/) as HTMLInputElement
+      fireEvent.click(checkbox)
+      expect(checkbox).toBeChecked()
+    })
+
+    it('下書きとして保存をチェックできる', () => {
+      render(<NewsModal onClose={() => {}} />)
+      const checkbox = screen.getByLabelText(/下書きとして保存/) as HTMLInputElement
+      fireEvent.click(checkbox)
+      expect(checkbox).toBeChecked()
+    })
+
+    it('編集モードで下書きの場合、isDraftがチェックされる', async () => {
+      const mockDraftNews = {
+        id: '1',
+        title: '下書きのお知らせ',
+        content: '下書き内容',
+        date: new Date(),
+        categories: ['告知'],
+        priority: null,
+        isMemberOnly: false,
+        author: 'テスト太郎',
+        attachments: [],
+        status: 'draft'
+      }
+
+      render(<NewsModal onClose={() => {}} news={mockDraftNews} isEditMode={true} />)
+
+      await waitFor(() => {
+        const checkbox = screen.getByLabelText(/下書きとして保存/) as HTMLInputElement
+        expect(checkbox).toBeChecked()
+      })
+    })
+
+    it('編集モードで公開済みの場合、isDraftがチェックされない', async () => {
+      const mockPublishedNews = {
+        id: '1',
+        title: '公開済みのお知らせ',
+        content: '公開内容',
+        date: new Date(),
+        categories: ['告知'],
+        priority: null,
+        isMemberOnly: false,
+        author: 'テスト太郎',
+        attachments: [],
+        status: 'published'
+      }
+
+      render(<NewsModal onClose={() => {}} news={mockPublishedNews} isEditMode={true} />)
+
+      await waitFor(() => {
+        const checkbox = screen.getByLabelText(/下書きとして保存/) as HTMLInputElement
+        expect(checkbox).not.toBeChecked()
+      })
+    })
+
+    it('編集モードで会員限定の場合、isMemberOnlyがチェックされる', async () => {
+      const mockMemberOnlyNews = {
+        id: '1',
+        title: '会員限定お知らせ',
+        content: '会員限定内容',
+        date: new Date(),
+        categories: ['告知'],
+        priority: null,
+        isMemberOnly: true,
+        author: 'テスト太郎',
+        attachments: [],
+        status: 'published'
+      }
+
+      render(<NewsModal onClose={() => {}} news={mockMemberOnlyNews} isEditMode={true} />)
+
+      await waitFor(() => {
+        const checkbox = screen.getByLabelText(/会員限定コンテンツ/) as HTMLInputElement
+        expect(checkbox).toBeChecked()
+      })
+    })
+
+    it('公開設定セクションにアイコンとタイトルが表示される', () => {
+      render(<NewsModal onClose={() => {}} />)
+      expect(screen.getByText('公開設定')).toBeInTheDocument()
+    })
+  })
 })

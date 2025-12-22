@@ -94,6 +94,7 @@ export const PUT: APIRoute = async ({ params, request }) => {
     }
     const priority = (formData.get('priority') as string) || null
     const isMemberOnly = String(formData.get('isMemberOnly') || 'false') === 'true'
+    const isDraft = String(formData.get('isDraft') || 'false') === 'true'
     const author = String(formData.get('author') || '')
     const newFiles = (formData.getAll('files') as File[]) || []
     let removedFiles: string[]
@@ -156,7 +157,8 @@ export const PUT: APIRoute = async ({ params, request }) => {
       date: new Date((date as string) + 'T00:00:00+09:00'), // 日本時間に変換
       categories,
       isMemberOnly,
-      author
+      author,
+      status: isDraft ? 'draft' : 'published'
     }
 
     if (priority) {

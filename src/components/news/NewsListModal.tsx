@@ -148,21 +148,18 @@ const NewsListModal: React.FC<NewsListModalProps> = ({ isOpen, onClose }) => {
     return dateObj > today
   }
 
-  // 非公開かどうかチェック
-  const isUnpublished = (status: string) => {
-    return status !== 'published'
-  }
-
   // ステータスバッジを取得
   const getStatusBadge = (news: News) => {
-    if (isUnpublished(news.status)) {
+    // 下書きステータスを最優先
+    if (news.status === 'draft') {
       return (
-        <span className="inline-flex items-center rounded-full bg-red-100 px-2 py-1 text-xs font-medium text-red-800">
-          非公開
+        <span className="inline-flex items-center rounded-full bg-yellow-100 px-2 py-1 text-xs font-medium text-yellow-800">
+          下書き
         </span>
       )
     }
-    if (isFutureDate(news.date)) {
+    // 予約投稿（scheduled または未来日付）
+    if (news.status === 'scheduled' || isFutureDate(news.date)) {
       return (
         <span className="inline-flex items-center rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800">
           予約投稿
@@ -180,10 +177,11 @@ const NewsListModal: React.FC<NewsListModalProps> = ({ isOpen, onClose }) => {
       date: typeof news.date === 'string' ? new Date(news.date) : news.date,
       categories: news.categories || [],
       priority: news.priority || null,
-      isMemberOnly: false, // デフォルト値を設定
+      isMemberOnly: news.isMemberOnly,
       author: news.author,
       attachments: news.attachments || [],
-      id: news.id.toString()
+      id: news.id.toString(),
+      status: news.status
     }
   }
 
@@ -248,8 +246,8 @@ const NewsListModal: React.FC<NewsListModalProps> = ({ isOpen, onClose }) => {
                 <div
                   key={news.id}
                   className={`flex items-center justify-between rounded-lg border p-4 transition-colors ${
-                    isUnpublished(news.status)
-                      ? 'border-red-200 bg-red-50'
+                    news.status === 'draft'
+                      ? 'border-yellow-200 bg-yellow-50'
                       : isFutureDate(news.date)
                         ? 'border-blue-200 bg-blue-50'
                         : 'border-gray-200 bg-white hover:bg-gray-50'

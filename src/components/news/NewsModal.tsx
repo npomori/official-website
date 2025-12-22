@@ -14,7 +14,7 @@ import { Controller, useForm, type FieldErrors } from 'react-hook-form'
 interface NewsModalProps {
   onClose: () => void
   onSuccess?: () => void
-  news?: NewsCreate & { id?: string } // 編集時の既存データ
+  news?: NewsCreate & { id?: string; status?: string } // 編集時の既存データ
   isEditMode?: boolean
 }
 
@@ -47,6 +47,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
       categories: [],
       priority: null,
       isMemberOnly: false,
+      isDraft: false,
       author: config.content.news.defaultAuthor || '未設定',
       attachments: []
     }
@@ -70,6 +71,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
         categories: news.categories || [],
         priority: news.priority || null,
         isMemberOnly: news.isMemberOnly || false,
+        isDraft: news.status === 'draft',
         author: news.author || config.content.news.defaultAuthor || '未設定',
         attachments: news.attachments || []
       })
@@ -95,6 +97,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
         categories: [],
         priority: null,
         isMemberOnly: false,
+        isDraft: false,
         author: config.content.news.defaultAuthor || '未設定',
         attachments: []
       })
@@ -137,6 +140,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
         formData.append('categories', JSON.stringify(values.categories))
         if (values.priority) formData.append('priority', values.priority)
         formData.append('isMemberOnly', values.isMemberOnly.toString())
+        formData.append('isDraft', String(values.isDraft))
         formData.append('author', values.author)
 
         // 新規追加ファイル
@@ -178,6 +182,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
         formData.append('date', dateString as string)
         formData.append('categories', JSON.stringify(values.categories))
         formData.append('isMemberOnly', values.isMemberOnly.toString())
+        formData.append('isDraft', String(values.isDraft))
         formData.append('author', values.author)
         if (values.priority) {
           formData.append('priority', values.priority)
@@ -471,50 +476,6 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
                 </div>
 
                 <div className="col-span-4">
-                  <div className="flex items-center">
-                    <input
-                      type="checkbox"
-                      id="isMemberOnly"
-                      {...register('isMemberOnly')}
-                      className="text-primary-600 focus:ring-primary-500 h-4 w-4 rounded border-gray-300"
-                    />
-                    <label htmlFor="isMemberOnly" className="ml-2 font-medium text-gray-900">
-                      会員限定コンテンツ
-                      <span className="group relative ml-2 inline-flex items-center text-gray-500">
-                        <svg
-                          className="h-4 w-4 cursor-help"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                          />
-                        </svg>
-                        <div className="absolute bottom-full left-0 mb-2 hidden w-[300px] transform rounded-lg bg-gray-900 p-3 text-sm text-white opacity-0 transition-opacity group-hover:block group-hover:opacity-100">
-                          <div className="space-y-2 whitespace-pre-wrap">
-                            <div>
-                              チェックすると、ログイン中の会員のみがアクセスできるお知らせになります。
-                            </div>
-                            <div>• チェックあり：会員限定</div>
-                            <div>• チェックなし：一般公開</div>
-                          </div>
-                          <div className="absolute -bottom-1 left-4 h-2 w-2 rotate-45 transform bg-gray-900"></div>
-                        </div>
-                      </span>
-                    </label>
-                  </div>
-                  {errors.isMemberOnly && (
-                    <p className="mt-1 text-sm text-red-600">
-                      <span className="font-medium">{errors.isMemberOnly.message}</span>
-                    </p>
-                  )}
-                </div>
-
-                <div className="col-span-4">
                   <label htmlFor="content" className="mb-1 block font-medium text-gray-900">
                     内容
                     <span className="group relative ml-2 inline-flex items-center text-gray-500">
@@ -737,6 +698,77 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
                       <span className="font-medium">{errors.attachments.message}</span>
                     </p>
                   )}
+                </div>
+
+                {/* 公開設定 */}
+                <div className="col-span-4 mb-6">
+                  <div className="rounded-lg border-2 border-blue-200 bg-blue-50 p-4">
+                    <div className="mb-3 flex items-center">
+                      <svg
+                        className="mr-2 h-5 w-5 text-blue-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                        />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                        />
+                      </svg>
+                      <h3 className="text-lg font-semibold text-blue-900">公開設定</h3>
+                    </div>
+
+                    <div className="space-y-3">
+                      {/* 会員限定コンテンツ */}
+                      <div className="rounded-lg border border-blue-200 bg-white p-3">
+                        <label className="flex cursor-pointer items-start">
+                          <input
+                            type="checkbox"
+                            id="isMemberOnly"
+                            {...register('isMemberOnly')}
+                            className="text-primary-600 focus:ring-primary-500 mt-0.5 mr-3 h-5 w-5 rounded border-gray-300"
+                          />
+                          <div className="flex-1">
+                            <div className="font-medium text-gray-900">会員限定コンテンツ</div>
+                            <p className="mt-1 text-sm text-gray-600">
+                              このお知らせは会員のみに公開されます
+                            </p>
+                          </div>
+                        </label>
+                        {errors.isMemberOnly && (
+                          <p className="mt-2 text-sm text-red-600">
+                            <span className="font-medium">{errors.isMemberOnly.message}</span>
+                          </p>
+                        )}
+                      </div>
+
+                      {/* 下書きとして保存 */}
+                      <div className="rounded-lg border border-blue-200 bg-white p-3">
+                        <label className="flex cursor-pointer items-start">
+                          <input
+                            type="checkbox"
+                            id="isDraft"
+                            {...register('isDraft')}
+                            className="text-primary-600 focus:ring-primary-500 mt-0.5 mr-3 h-5 w-5 rounded border-gray-300"
+                          />
+                          <div className="flex-1">
+                            <div className="font-medium text-gray-900">下書きとして保存</div>
+                            <p className="mt-1 text-sm text-gray-600">
+                              このお知らせは下書き状態となり、一般には公開されません
+                            </p>
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </fieldset>

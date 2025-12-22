@@ -28,6 +28,7 @@ export const newsBaseSchema = z.object({
   categories: z.array(z.string()).min(1, { message: 'カテゴリーは必須です' }),
   priority: z.string().nullable(),
   isMemberOnly: z.boolean().default(false),
+  isDraft: z.boolean().optional(),
   author: z
     .string()
     .trim()

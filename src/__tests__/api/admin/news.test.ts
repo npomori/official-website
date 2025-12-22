@@ -192,6 +192,130 @@ describe('News API', () => {
 
       expect(result.attachments).toBeNull()
     })
+
+    it('下書きとしてお知らせを作成できる', async () => {
+      const mockDraftNews = {
+        id: 3,
+        title: '下書きのお知らせ',
+        content: '下書き内容',
+        date: new Date('2025-12-15'),
+        categories: ['告知'],
+        priority: null,
+        attachments: null,
+        author: '作成者',
+        status: 'draft',
+        isMemberOnly: false,
+        creatorId: 1,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
+
+      mockNewsDB.createNews.mockResolvedValue(mockDraftNews)
+
+      const result = await mockNewsDB.createNews({
+        title: '下書きのお知らせ',
+        content: '下書き内容',
+        date: new Date('2025-12-15'),
+        categories: ['告知'],
+        attachments: null,
+        author: '作成者',
+        status: 'draft',
+        isMemberOnly: false,
+        creatorId: 1
+      })
+
+      expect(result.status).toBe('draft')
+      expect(result.title).toBe('下書きのお知らせ')
+    })
+
+    it('会員限定のお知らせを作成できる', async () => {
+      const mockMemberOnlyNews = {
+        id: 4,
+        title: '会員限定お知らせ',
+        content: '会員限定内容',
+        date: new Date('2025-12-15'),
+        categories: ['会員専用'],
+        priority: null,
+        attachments: null,
+        author: '作成者',
+        status: 'published',
+        isMemberOnly: true,
+        creatorId: 1,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
+
+      mockNewsDB.createNews.mockResolvedValue(mockMemberOnlyNews)
+
+      const result = await mockNewsDB.createNews({
+        title: '会員限定お知らせ',
+        content: '会員限定内容',
+        date: new Date('2025-12-15'),
+        categories: ['会員専用'],
+        attachments: null,
+        author: '作成者',
+        status: 'published',
+        isMemberOnly: true,
+        creatorId: 1
+      })
+
+      expect(result.isMemberOnly).toBe(true)
+      expect(result.status).toBe('published')
+    })
+  })
+
+  describe('PUT /api/admin/news/:id', () => {
+    it('お知らせのステータスを下書きから公開に更新できる', async () => {
+      const mockUpdatedNews = {
+        id: 1,
+        title: '更新されたお知らせ',
+        content: '更新内容',
+        date: new Date('2025-12-15'),
+        categories: ['告知'],
+        priority: null,
+        attachments: null,
+        author: '作成者',
+        status: 'published',
+        isMemberOnly: false,
+        creatorId: 1,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
+
+      mockNewsDB.updateNews.mockResolvedValue(mockUpdatedNews)
+
+      const result = await mockNewsDB.updateNews(1, {
+        status: 'published'
+      })
+
+      expect(result.status).toBe('published')
+    })
+
+    it('公開されたお知らせを下書きに戻せる', async () => {
+      const mockUpdatedNews = {
+        id: 1,
+        title: 'お知らせ',
+        content: '内容',
+        date: new Date('2025-12-15'),
+        categories: ['告知'],
+        priority: null,
+        attachments: null,
+        author: '作成者',
+        status: 'draft',
+        isMemberOnly: false,
+        creatorId: 1,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
+
+      mockNewsDB.updateNews.mockResolvedValue(mockUpdatedNews)
+
+      const result = await mockNewsDB.updateNews(1, {
+        status: 'draft'
+      })
+
+      expect(result.status).toBe('draft')
+    })
   })
 
   describe('FileUploader', () => {
