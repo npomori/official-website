@@ -12,6 +12,7 @@ export interface Record {
   remarks?: string | null
   categories?: string[] | null
   images?: string[] | null
+  status: string
   createdAt: Date
   updatedAt: Date
   creator: {
@@ -66,6 +67,7 @@ export interface PublicRecord {
   remarks?: string | null
   categories?: string[] | null
   images?: string[] | null
+  status: string
   createdAt: Date
   updatedAt: Date
   creator: {

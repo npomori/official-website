@@ -109,6 +109,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
       const dataJson = formData.get('data') as string
       data = JSON.parse(dataJson)
 
+      // 下書きフラグを取得
+      const isDraft = formData.get('isDraft') === 'true'
+      data.isDraft = isDraft
+
       // 画像ファイルの処理
       const imageFiles = formData.getAll('images') as File[]
       totalImageCount = imageFiles.length
@@ -231,7 +235,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       remarks: validationResult.data.remarks || null,
       categories: validationResult.data.categories || [],
       images: validationResult.data.images || [],
-      status: 'published',
+      status: validationResult.data.isDraft ? 'draft' : 'published',
       creatorId: locals.user.id
     })
 

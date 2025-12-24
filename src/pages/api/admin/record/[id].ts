@@ -172,6 +172,10 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
       const dataStr = formData.get('data') as string
       body = JSON.parse(dataStr)
 
+      // 下書きフラグを取得
+      const isDraft = formData.get('isDraft') === 'true'
+      body.isDraft = isDraft
+
       // 画像ファイルを取得
       const imageFiles = formData.getAll('images')
       images = imageFiles.filter((file): file is File => file instanceof File)
@@ -323,7 +327,8 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
       equipment: validationResult.data.equipment || null,
       remarks: validationResult.data.remarks || null,
       categories: validationResult.data.categories || [],
-      images: finalImages
+      images: finalImages,
+      status: validationResult.data.isDraft ? 'draft' : 'published'
     })
 
     // 部分成功時の警告メッセージを生成

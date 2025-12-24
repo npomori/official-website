@@ -39,7 +39,8 @@ export const RecordDataSchema = z.object({
   equipment: z.string().trim().max(500, '動力使用は500文字以内で入力してください').optional(),
   remarks: z.string().trim().max(1000, '備考は1000文字以内で入力してください').optional(),
   categories: z.array(z.string()).optional(),
-  images: z.array(z.string()).optional()
+  images: z.array(z.string()).optional(),
+  isDraft: z.boolean().optional()
 })
 
 // APIリクエストのスキーマ
