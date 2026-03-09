@@ -210,9 +210,10 @@ describe('RecordList', () => {
         name: 'Admin User',
         email: 'admin@example.com',
         role: 'ADMIN'
+      })
+
       const swrModule = await import('@/hooks/swr')
-      vi.mocked(swrModule
-      vi.mocked(require('@/hooks/swr').default).mockReturnValue({
+      vi.mocked(swrModule.default).mockReturnValue({
         data: mockRecordsData,
         error: null,
         isLoading: false,
