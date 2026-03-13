@@ -282,10 +282,10 @@ describe('RecordList', () => {
 
   describe('ページネーション', () => {
     beforeEach(async () => {
-      const swrModule = await import('@/hooks/swr')
-      vi.mocked(swrModulet('@nanostores/react')
+      const { useStore } = await import('@nanostores/react')
       vi.mocked(useStore).mockReturnValue(null)
-      vi.mocked(require('@/hooks/swr').default).mockReturnValue({
+      const swrModule = await import('@/hooks/swr')
+      vi.mocked(swrModule.default).mockReturnValue({
         data: {
           ...mockRecordsData,
           pagination: {
@@ -323,10 +323,10 @@ describe('RecordList', () => {
 
   describe('ローディング状態', () => {
     beforeEach(async () => {
-      const swrModule = await import('@/hooks/swr')
-      vi.mocked(swrModulet('@nanostores/react')
+      const { useStore } = await import('@nanostores/react')
       vi.mocked(useStore).mockReturnValue(null)
-      vi.mocked(require('@/hooks/swr').default).mockReturnValue({
+      const swrModule = await import('@/hooks/swr')
+      vi.mocked(swrModule.default).mockReturnValue({
         data: undefined,
         error: null,
         isLoading: true,
@@ -342,11 +342,11 @@ describe('RecordList', () => {
   })
 
   describe('エラー状態', () => {
-    beconst swrModule = await import('@/hooks/swr')
-      vi.mocked(swrModule
+    beforeEach(async () => {
       const { useStore } = await import('@nanostores/react')
       vi.mocked(useStore).mockReturnValue(null)
-      vi.mocked(require('@/hooks/swr').default).mockReturnValue({
+      const swrModule = await import('@/hooks/swr')
+      vi.mocked(swrModule.default).mockReturnValue({
         data: undefined,
         error: new Error('データの取得に失敗しました'),
         isLoading: false,
@@ -362,11 +362,11 @@ describe('RecordList', () => {
   })
 
   describe('記録0件の場合', () => {
-    beconst swrModule = await import('@/hooks/swr')
-      vi.mocked(swrModule
+    beforeEach(async () => {
       const { useStore } = await import('@nanostores/react')
       vi.mocked(useStore).mockReturnValue(null)
-      vi.mocked(require('@/hooks/swr').default).mockReturnValue({
+      const swrModule = await import('@/hooks/swr')
+      vi.mocked(swrModule.default).mockReturnValue({
         data: {
           records: [],
           pagination: {
@@ -389,12 +389,12 @@ describe('RecordList', () => {
     })
   })
 
-  descconst swrModule = await import('@/hooks/swr')
-      vi.mocked(swrModule
+  describe('画像表示', () => {
     beforeEach(async () => {
       const { useStore } = await import('@nanostores/react')
       vi.mocked(useStore).mockReturnValue(null)
-      vi.mocked(require('@/hooks/swr').default).mockReturnValue({
+      const swrModule = await import('@/hooks/swr')
+      vi.mocked(swrModule.default).mockReturnValue({
         data: mockRecordsData,
         error: null,
         isLoading: false,
