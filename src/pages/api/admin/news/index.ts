@@ -95,8 +95,28 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const categories = JSON.parse(formData.get('categories') as string)
     const priority = (formData.get('priority') as string) || null
     const isMemberOnly = formData.get('isMemberOnly') === 'true'
+    const isPinned = formData.get('isPinned') === 'true'
     const isDraft = formData.get('isDraft') === 'true'
     const author = formData.get('author') as string
+
+    // isPinned を true に設定しようとする場合は ADMIN/MODERATOR のみ許可
+    if (isPinned) {
+      const userRole = locals.user?.role
+      if (userRole !== 'ADMIN' && userRole !== 'MODERATOR') {
+        return new Response(
+          JSON.stringify({
+            success: false,
+            message: 'お知らせの固定機能は管理者・モデレーターのみ使用できます'
+          }),
+          {
+            status: 403,
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          }
+        )
+      }
+    }
 
     const newsFileUploader = new FileUploader(UPLOAD_DIR)
 
@@ -109,6 +129,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
         categories,
         priority,
         isMemberOnly,
+        isPinned,
         author
       })
     } catch (validationError) {
@@ -229,6 +250,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       categories,
       attachments: uploadedAttachments,
       isMemberOnly,
+      isPinned,
       author: author, // フォームから取得した作成者名を使用
       status: isDraft ? 'draft' : 'published',
       creatorId: locals.user?.id || 1 // 認証されたユーザーIDまたはデフォルト値

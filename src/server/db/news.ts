@@ -52,6 +52,7 @@ class NewsDB extends BaseDB {
             updatedAt: true,
             downloadStats: true,
             isMemberOnly: true,
+            isPinned: true,
             creator: {
               select: {
                 id: true,
@@ -69,6 +70,7 @@ class NewsDB extends BaseDB {
             priority: true,
             attachments: true,
             isMemberOnly: true,
+            isPinned: true,
             author: true
           }
 
@@ -77,6 +79,9 @@ class NewsDB extends BaseDB {
         where: whereCondition,
         select: selectCondition,
         orderBy: [
+          {
+            isPinned: 'desc'
+          },
           {
             date: 'desc'
           },
@@ -207,6 +212,7 @@ class NewsDB extends BaseDB {
         createdAt: true,
         updatedAt: true,
         downloadStats: true,
+        isPinned: true,
         creator: {
           select: {
             id: true,
@@ -220,6 +226,9 @@ class NewsDB extends BaseDB {
         where: whereCondition,
         select: selectCondition,
         orderBy: [
+          {
+            isPinned: 'desc'
+          },
           {
             date: 'desc'
           },
@@ -283,6 +292,7 @@ class NewsDB extends BaseDB {
         priority: data.priority ?? null,
         attachments: (data.attachments ?? []) as unknown as Prisma.InputJsonValue,
         isMemberOnly: data.isMemberOnly ?? false,
+        isPinned: data.isPinned ?? false,
         author: data.author,
         status: data.status ?? 'published',
         creatorId: data.creatorId
@@ -332,6 +342,7 @@ class NewsDB extends BaseDB {
           priority: data.priority,
           attachments: (data.attachments ?? null) as unknown as Prisma.InputJsonValue,
           isMemberOnly: data.isMemberOnly,
+          isPinned: data.isPinned,
           author: data.author,
           status: data.status
         },
@@ -548,6 +559,9 @@ class NewsDB extends BaseDB {
         take: limit,
         orderBy: [
           {
+            isPinned: 'desc'
+          },
+          {
             date: 'desc'
           },
           {
@@ -563,6 +577,7 @@ class NewsDB extends BaseDB {
           priority: true,
           attachments: true,
           isMemberOnly: true,
+          isPinned: true,
           author: true
         }
       })

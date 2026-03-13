@@ -60,7 +60,7 @@ export const GET: APIRoute = async ({ params }) => {
 }
 
 // 管理者用のお知らせ更新
-export const PUT: APIRoute = async ({ params, request }) => {
+export const PUT: APIRoute = async ({ params, request, locals }) => {
   try {
     const id = Number(params.id)
 
@@ -94,6 +94,7 @@ export const PUT: APIRoute = async ({ params, request }) => {
     }
     const priority = (formData.get('priority') as string) || null
     const isMemberOnly = String(formData.get('isMemberOnly') || 'false') === 'true'
+    const isPinned = String(formData.get('isPinned') || 'false') === 'true'
     const isDraft = String(formData.get('isDraft') || 'false') === 'true'
     const author = String(formData.get('author') || '')
     const newFiles = (formData.getAll('files') as File[]) || []
@@ -102,6 +103,25 @@ export const PUT: APIRoute = async ({ params, request }) => {
       removedFiles = JSON.parse(String(formData.get('removedFiles') || '[]'))
     } catch {
       removedFiles = []
+    }
+
+    // isPinned を true に設定しようとする場合は ADMIN/MODERATOR のみ許可
+    if (isPinned) {
+      const userRole = locals.user?.role
+      if (userRole !== 'ADMIN' && userRole !== 'MODERATOR') {
+        return new Response(
+          JSON.stringify({
+            success: false,
+            message: 'お知らせの固定機能は管理者・モデレーターのみ使用できます'
+          }),
+          {
+            status: 403,
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          }
+        )
+      }
     }
 
     // zodスキーマでバリデーション
@@ -113,6 +133,7 @@ export const PUT: APIRoute = async ({ params, request }) => {
         categories,
         priority: priority || null,
         isMemberOnly: isMemberOnly || false,
+        isPinned: isPinned || false,
         author
       })
     } catch (validationError) {
@@ -157,6 +178,7 @@ export const PUT: APIRoute = async ({ params, request }) => {
       date: new Date((date as string) + 'T00:00:00+09:00'), // 日本時間に変換
       categories,
       isMemberOnly,
+      isPinned,
       author,
       status: isDraft ? 'draft' : 'published'
     }

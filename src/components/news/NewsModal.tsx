@@ -6,8 +6,10 @@ import NewsPriorityDropdown from '@/components/news/NewsPriorityDropdown'
 import config from '@/config/config.json'
 import AdminNewsFetch from '@/fetch/admin/news'
 import { newsCreateSchema, type NewsCreate } from '@/schemas/news'
+import { userStore } from '@/store/user'
 import type { NewsAttachment } from '@/types/news'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useStore } from '@nanostores/react'
 import { useEffect, useRef, useState } from 'react'
 import { Controller, useForm, type FieldErrors } from 'react-hook-form'
 
@@ -26,6 +28,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
   const [existingFiles, setExistingFiles] = useState<NewsAttachment[]>([]) // 既存ファイル
   const [removedFiles, setRemovedFiles] = useState<string[]>([]) // 削除されたファイル
   const scrollRef = useRef<HTMLDivElement>(null) // スクロールコンテナ参照
+  const user = useStore(userStore) // ユーザー情報を取得
 
   // お知らせの設定を直接取得
   const newsConfig = config.upload.news
@@ -47,6 +50,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
       categories: [],
       priority: null,
       isMemberOnly: false,
+      isPinned: false,
       isDraft: false,
       author: config.content.news.defaultAuthor || '未設定',
       attachments: []
@@ -71,6 +75,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
         categories: news.categories || [],
         priority: news.priority || null,
         isMemberOnly: news.isMemberOnly || false,
+        isPinned: news.isPinned || false,
         isDraft: news.status === 'draft',
         author: news.author || config.content.news.defaultAuthor || '未設定',
         attachments: news.attachments || []
@@ -97,6 +102,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
         categories: [],
         priority: null,
         isMemberOnly: false,
+        isPinned: false,
         isDraft: false,
         author: config.content.news.defaultAuthor || '未設定',
         attachments: []
@@ -140,6 +146,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
         formData.append('categories', JSON.stringify(values.categories))
         if (values.priority) formData.append('priority', values.priority)
         formData.append('isMemberOnly', values.isMemberOnly.toString())
+        formData.append('isPinned', (values.isPinned || false).toString())
         formData.append('isDraft', String(values.isDraft))
         formData.append('author', values.author)
 
@@ -182,6 +189,7 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
         formData.append('date', dateString as string)
         formData.append('categories', JSON.stringify(values.categories))
         formData.append('isMemberOnly', values.isMemberOnly.toString())
+        formData.append('isPinned', (values.isPinned || false).toString())
         formData.append('isDraft', String(values.isDraft))
         formData.append('author', values.author)
         if (values.priority) {
@@ -767,6 +775,26 @@ const NewsModal: React.FC<NewsModalProps> = ({ onClose, onSuccess, news, isEditM
                           </div>
                         </label>
                       </div>
+
+                      {/* リスト先頭に固定 (ADMIN/MODERATORのみ) */}
+                      {user && (user.role === 'ADMIN' || user.role === 'MODERATOR') && (
+                        <div className="rounded-lg border border-blue-200 bg-white p-3">
+                          <label className="flex cursor-pointer items-start">
+                            <input
+                              type="checkbox"
+                              id="isPinned"
+                              {...register('isPinned')}
+                              className="text-primary-600 focus:ring-primary-500 mt-0.5 mr-3 h-5 w-5 rounded border-gray-300"
+                            />
+                            <div className="flex-1">
+                              <div className="font-medium text-gray-900">リスト先頭に固定</div>
+                              <p className="mt-1 text-sm text-gray-600">
+                                このお知らせを一覧の先頭に表示します
+                              </p>
+                            </div>
+                          </label>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>

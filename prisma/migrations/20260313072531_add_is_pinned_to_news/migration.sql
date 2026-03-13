@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `News` ADD COLUMN `isPinned` BOOLEAN NOT NULL DEFAULT false;

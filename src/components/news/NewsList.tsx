@@ -219,9 +219,11 @@ const NewsList: React.FC = () => {
       categories: news.categories || [],
       priority: news.priority || null,
       isMemberOnly: news.isMemberOnly || false,
+      isPinned: 'isPinned' in news ? news.isPinned || false : false,
       author: news.author,
       attachments: news.attachments || [],
-      id: news.id.toString()
+      id: news.id.toString(),
+      status: 'status' in news ? news.status : undefined
     }
   }
 
@@ -494,12 +496,31 @@ const NewsList: React.FC = () => {
 
                   <div className="space-y-3">
                     {/* タイトル */}
-                    <h2
-                      className="cursor-pointer text-2xl font-bold text-gray-800 transition-colors hover:text-blue-600"
-                      onClick={() => (window.location.href = `/news/${newsItem.id}`)}
-                    >
-                      {newsItem.title}
-                    </h2>
+                    <div className="flex items-start gap-2">
+                      <h2
+                        className="flex-1 cursor-pointer text-2xl font-bold text-gray-800 transition-colors hover:text-blue-600"
+                        onClick={() => (window.location.href = `/news/${newsItem.id}`)}
+                      >
+                        {newsItem.title}
+                      </h2>
+                      {/* 固定表示バッジ */}
+                      {newsItem.isPinned && (
+                        <span
+                          className="flex items-center gap-1 rounded-full bg-yellow-100 px-3 py-1 text-sm font-medium text-yellow-800"
+                          title="リスト先頭に固定"
+                        >
+                          <svg
+                            className="h-4 w-4"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path d="M10 2a1 1 0 011 1v1.323l3.954 1.582 1.599-.8a1 1 0 01.894 1.79l-1.233.616 1.738 5.42a1 1 0 01-.285 1.05A3.989 3.989 0 0115 15a3.989 3.989 0 01-2.667-1.019 1 1 0 01-.285-1.05l1.738-5.42-1.233-.617a1 1 0 01.894-1.788l1.599.799L11 4.323V3a1 1 0 011-1h-2zm-5 8.274l-.818 2.552c-.25.78.1 1.632.832 1.952L6 15.051V18a1 1 0 001 1h6a1 1 0 001-1v-2.949l.986-.273c.732-.32 1.082-1.172.832-1.952l-.818-2.552L13 9.726V18H7V9.726l-2-.548z" />
+                          </svg>
+                          固定
+                        </span>
+                      )}
+                    </div>
 
                     {/* 内容 */}
                     <div className="prose prose-gray prose-p:my-2 prose-h1:text-lg prose-h2:text-lg prose-h2:mb-1 prose-h2:mt-1 prose-h3:text-base prose-li:my-0.5 prose-ul:mt-1 prose-ul:mb-2 prose-ol:mt-1 prose-ol:mb-2 max-w-none text-base leading-relaxed text-gray-600">

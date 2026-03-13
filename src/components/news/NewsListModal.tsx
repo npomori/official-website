@@ -178,6 +178,7 @@ const NewsListModal: React.FC<NewsListModalProps> = ({ isOpen, onClose }) => {
       categories: news.categories || [],
       priority: news.priority || null,
       isMemberOnly: news.isMemberOnly,
+      isPinned: news.isPinned || false,
       author: news.author,
       attachments: news.attachments || [],
       id: news.id.toString(),
