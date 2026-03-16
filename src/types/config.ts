@@ -121,9 +121,16 @@ interface RecordContentConfig {
   editDays: number
 }
 
+interface RssConfig {
+  enabled: boolean
+  maxItems: number
+  descriptionLength: number
+}
+
 interface NewsContentConfig {
   editDays: number
   defaultAuthor?: string
+  rss?: RssConfig
 }
 
 interface ArticleContentConfig {
