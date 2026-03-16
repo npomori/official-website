@@ -107,10 +107,21 @@ export const GET: APIRoute = async () => {
     const siteUrl = config.site.organization.url
     const siteDescription = config.site.head.defaultDescription
 
-    // 最新のお知らせを取得（非ログイン状態として取得）
-    const newsList = await NewsDB.getLatestNews(maxItems as number, false)
+    // お知らせ一覧と同じロジックで取得（ゲストとして、管理権限なしで取得）
+    // hasAdminRole=false, isLoggedIn=false により、以下がフィルタリングされます：
+    // - status: 'published' のみ（公開済み）
+    // - date < 翌日の0:00:00 のみ（本日以前）
+    // - isMemberOnly: false のみ（会員限定を除外）
+    const { news: newsList } = await NewsDB.getNewsWithPagination(
+      1, // ページ1
+      maxItems as number, // 最大件数
+      false, // hasAdminRole = 管理権限なし
+      false // isLoggedIn = ゲスト（未ログイン）
+      // category, priority は指定なし = 全カテゴリ・全優先度
+    )
 
-    // 会員限定記事を除外
+    // getNewsWithPagination の戻り値は isLoggedIn=false の場合 PublicNews[]
+    // 既に会員限定記事は除外されているが、念のため再確認
     const publicNews = newsList.filter((news) => !news.isMemberOnly)
 
     // RSS 2.0 XMLを生成
