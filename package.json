@@ -28,7 +28,7 @@
     "db:seed:locations": "tsx prisma/seeds/locations.ts"
   },
   "dependencies": {
-    "@astrojs/node": "^10.0.1",
+    "@astrojs/node": "^10.0.2",
     "@astrojs/react": "^5.0.0",
     "@fullcalendar/core": "^6.1.20",
     "@fullcalendar/daygrid": "^6.1.20",
@@ -36,10 +36,10 @@
     "@hookform/resolvers": "^5.2.2",
     "@mdx-js/mdx": "^3.1.1",
     "@mdx-js/react": "^3.1.1",
-    "@nanostores/react": "^1.0.1",
+    "@nanostores/react": "^1.1.0",
     "@prisma/adapter-mariadb": "^7.5.0",
     "@prisma/client": "^7.5.0",
-    "astro": "^6.0.4",
+    "astro": "^6.0.5",
     "astro-icon": "^1.1.5",
     "bcrypt": "^6.0.0",
     "cookie-signature": "^1.2.2",
@@ -79,7 +79,7 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@types/unist": "^3.0.3",
-    "@typescript-eslint/parser": "^8.57.0",
+    "@typescript-eslint/parser": "^8.57.1",
     "@vitejs/plugin-react": "^6.0.1",
     "@vitest/coverage-v8": "4.1.0",
     "astro-eslint-parser": "^1.3.0",
@@ -96,7 +96,7 @@
     "tailwindcss": "^4.2.1",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.57.0",
+    "typescript-eslint": "^8.57.1",
     "unist-util-visit": "^5.1.0",
     "vitest": "^4.1.0"
   }
